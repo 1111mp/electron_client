@@ -1,7 +1,7 @@
 /*
  * @Author: say_1mp@163.com
  * @Date: 2019-10-28 13:56:30
- * @LastEditTime: 2019-12-10 16:14:07
+ * @LastEditTime: 2019-12-10 16:39:27
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \ele_client\renderer-process\header-event.js
@@ -49,7 +49,7 @@ export function funcNotOpen() {
 	ipcRenderer.send('func-not-open-dialog')
 }
 
-export function newWin({ url, options }) {
+export function newWin({ url, options }: { url: String, options: Object }) {
 	// const { ipcRenderer, remote } = window.electron
 	const { BrowserWindow } = remote
 	let currentWin = remote.getCurrentWindow()
