@@ -25,6 +25,7 @@ function initialize() {
 			// backgroundColor: '#2e2c29',
 			webPreferences: {
 				nodeIntegration: true,
+				// preload: path.join(__dirname, './pages/render.js')
 			}
 		})
 

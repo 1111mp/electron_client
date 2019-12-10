@@ -1,8 +1,8 @@
 /*
  * @Author: say_1mp@163.com
  * @Date: 2019-10-28 13:43:01
- * @LastEditTime: 2019-12-06 15:35:04
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2019-10-28 13:58:18
+ * @LastEditors: say_1mp@163.com
  * @Description: In User Settings Edit
  * @FilePath: \ele_client\main-process\header\app-header.js
  */
