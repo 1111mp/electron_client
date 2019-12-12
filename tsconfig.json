@@ -2,25 +2,22 @@
   "extends": "./paths.json",
   "compilerOptions": {
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "esnext",
+    "baseUrl": ".",
+    "rootDir": "./",
+    "jsx": "react",
+    "module": "es2015",
     "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "pretty": true,
+    "sourceMap": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react"
+    "lib": [
+      "es2015",
+      "dom"
+    ]
   },
-  "include": [
-    "src"
+  "exclude": [
+    "node_modules",
+    "**/node_modules/*"
   ]
 }

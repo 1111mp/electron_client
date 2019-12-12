@@ -2,8 +2,13 @@
 	"compilerOptions": {
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["src/*"],
-			"renderer/*": ["renderer-process/*"]
+			"app/*": ["app/*"],
+			"components/*": ["app/components/*"],
+			"containers/*": ["app/containers/*"],
+			"pages/*": ["app/pages/*"],
+			"stores/*": ["app/stores/*"],
+			"routes/*": ["app/routes/*"],
+			"utils/*": ["app/utils/*"]
 		}
 	}
 }
