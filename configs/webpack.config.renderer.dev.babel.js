@@ -26,10 +26,6 @@ const requiredByDLLConfig = module.parent.filename.includes(
   'webpack.config.renderer.dev.dll'
 );
 
-// https://electronjs.org/docs/tutorial/security#electron-%E5%AE%89%E5%85%A8%E8%AD%A6%E5%91%8A
-delete process.env.ELECTRON_ENABLE_SECURITY_WARNINGS;
-process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
-
 /**
  * Warn if the DLL is not built
  */

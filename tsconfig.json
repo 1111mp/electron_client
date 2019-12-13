@@ -5,15 +5,19 @@
     "baseUrl": ".",
     "rootDir": "./",
     "jsx": "react",
-    "module": "es2015",
+    "module": "esnext",
     "moduleResolution": "node",
     "noUnusedLocals": true,
     "pretty": true,
     "sourceMap": true,
     "resolveJsonModule": true,
     "lib": [
-      "es2015",
+      "esnext",
       "dom"
+    ],
+    "typeRoots": [
+      "@types",
+      "node_modules/@types"
     ]
   },
   "exclude": [

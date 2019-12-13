@@ -58,6 +58,9 @@ app.on('window-all-closed', () => {
 });
 
 app.on('ready', async () => {
+  // 项目使用run-electron代替electron启动项目以解决Google Chrome的devtools的报错信息
+  // 详见 https://github.com/electron/electron/issues/12438#issuecomment-412172065
+  // https://github.com/sindresorhus/run-electron
   if (
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'

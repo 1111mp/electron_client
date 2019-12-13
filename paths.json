@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"baseUrl": ".",
+    "baseUrl": ".",
 		"paths": {
 			"app/*": ["app/*"],
 			"components/*": ["app/components/*"],
@@ -8,7 +8,8 @@
 			"pages/*": ["app/pages/*"],
 			"stores/*": ["app/stores/*"],
 			"routes/*": ["app/routes/*"],
-			"utils/*": ["app/utils/*"]
+			"utils/*": ["app/utils/*"],
+			"config/*": ["app/config/*"]
 		}
 	}
 }

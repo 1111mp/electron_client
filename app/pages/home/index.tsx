@@ -1,16 +1,17 @@
 import * as React from 'react';
 import { Component } from 'react';
-const styles = require('./Home.css');
+import { Button } from 'antd';
 
 type Props = {};
 
 export default class Home extends Component<Props> {
   props: Props;
 
-  render() {
+  render(): JSX.Element {
     return (
-      <div className={styles.container} data-tid="container">
-        <h2>Homes</h2>
+      <div>
+        <h2>Home</h2>
+        <Button type="primary">Primary</Button>
       </div>
     );
   }

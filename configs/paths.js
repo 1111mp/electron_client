@@ -16,7 +16,8 @@ module.exports = {
     pages: resolveApp('app/pages'),
     stores: resolveApp('app/stores'),
     routes: resolveApp('app/routes'),
-    utils: resolveApp('app/utils')
+    utils: resolveApp('app/utils'),
+    config: resolveApp('app/config')
   },
   extensions: ['.js', '.ts', '.tsx', '.json'],
   modules: [path.join(__dirname, '..'), 'node_modules']
