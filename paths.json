@@ -1,15 +1,17 @@
 {
-	"compilerOptions": {
+  "compilerOptions": {
     "baseUrl": ".",
-		"paths": {
-			"app/*": ["app/*"],
-			"components/*": ["app/components/*"],
-			"containers/*": ["app/containers/*"],
-			"pages/*": ["app/pages/*"],
-			"stores/*": ["app/stores/*"],
-			"routes/*": ["app/routes/*"],
-			"utils/*": ["app/utils/*"],
-			"config/*": ["app/config/*"]
-		}
-	}
+    "paths": {
+      "app/*": ["app/*"],
+      "components/*": ["app/components/*"],
+      "containers/*": ["app/containers/*"],
+      "pages/*": ["app/pages/*"],
+      "stores/*": ["app/stores/*"],
+      "routes/*": ["app/routes/*"],
+      "utils/*": ["app/utils/*"],
+      "config/*": ["app/config/*"],
+      "renderer-process/*": ["app/renderer-process/*"],
+      "main-process/*": ["app/main-process/*"]
+    }
+  }
 }

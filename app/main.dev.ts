@@ -8,10 +8,24 @@
  * When running `yarn build` or `yarn build-main`, this file is compiled to
  * `./app/main.prod.js` using webpack. This gives us some performance wins.
  */
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+// import debug from 'electron-debug';
 import MenuBuilder from './menu';
+import Config from './config';
+import listener from './main-process';
+
+const debug = require('electron-debug');
+
+/** 设置日志级别 */
+log.transports.console.level = 'silly';
+
+/** 开发者工具 */
+debug({
+  isEnabled: Config.isDev,
+  showDevTools: Config.isDev
+});
 
 export default class AppUpdater {
   constructor() {
@@ -93,14 +107,41 @@ app.on('ready', async () => {
     }
   });
 
+  /** 崩溃容错 */
+  mainWindow.webContents.on('crashed', () => {
+    const choice = dialog.showMessageBox(mainWindow, {
+      type: 'info',
+      title: '崩溃啦',
+      message: '好像出了点小问题...',
+      buttons: ['重新打开', '关闭']
+    });
+
+    if (choice['response'] === 0) mainWindow.reload();
+    else mainWindow.close();
+  });
+
+  app.on('gpu-process-crashed', () => {
+    debugger
+    app.exit();
+  });
+
+  app.on('renderer-process-crashed', () => {
+    debugger
+    app.exit();
+  });
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
 
+  /** 添加程序菜单 */
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
+
+  /** 添加主进程监听事件 */
+  listener();
 });
