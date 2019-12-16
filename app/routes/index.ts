@@ -14,7 +14,7 @@ export interface RouterConfig {
  */
 export default ([
   {
-    component: loadable(() => import('app/app')),
+    component: loadable(() => import('components/app')),
     routes: [
       {
         path: '/',

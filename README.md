@@ -15,3 +15,8 @@ yarn dev
 ```
 yarn package
 ```
+
+## debug
+
+使用 vscode 的 debug 模式调试项目
+选中`Electron: All`，然后点击`start debugging`启动

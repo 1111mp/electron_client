@@ -1,0 +1,16 @@
+.layout {
+  height: 100%;
+
+  .header {
+    height: 52px;
+    padding: 0 24px;
+    color: #fff;
+    background-color: #7dbcea;
+    -webkit-user-select: none;
+    -webkit-app-region: drag;
+  }
+
+  .slider {
+    background-color: #3ba0e9;
+  }
+}

@@ -1,16 +1,18 @@
 import * as React from 'react';
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
+
+const styles = require('./header.scss');
 
 type Props = {};
 
-export default class Header extends Component<Props> {
+export default class AppHeader extends Component<Props> {
   props: Props;
 
   render(): JSX.Element {
     return (
-      <div>
-        <h2>Header</h2>
-      </div>
+      <Fragment>
+        <h2 className={styles.h2}>Header</h2>
+      </Fragment>
     );
   }
 }

@@ -13,4 +13,11 @@ const config: Config = {
   isBorwserHistory: true,
 }
 
+export const Mainwin = {
+  width: 1024,
+  height: 728,
+  minWidth: 1024,
+  minHeight: 728
+};
+
 export default config;

@@ -8,14 +8,15 @@
  * When running `yarn build` or `yarn build-main`, this file is compiled to
  * `./app/main.prod.js` using webpack. This gives us some performance wins.
  */
-import { app, BrowserWindow, dialog } from 'electron';
+import { app, BrowserWindow, dialog, nativeImage } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-// import debug from 'electron-debug';
 import MenuBuilder from './menu';
-import Config from './config';
+import Config, { Mainwin } from './config';
 import listener from './main-process';
+import TrayCreator from './main-process/tray';
 
+const path = require('path');
 const debug = require('electron-debug');
 
 /** 设置日志级别 */
@@ -36,6 +37,7 @@ export default class AppUpdater {
 }
 
 let mainWindow = null;
+let tray = null; // 创建全局的变量 防止系统托盘被垃圾回收
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -84,8 +86,12 @@ app.on('ready', async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728,
+    width: Mainwin.width,
+    height: Mainwin.height,
+    minWidth: Mainwin.minWidth,
+    minHeight: Mainwin.minHeight,
+    center: true,
+    frame: false,
     webPreferences: {
       nodeIntegration: true
     },
@@ -142,6 +148,23 @@ app.on('ready', async () => {
   // eslint-disable-next-line
   new AppUpdater();
 
+  /** 创建系统托盘菜单 */
+  createTray();
+
   /** 添加主进程监听事件 */
   listener();
 });
+
+function createTray() {
+  const icon = path.join(__dirname, '../resources/icon.png');
+  const image = nativeImage.createFromPath(icon);
+  tray = new TrayCreator({
+    icon: image.resize({ width: 16, height: 16 })
+  });
+
+  tray.initTray();
+
+  tray.on('click', () => {
+    mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+  });
+}
