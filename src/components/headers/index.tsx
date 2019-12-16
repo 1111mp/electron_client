@@ -1,8 +1,8 @@
 import React, { PureComponent, Fragment } from 'react';
-import Events from 'renderer/header-event.js';
+// import Events from 'renderer/header-event.js';
 import './header.scss';
 
-const { winMin, winMax, winClose, funcNotOpen } = Events;
+// const { winMin, winMax, winClose, funcNotOpen } = Events;
 
 interface IState {
 	isMaximized: Boolean
@@ -14,22 +14,22 @@ export default class Headers extends PureComponent<{}, IState> {
 	}
 
 	winHandle(str: string): void {
-		switch (str) {
-			case 'min':
-				winMin();
-				return;
-			case 'max':
-				let { isMaximized } = this.state;
-				this.setState({ isMaximized: !isMaximized });
-				winMax();
-				return;
-			case 'close':
-				winClose();
-				return;
-			case 'notOPen':
-				funcNotOpen();
-				return;
-		}
+		// switch (str) {
+		// 	case 'min':
+		// 		winMin();
+		// 		return;
+		// 	case 'max':
+		// 		let { isMaximized } = this.state;
+		// 		this.setState({ isMaximized: !isMaximized });
+		// 		winMax();
+		// 		return;
+		// 	case 'close':
+		// 		winClose();
+		// 		return;
+		// 	case 'notOPen':
+		// 		funcNotOpen();
+		// 		return;
+		// }
 	}
 
 	public render(): JSX.Element {

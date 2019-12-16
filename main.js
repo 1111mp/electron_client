@@ -11,8 +11,6 @@ let mainWindow
 function initialize() {
 	makeSingleInstance()
 
-	loadDemos()
-
 	function createWindow() {
 		Menu.setApplicationMenu(null)
 		// Create the browser window.
@@ -72,15 +70,10 @@ function initialize() {
 		// dock icon is clicked and there are no other windows open.
 		if (mainWindow === null) createWindow()
 	})
+
+	loadIpcMain()
 }
 
-// Make this app a single instance app.
-//
-// The main window will be restored and focused instead of a second window
-// opened when a person attempts to launch a second instance.
-//
-// Returns true if the current version of the app should quit instead of
-// launching.
 function makeSingleInstance() {
 	if (process.mas) return
 
@@ -98,8 +91,8 @@ function makeSingleInstance() {
 // code. You can also put them in separate files and require them here.
 
 // Require each JS file in the main-process dir
-function loadDemos() {
-	const files = glob.sync(path.join(__dirname, 'main-process/**/*.js'))
+function loadIpcMain() {
+	const files = glob.sync(path.join(__dirname, 'src/main-process/main.ts'))
 	files.forEach((file) => { require(file) })
 }
 
