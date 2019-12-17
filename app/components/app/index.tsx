@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Component, Fragment } from 'react';
+import { inject, observer } from 'mobx-react';
 import { Layout } from 'antd';
 import AppHeader from "components/header";
 import { renderRoutes } from "react-router-config";
@@ -9,12 +10,23 @@ const styles = require('./app.scss');
 
 const { Header, Sider, Content } = Layout;
 
-type Props = {
-  route: any
-};
+// type Props = {
+//   route: any
+// };
 
-export default class App extends Component<Props> {
-  props: Props;
+@inject((stores: IAnyObject) => {
+  return {
+    routerStore: stores.routerStore,
+  };
+})
+@observer
+export default class App extends Component<IAnyObject> {
+  props: IAnyObject;
+
+  _push = () => {
+    const { routerStore } = this.props;
+    routerStore.push('/dialog');
+  }
 
   render(): JSX.Element {
     const { route } = this.props;
@@ -25,7 +37,9 @@ export default class App extends Component<Props> {
             <AppHeader />
           </Header>
           <Layout>
-            <Sider className={styles.slider}>Sider</Sider>
+            <Sider className={styles.slider}>
+              <div onClick={this._push}>dialog</div>
+            </Sider>
             <Content>
               {/* child routes won't render without this */}
               {renderRoutes(route.routes)}

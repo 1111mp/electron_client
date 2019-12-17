@@ -1,7 +1,7 @@
 import { Event, ipcMain, WebContents } from 'electron';
 import log from 'electron-log';
-// import listener from '../constants/listener.json';
 import { openDevTools } from './devTools';
+import dialog from './dialog';
 
 const listener = require('../constants/listener.json');
 
@@ -86,6 +86,7 @@ const events = {
       openDevTools(webContent);
     };
   },
+  ...dialog,
 }
 
 export default function () {

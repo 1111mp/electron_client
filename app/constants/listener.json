@@ -1,3 +1,11 @@
 {
-  "MAIN_DEVTOOLS": "devtools"
+  "MAIN_DEVTOOLS": "devtools",
+
+  "DIALOG_SHOW": "dialog-show",
+  "DIALOG_CONFIRM": "dialog-confirm",
+  "DIALOG_CANCEL": "dialog-cancel",
+
+  "CUSTOM_WIN_SHOW": "custom-win-show",
+
+  "BROWSER_OPEN_URL": "browser-open-url"
 }

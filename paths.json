@@ -10,6 +10,7 @@
       "routes/*": ["app/routes/*"],
       "utils/*": ["app/utils/*"],
       "config/*": ["app/config/*"],
+      "constants/*": ["app/constants/*"],
       "renderer-process/*": ["app/renderer-process/*"],
       "main-process/*": ["app/main-process/*"]
     }

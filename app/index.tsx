@@ -37,7 +37,8 @@ function preloadComponent() {
 }
 
 async function renderer() {
-  const store = createStore();
+  const stores = createStore();
+
   const loadAsyncComponents = preloadComponent();
 
   let statusCode = 200;
@@ -52,7 +53,7 @@ async function renderer() {
 
   render(
     <AppContainer>
-      <Root store={store} statusCode={statusCode} />
+      <Root stores={stores} statusCode={statusCode} />
     </AppContainer>,
     document.getElementById('root')
   );
@@ -63,7 +64,7 @@ async function renderer() {
       const NextRoot = require('./root').default;
       render(
         <AppContainer>
-          <NextRoot store={store} />
+          <NextRoot stores={stores} />
         </AppContainer>,
         document.getElementById('root')
       );

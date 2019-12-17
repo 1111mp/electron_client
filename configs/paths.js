@@ -18,6 +18,7 @@ module.exports = {
     routes: resolveApp('app/routes'),
     utils: resolveApp('app/utils'),
     config: resolveApp('app/config'),
+    constants: resolveApp('app/constants'),
     'renderer-process': resolveApp('app/renderer-process'),
     'main-process': resolveApp('app/main-process')
   },

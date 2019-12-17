@@ -18,6 +18,8 @@ export default class RendererProcess {
   private _win: BrowserWindow;
   private _allEvents: IAnyObject;
 
+  _onWindowStatusChanged?: (e: Event, status: string) => void;
+
   constructor() {
     this._allEvents = {};
 
@@ -25,14 +27,14 @@ export default class RendererProcess {
     if (typeof window === 'undefined') return;
 
     /** 防止初始化时electron还没有加载完成 */
-    Object.assign(this, '_win', {
+    Object.defineProperty(this, '_win', {
       get() {
         const { remote } = require('electron');
         return remote.getCurrentWindow();
       }
     });
 
-    Object.assign(this, '_electron', {
+    Object.defineProperty(this, '_electron', {
       get() {
         return require('electron');
       }
@@ -40,10 +42,47 @@ export default class RendererProcess {
   }
 
   /**
+   * @description: 窗口添加事件：https://electronjs.org/docs/api/browser-window#%E5%AE%9E%E4%BE%8B%E4%BA%8B%E4%BB%B6
+   * @param {boolean} isBind
+   * @return: void
+   */
+  bindWinEvents(isBind: boolean = true): void {
+    if (!this._win) return;
+
+    const win = this._win;
+    const events = [
+      'close', // 在窗口要关闭的时候触发。 它在DOM 的beforeunload 和 unload 事件之前触发. 调用event.preventDefault()将阻止这个操作。
+      'closed', // 窗口已经关闭时触发。当你接收到这个事件的时候, 你应当删除对已经关闭的窗口的引用对象和避免再次使用它.
+      'blur', // 当窗口失去焦点时触发
+      'focus', // 当窗口获得焦点时触发
+      'show', // 当窗口显示时触发
+      'ready-to-show', // 当页面已经渲染完成(但是还没有显示) 并且窗口可以被显示时触发
+      'hide', // 当窗口隐藏时触发
+      'maximize', // 窗口最大化时触发
+      'unmaximize', // 当窗口从最大化状态退出时触发
+      'enter-full-screen', // 窗口进入全屏状态时触发
+      'leave-full-screen', // 窗口离开全屏状态时触发
+      'minimize', // 窗口最小化时触发
+      'restore' // 当窗口从最小化状态恢复时触发
+    ]
+    const method = isBind ? 'on' : 'removeListener';
+    events.forEach((event: any) => {
+      win[method](
+        event,
+        (e: Event) => this._onWindowStatusChanged && this._onWindowStatusChanged(e, event)
+      );
+    });
+
+    if (!isBind) {
+      delete this._onWindowStatusChanged;
+    }
+  }
+
+  /**
    * @description: 获取当前窗口对象
    * @return: 当前窗口对象
    */
-  geCurrentWin() {
+  geCurrentWin(): BrowserWindow {
     if (!this._electron) return;
 
     const { remote } = this._electron;
@@ -57,6 +96,7 @@ export default class RendererProcess {
    * @return: void
    */
   send(channel: string, args: any): void {
+    console.log(555555)
     if (!this._electron) return;
 
     this._electron.ipcRenderer.send(channel, args);
@@ -65,7 +105,7 @@ export default class RendererProcess {
   /**
    * @description: 往渲染线程中注册事件
    * @param {string} channel  事件名
-   * @param {CallBack} cb  执行事件的回调方法  
+   * @param {CallBack} cb  执行事件的回调方法
    * @param {boolean} isOnce  是否注册一次性的事件
    * @return: void
    */

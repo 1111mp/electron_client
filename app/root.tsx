@@ -13,16 +13,16 @@ const History = Config.isBorwserHistory
   : createHashHistory();
 
 type Props = {
-  store: any,
+  stores: any,
   statusCode: number
 };
 
 export default class Root extends Component<Props> {
   render() {
-    const { store } = this.props;
+    const { stores } = this.props;
     return (
-      <Provider store={store}>
-        <Router history={syncHistoryWithStore(History, store.routerStore)} >
+      <Provider {...stores}>
+        <Router history={syncHistoryWithStore(History, stores.routerStore)} >
           {renderRoutes(routerConfig)}
         </Router>
       </Provider>

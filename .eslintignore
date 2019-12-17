@@ -55,4 +55,5 @@ __snapshots__
 package.json
 .travis.yml
 
-app/*
+app/**/*.scss
+app/**/*.scss.map

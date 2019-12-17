@@ -25,6 +25,11 @@ export default ([
         path: '/red',
         component: loadable(() => import('pages/red')),
         exact: true
+      },
+      {
+        path: '/dialog',
+        component: loadable(() => import('components/dialog')),
+        exact: true
       }
     ]
   }

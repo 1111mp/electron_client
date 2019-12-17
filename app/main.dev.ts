@@ -138,6 +138,7 @@ app.on('ready', async () => {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+    tray = null;
   });
 
   /** 添加程序菜单 */
