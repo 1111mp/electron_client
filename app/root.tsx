@@ -6,11 +6,15 @@ import { renderRoutes } from "react-router-config";
 import { createBrowserHistory, createHashHistory } from 'history';
 import { syncHistoryWithStore } from 'mobx-react-router';
 import Config from './config';
-import routerConfig from './routes';
+// import createRoutes from './routes';
+import allRoutes from 'app/routes/routeConfig';
 
 const History = Config.isBorwserHistory
-  ? createBrowserHistory()
+  ? createBrowserHistory({
+    basename: window.location.pathname
+  })
   : createHashHistory();
+// const Routes = createRoutes();
 
 type Props = {
   stores: any,
@@ -23,7 +27,8 @@ export default class Root extends Component<Props> {
     return (
       <Provider {...stores}>
         <Router history={syncHistoryWithStore(History, stores.routerStore)} >
-          {renderRoutes(routerConfig)}
+          {/* <Routes /> */}
+          {renderRoutes(allRoutes)}
         </Router>
       </Provider>
     );

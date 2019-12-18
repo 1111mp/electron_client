@@ -1,10 +1,7 @@
 import { BrowserWindow } from 'electron';
 import ChildWindow from '../win/childWin';
-import { URL } from 'url';
 import { DIALOG } from '../../config';
-import { addUrlQuery } from '../../utils';
-
-import log from 'electron-log';
+import { getOptions } from '../../utils/dialog';
 
 export default class Dialog {
   parent: BrowserWindow;
@@ -39,16 +36,15 @@ export default class Dialog {
       alwaysOnTop: true
     });
 
-    const url = new URL(addUrlQuery(DIALOG.url, {
+    const options = getOptions(DIALOG.url, {
       type: this.type,
       title: this.title,
       message: this.message,
       ...this.data
-    }));
+    });
 
     winInstance.bind({ readyToShow: winInstance.show });
-    log.info(url)
-    winInstance.loadFile(url);
+    winInstance.loadFile(options);
 
     return winInstance;
   }

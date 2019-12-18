@@ -96,7 +96,6 @@ export default class RendererProcess {
    * @return: void
    */
   send(channel: string, args: any): void {
-    console.log(555555)
     if (!this._electron) return;
 
     this._electron.ipcRenderer.send(channel, args);
@@ -140,6 +139,7 @@ export default class RendererProcess {
    * @return: void
    */
   remove(channel: string): void {
+    console.log(channel)
     if (!this._electron) return;
 
     if (channel && this._allEvents[channel]) {

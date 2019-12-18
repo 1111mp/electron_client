@@ -24,8 +24,8 @@
       "env": {
         "NODE_ENV": "development",
         "HOT": "1",
-        "HIDE_DEV_TOOLS": "1",
-        "ELECTRON_DISABLE_SECURITY_WARNINGS": true
+        "ELECTRON_DISABLE_SECURITY_WARNINGS": true,
+        "HIDE_DEV_TOOLS": "1"
       },
       "protocol": "inspector",
       "sourceMaps": true,

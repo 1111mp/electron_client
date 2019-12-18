@@ -37,7 +37,7 @@ function injectUnmount(target: any) {
 export default class BasicComponent<Props = {}, State = {}, Other = any> extends Component<Props, State, Other> {
   $renderer: any;
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
 
     // 实例化RendererProcess渲染进程监听函数
@@ -83,7 +83,6 @@ export default class BasicComponent<Props = {}, State = {}, Other = any> extends
   /** 使用箭头函数 防止出现this丢失问题 不需要每个函数都bind(this) */
   /** 渲染线程往主线程中发送channel */
   $send = (channel: string, args?: any): void => {
-    console.log(4444)
     this.$renderer.send(channel, args);
   }
 
@@ -160,16 +159,15 @@ export default class BasicComponent<Props = {}, State = {}, Other = any> extends
       });
 
       /** 点击弹窗取消按钮 */
-      this.$once(listener.DIALOG_CANCEL, (args: any) => {
-        reject(args.data);
-      });
+      // this.$once(listener.DIALOG_CANCEL, (args: any) => {
+      //   reject(args.data);
+      // });
     });
   }
 
-  /** 开发confirm弹窗 */
+  /** 打开confirm弹窗 */
   $confirm = (message: string, title: string = '弹窗', data?: IAnyObject) => {
     return new Promise((resolve, reject) => {
-      console.log(3333)
       this.$send(listener.DIALOG_SHOW, {
         type: 'confirm',
         title,
@@ -177,13 +175,18 @@ export default class BasicComponent<Props = {}, State = {}, Other = any> extends
         data
       });
 
+      /** 这里需要注意 因为confirm弹窗中只能点击取消或者确认按钮 所以肯定有一个不会被触发 所以不会被移除 下次打开的时候有一个会报重复注册channel的错误
+       *  所以在各自的回调中去帮忙移除另一个的channel
+       */
       /** 点击弹窗确认按钮 */
       this.$once(listener.DIALOG_CONFIRM, (args: any) => {
+        this.$remove(listener.DIALOG_CANCEL);
         resolve(args.data);
       });
 
       /** 点击弹窗取消按钮 */
       this.$once(listener.DIALOG_CANCEL, (args: any) => {
+        this.$remove(listener.DIALOG_CONFIRM);
         reject(args.data);
       });
     });

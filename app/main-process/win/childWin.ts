@@ -1,4 +1,5 @@
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
+import { LoadFileOption } from 'app/utils/dialog';
 
 const merge = require('lodash/merge');
 const os = require('os');
@@ -30,7 +31,7 @@ export default class ChildWindow {
         resizable: false,
         transparent: false,
         webPreferences: {
-          nodeIntegration: true
+          nodeIntegration: true,
         }
       },
       this.winOptions)
@@ -69,9 +70,9 @@ export default class ChildWindow {
     this.win.loadURL(url, { userAgent });
   }
 
-  loadFile = (urlObj: any) => {
+  loadFile = (options: LoadFileOption) => {
     this.win.loadFile('./app.html', {
-      hash: 'dialog'
+      ...options
     });
   }
 

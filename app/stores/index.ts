@@ -1,5 +1,5 @@
 import { RouterStore } from 'mobx-react-router';
-import Config from 'config';
+import Config from 'app/config';
 
 Config.isDev
   && import('mobx-logger').then(logger => {

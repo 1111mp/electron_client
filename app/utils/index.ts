@@ -1,23 +1,65 @@
-/**
- * 将当前访问的search附加至传入的url上
- */
-export function addUrlQuery(url: string, query?: IAnyObject) {
-  let queryStr = '';
-  if (query) {
-    Object.keys(query).forEach(key => {
-      queryStr += `${queryStr ? '&' : ''}${key}=${query[key]}`;
-    });
-  }
+const query = require('query-string');
 
-  const hashReg = /#/;
-  const addHandler = () => {
-    if (hashReg.test(url)) {
-      return url.replace(hashReg, `${/\?/.test(url) ? '&' : '?'}${queryStr.substr(1, queryStr.length)}#`);
-    } else {
-      return /\?/.test(url) ? `${url}&${queryStr.substr(1, queryStr.length)}` : url + queryStr;
-    }
+const QUERY_REGEXP = /[?&]([^=&#]+)=([^&#]*)/g;
+const SPLIT_QUERY_REGEXP = /[?&]([^=&#]+)=([^&#]*)/;
+
+/**
+ * 获取url上的query字段
+ * @param url
+ */
+export function getLocationSearch(url?: string) {
+  if (typeof window === 'undefined') return '';
+  return queryMergeToStr(url || window.location.href || '');
+}
+
+/**
+ * merge query字符串返回对象
+ * @param search
+ * @param target
+ */
+export function queryMergeToObj(search: string, target: string = '') {
+  const matchQuery = search.match(QUERY_REGEXP);
+  const matchTarget = target.match(QUERY_REGEXP);
+  const getQueryObj = (match?: string[] | null) => {
+    const obj = {};
+
+    match && match.forEach(str => {
+      const v = str.match(SPLIT_QUERY_REGEXP);
+      v && (obj[v[1]] = v[2]);
+    });
+
+    return obj;
   };
 
-  queryStr = queryStr ? '?' + queryStr : '';
-  return queryStr ? addHandler() : url;
+  return Object.assign(getQueryObj(matchTarget), getQueryObj(matchQuery));
+}
+
+/**
+ * merge query字符串返回search字符串（?xxx=xxx&xxx=xxx）
+ * @param search
+ * @param target
+ */
+export function queryMergeToStr(search: string, target: string = '') {
+  const obj = queryMergeToObj(search, target);
+
+  let queryStr = '';
+  Object.keys(obj).forEach(key => {
+    queryStr += `${queryStr ? '&' : ''}${key}=${obj[key]}`;
+  });
+
+  return queryStr ? '?' + queryStr : '';
+}
+
+/**
+ * 格式化query
+ * @param search
+ */
+export function queryParse(search?: string): IAnyObject {
+  if (search) {
+    return query.parse(search);
+  } else if (typeof window === 'undefined') {
+    return {};
+  } else {
+    return query.parse(getLocationSearch());
+  }
 }

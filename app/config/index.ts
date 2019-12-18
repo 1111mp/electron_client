@@ -1,7 +1,7 @@
-const path = require('path');
-const url = require('url');
+// const path = require('path');
+// const url = require('url');
 const {
-  NODE_ENV,
+  NODE_ENV
 } = (process as any).env;
 
 interface Config {
@@ -11,8 +11,8 @@ interface Config {
 
 const config: Config = {
   isDev: NODE_ENV === 'development',
-  /** 默认使用history模式 */
-  isBorwserHistory: true,
+  /** 默认不使用history模式 */
+  isBorwserHistory: false,
 }
 
 export const Mainwin = {
@@ -25,17 +25,7 @@ export const Mainwin = {
 export const DIALOG = {
   width: 480,
   height: 324,
-  url: getIndex('/dialog')
-}
-
-function getIndex(pathName: string) {
-  const dirName = typeof window === 'undefined' ? __dirname : require('electron').remote.app.getAppPath();
-  return url.format({
-    pathname: path.join(dirName, `../app.html`),
-    protocol: 'file:',
-    hash: pathName,
-    slashes: true
-  });
+  url: '/dialog'
 }
 
 export default config;

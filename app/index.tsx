@@ -5,10 +5,11 @@ import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import { matchRoutes, } from 'react-router-config';
 import Root from './root';
-import Config from 'config';
-import createStore from 'stores';
-import routerConfig from 'routes';
+import Config from 'app/config';
+import createStore from 'app/stores';
+import routerConfig from 'app/routes/routeConfig';
 import './app.global.css';
+import './app.global.scss';
 
 function getPathname() {
   return Config.isBorwserHistory

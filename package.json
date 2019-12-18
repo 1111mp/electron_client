@@ -272,6 +272,7 @@
     "mobx": "^5.15.0",
     "mobx-react": "^6.1.4",
     "mobx-react-router": "^4.1.0",
+    "query-string": "^6.9.0",
     "react": "^16.12.0",
     "react-dom": "npm:@hot-loader/react-dom",
     "react-router": "^5.1.2",

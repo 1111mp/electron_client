@@ -46,6 +46,7 @@ dist
 dll
 main.js
 main.js.map
+resources/font/*
 
 .idea
 npm-debug.log.*
@@ -55,5 +56,7 @@ __snapshots__
 package.json
 .travis.yml
 
+app/app.global.css
 app/**/*.scss
+app/*.scss
 app/**/*.scss.map
