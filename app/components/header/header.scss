@@ -1,4 +1,57 @@
-.h2 {
-  color: #fff;
-  line-height: 52px;
+@import 'app/styles/mixin.scss';
+
+:global {
+
+  p,
+  ul,
+  li {
+    margin: 0;
+  }
+}
+
+.wrapper {
+  height: 100%;
+  @include flex($align:center);
+
+  .logoWrapper {
+    @include flex($justify:center, $align:center);
+    -webkit-app-region: no-drag;
+    width: 113px;
+    height: 28px;
+    margin: 0;
+    border-radius: 4px;
+    background-color: #434345;
+    cursor: pointer;
+  }
+
+  .widgetsWrapper {
+    @include flex($justify:space-between, $align:center);
+    flex: 1;
+
+    .container {
+      @include flex($align:center);
+
+      .iconItem {
+        @include flex($direction:row, $justify:center, $align:center);
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+        overflow: hidden;
+        -webkit-app-region: no-drag;
+
+        .icon {
+          font-size: 36px;
+          color: rgba(214, 214, 214, 0.3)
+        }
+
+        &:hover {
+          background: #343437;
+
+          &>.icon {
+            color: rgba(214, 214, 214, 0.5);
+          }
+        }
+      }
+    }
+  }
 }

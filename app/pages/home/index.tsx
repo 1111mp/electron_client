@@ -4,6 +4,7 @@ import BasicComponent from 'components/BasicComponent';
 import { inject, observer } from 'mobx-react';
 import AppHeader from 'components/header';
 import { Button, Layout } from 'antd';
+import { CUSTOMWIN } from 'app/config';
 
 const styles = require('./home.scss');
 
@@ -27,19 +28,27 @@ export default class Home extends BasicComponent<IAnyObject> {
     });
   }
 
+  customWin = (): void => {
+    this.$open({
+      ...CUSTOMWIN,
+      url: this.$addUrlQuery(CUSTOMWIN.url),
+    });
+  }
+
   $render(): JSX.Element {
     return (
       <Fragment>
         <Layout className={styles.layout}>
-          <Header className={styles.header}>
+          <Header>
             <AppHeader />
           </Header>
           <Layout>
-            <Sider className={styles.slider}>
+            <Sider>
             </Sider>
             <Content>
               <h2>Home</h2>
               <Button type="primary" onClick={this.confirm}>confirm</Button>
+              <Button type="primary" onClick={this.customWin}>customWin</Button>
             </Content>
           </Layout>
         </Layout>

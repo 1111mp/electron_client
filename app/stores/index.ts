@@ -1,5 +1,6 @@
 import { RouterStore } from 'mobx-react-router';
 import Config from 'app/config';
+import Client from './client';
 
 Config.isDev
   && import('mobx-logger').then(logger => {
@@ -14,6 +15,7 @@ Config.isDev
 
 const storageMap = {
   routerStore: RouterStore,
+  clientStore: Client,
 };
 
 export default function createStore() {

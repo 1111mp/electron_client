@@ -6,7 +6,7 @@
  @import '../resources/font/iconfont.css';
 
 /* css 初始化 */
-body,dl,dd,ul,ol,h1,h2,h3,h4,h5,h6,pre,form,input,textarea,p,hr,thead,tbody,tfoot,th,td{margin:0;padding:0;}
+body,dl,dd,ul,ol,h1,h2,h3,h4,h5,h6,pre,form,input,textarea,p,hr,thead,tbody,tfoot,th,td{margin:0;padding:0;margin-bottom:0;}
 ul,ol{list-style:none;}
 a{text-decoration:none;}
 html{-ms-text-size-adjust:none;-webkit-text-size-adjust:none;text-size-adjust:none;}
@@ -34,21 +34,21 @@ button,input,textarea{
 -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 .clearfix::before{
-    clear:both;
-    height:0;
-    width:0;
-    content: "";
-    display: table;
+  clear:both;
+  height:0;
+  width:0;
+  content: "";
+  display: table;
 }
 .clearfix::after {
-    clear:both;
-    height:0;
-    width:0;
-    content: "";
-    display: table;
+  clear:both;
+  height:0;
+  width:0;
+  content: "";
+  display: table;
 }
 .clearfix {
-    *zoom: 1; /* IE/7/6 */ /* 兼容IE6下的写法 */
+  *zoom: 1; /* IE/7/6 */ /* 兼容IE6下的写法 */
 }
 
 /* css初始化完成 */

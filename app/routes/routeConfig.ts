@@ -27,6 +27,11 @@ const allRoutes = [
     path: '/dialog',
     component: loadable(() => import('components/dialog')),
     exact: true
+  },
+  {
+    path: '/userCenter',
+    component: loadable(() => import('pages/userCenter')),
+    exact: true
   }
 ] as RouterConfig[];
 

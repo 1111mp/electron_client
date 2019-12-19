@@ -2,6 +2,7 @@ import { BrowserWindow, Event } from 'electron';
 import * as React from 'react';
 import { Component, Fragment } from 'react';
 import RendererProcess, { CallBack } from 'app/renderer-process';
+import { getLocationSearch, queryMergeToStr } from 'app/utils';
 
 const listener = require('constants/listener.json');
 
@@ -58,7 +59,7 @@ export default class BasicComponent<Props = {}, State = {}, Other = any> extends
 
   didUpdate(...args: any[]) { }
 
-  /** render 让BasicComponent与React的Component render分开 */
+  /** 重命名render 让BasicComponent与React的Component render分开 */
   render() {
     return this.$render.apply(this);
   }
@@ -175,7 +176,7 @@ export default class BasicComponent<Props = {}, State = {}, Other = any> extends
         data
       });
 
-      /** 这里需要注意 因为confirm弹窗中只能点击取消或者确认按钮 所以肯定有一个不会被触发 所以不会被移除 下次打开的时候有一个会报重复注册channel的错误
+      /** 这里需要注意 因为confirm弹窗中只能点击取消或者确认按钮 所以肯定有一个channel不会被触发 所以不会被移除 下次打开的时候有一个会报重复注册channel的错误
        *  所以在各自的回调中去帮忙移除另一个的channel
        */
       /** 点击弹窗确认按钮 */
@@ -190,6 +191,28 @@ export default class BasicComponent<Props = {}, State = {}, Other = any> extends
         reject(args.data);
       });
     });
+  }
+
+  /**
+   * 将当前访问的search附加至传入的url上
+   */
+  $addUrlQuery = (url: string, query?: IAnyObject, addSearch: boolean = true) => {
+    if (typeof window === 'undefined') return url;
+
+    let queryStr = '';
+    query && Object.keys(query).forEach(key => {
+      queryStr += `${queryStr ? '&' : ''}${key}=${query[key]}`;
+    });
+
+
+
+    const search = getLocationSearch();
+    queryStr = '?' + queryStr;
+    queryStr = search && addSearch ? queryMergeToStr(queryStr, search) : queryStr;
+
+    return queryStr
+      ? /\?/.test(url) ? `${url}&${queryStr.substr(1, queryStr.length)}` : url + queryStr
+      : url;
   }
 
   /** 打开新窗口 */
@@ -226,6 +249,11 @@ export default class BasicComponent<Props = {}, State = {}, Other = any> extends
   /** 隐藏窗口 */
   $hide = (): void => {
     this.$renderer.hide();
+  }
+
+  /** 窗口最小化 */
+  $minimize = () => {
+    this.$renderer.minimize();
   }
 
   /** 关闭窗口 */

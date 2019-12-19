@@ -45,3 +45,8 @@
     background: rgba(103, 103, 106, 1);
   }
 }
+
+.enable-drag {
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+}

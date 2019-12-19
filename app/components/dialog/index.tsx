@@ -33,7 +33,7 @@ export default class Dialog extends BasicComponent<IDialog.props> {
     this.$send(listener.DIALOG_CANCEL);
   }
 
-  render() {
+  $render() {
     const { type, title, message } = this.state;
     return (
       <Fragment>

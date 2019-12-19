@@ -1,16 +1,18 @@
-.layout {
-  height: 100%;
-
-  .header {
+:global {
+  .ant-layout-header {
     height: 52px;
-    padding: 0 24px;
+    padding: 0 13px 0 18px;
     color: #fff;
-    background-color: #7dbcea;
+    background-color: #252529;
     -webkit-user-select: none;
     -webkit-app-region: drag;
   }
 
-  .slider {
+  .ant-layout-sider {
     background-color: #3ba0e9;
   }
+}
+
+.layout {
+  height: 100%;
 }

@@ -15,6 +15,7 @@ const config: Config = {
   isBorwserHistory: false,
 }
 
+/** 主界面 */
 export const Mainwin = {
   width: 1024,
   height: 728,
@@ -22,10 +23,28 @@ export const Mainwin = {
   minHeight: 728
 };
 
+/** 对话框 */
 export const DIALOG = {
   width: 480,
   height: 324,
   url: '/dialog'
 }
+
+/** customWin模版
+ * CUSTOMWIN = {
+ *   w: 680,
+ *   h: 600,
+ *  id: 'customWin',
+ *   url: '/customWin'
+ * };
+ */
+
+/** 使用custonWin打开个人中心页面 */
+export const CUSTOMWIN = {
+  w: 680,
+  h: 600,
+  id: 'userCenter',
+  url: '/userCenter'
+};
 
 export default config;

@@ -2,6 +2,7 @@ import { Event, ipcMain, WebContents } from 'electron';
 import log from 'electron-log';
 import { openDevTools } from './devTools';
 import dialog from './dialog';
+import customWin from './customWin';
 
 const listener = require('../constants/listener.json');
 
@@ -87,6 +88,7 @@ const events = {
     };
   },
   ...dialog,
+  ...customWin,
 }
 
 export default function () {

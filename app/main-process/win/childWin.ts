@@ -100,6 +100,10 @@ export default class ChildWindow {
     return this.win.isVisible();
   }
 
+  isDestroyed = () => {
+    return this.win.isDestroyed();
+  }
+
   isMinimized = () => {
     return this.win.isMinimized();
   }
