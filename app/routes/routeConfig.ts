@@ -29,6 +29,11 @@ const allRoutes = [
     exact: true
   },
   {
+    path: '/browser',
+    component: loadable(() => import('components/browser')),
+    exact: true
+  },
+  {
     path: '/userCenter',
     component: loadable(() => import('pages/userCenter')),
     exact: true

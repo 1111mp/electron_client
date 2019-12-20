@@ -3,6 +3,7 @@ import log from 'electron-log';
 import { openDevTools } from './devTools';
 import dialog from './dialog';
 import customWin from './customWin';
+import browser from './browser';
 
 const listener = require('../constants/listener.json');
 
@@ -89,6 +90,7 @@ const events = {
   },
   ...dialog,
   ...customWin,
+  ...browser,
 }
 
 export default function () {

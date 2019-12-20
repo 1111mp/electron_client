@@ -2,7 +2,6 @@ import { Event, WebContents } from 'electron';
 import CustomWindow, { CustomWindowArgs } from './customWin';
 import { send } from '../common';
 
-// const lodash = require('lodash');
 const listener = require('../../constants/listener.json');
 
 /** 保存打开过的customWin 用于防止被垃圾回收

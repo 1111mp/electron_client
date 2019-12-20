@@ -35,6 +35,10 @@ export default class Home extends BasicComponent<IAnyObject> {
     });
   }
 
+  browser = () => {
+    this.$openBrowser('https://www.baidu.com');
+  }
+
   $render(): JSX.Element {
     return (
       <Fragment>
@@ -43,12 +47,13 @@ export default class Home extends BasicComponent<IAnyObject> {
             <AppHeader />
           </Header>
           <Layout>
-            <Sider>
+            <Sider width="128">
             </Sider>
             <Content>
               <h2>Home</h2>
               <Button type="primary" onClick={this.confirm}>confirm</Button>
               <Button type="primary" onClick={this.customWin}>customWin</Button>
+              <Button type="primary" onClick={this.browser}>browser</Button>
             </Content>
           </Layout>
         </Layout>

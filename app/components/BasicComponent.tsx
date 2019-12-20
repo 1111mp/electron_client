@@ -135,8 +135,8 @@ export default class BasicComponent<Props = {}, State = {}, Other = any> extends
   }
 
   /** 往当前窗口添加窗口状态变化的事件 */
-  $bindWinEvents = (): void => {
-    this.$renderer.bindWinEvents();
+  $bindWinEvents = (isBind: boolean = true): void => {
+    this.$renderer.bindWinEvents(isBind);
   }
 
   /** 绑定窗口事件的回调函数 */
@@ -252,8 +252,23 @@ export default class BasicComponent<Props = {}, State = {}, Other = any> extends
   }
 
   /** 窗口最小化 */
-  $minimize = () => {
+  $minimize = (): void => {
     this.$renderer.minimize();
+  }
+
+  /** 窗口最大化 */
+  $maximize = (): void => {
+    this.$renderer.maximize();
+  }
+
+  /** 设置窗口最大化的 width 和 height */
+  $setMaximumSize = (width: number, height: number) => {
+    this.$renderer.$setMaximumSize(width, height);
+  }
+
+  /** 取消窗口最大化 */
+  $unmaximize = (): void => {
+    this.$renderer.unmaximize();
   }
 
   /** 关闭窗口 */
@@ -269,5 +284,31 @@ export default class BasicComponent<Props = {}, State = {}, Other = any> extends
   /** 获取当前窗口对象 */
   $geCurrentWin = (): BrowserWindow => {
     return this.$renderer.geCurrentWin();
+  }
+
+  /** 设置窗口尺寸 */
+  $setSize = (width: number, height: number) => {
+    if (!this.$renderer.isResizable()) {
+      this.$renderer.setResizable(true);
+      this.$renderer.setSize(width, height);
+      this.$renderer.setResizable(false);
+    } else {
+      this.$renderer.setSize(width, height);
+    }
+  }
+
+  /** 返回 Integer []-包含窗口的宽度和高度。 */
+  $getSize = (): number[] => {
+    return this.$renderer.$getSize();
+  }
+
+  /** 将窗口移动到 x 和 y */
+  $setPosition = (x: number, y: number) => {
+    this.$renderer.$setPosition(x, y);
+  }
+
+  /** 返回 Integer[] - 返回一个包含当前窗口位置的数组. */
+  $getPosition = (): number[] => {
+    return this.$renderer.$getPosition();
   }
 }

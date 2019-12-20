@@ -41,10 +41,16 @@ export const DIALOG = {
 
 /** 使用custonWin打开个人中心页面 */
 export const CUSTOMWIN = {
-  w: 680,
-  h: 600,
+  width: 680,
+  height: 600,
   id: 'userCenter',
   url: '/userCenter'
+};
+
+export const BROWSER = {
+  width: 1024,
+  height: 768,
+  url: '/browser'
 };
 
 export default config;
