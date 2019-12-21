@@ -139,7 +139,6 @@ export default class RendererProcess {
    * @return: void
    */
   remove(channel: string): void {
-    console.log(channel)
     if (!this._electron) return;
 
     if (channel && this._allEvents[channel]) {

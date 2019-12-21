@@ -1,7 +1,7 @@
-@import 'app/styles/mixin.scss';
+@import "app/styles/mixin.scss";
 
 .etabs-tabgroup {
-  @include flex($align:flex-end);
+  @include flex($align: flex-end);
   width: 100%;
   padding: 8px;
   background-color: #252529;
@@ -15,16 +15,16 @@
     position: relative;
 
     .etabs-tabs {
-      @include flex($align:center);
+      @include flex($align: center);
       display: inline-flex;
       position: relative;
 
       .etabs-tab {
-        @include flex($align:center);
+        @include flex($align: center);
         font-size: 12px;
         margin-left: 8px;
         padding: 4px 6px;
-        color: #E5E5E5;
+        color: #e5e5e5;
         background-color: #252529;
         position: relative;
         -webkit-app-region: no-drag;
@@ -41,7 +41,7 @@
         }
 
         .etabs-tab-buttons {
-          @include flex($align:center);
+          @include flex($align: center);
 
           button {
             border: none;
@@ -59,10 +59,10 @@
           }
 
           .etabs-tab-button-close {
-            color: rgba(214, 214, 214, .3);
+            color: rgba(214, 214, 214, 0.3);
 
             &:hover {
-              color: rgba(214, 214, 214, .8);
+              color: rgba(214, 214, 214, 0.8);
               background: #343437;
             }
           }
@@ -81,10 +81,10 @@
   }
 
   .icons-container {
-    @include flex($align:center);
+    @include flex($align: center);
 
     .icon-item {
-      @include flex($direction:row, $justify:center, $align:center);
+      @include flex($direction: row, $justify: center, $align: center);
       width: 28px;
       height: 28px;
       cursor: pointer;
@@ -93,22 +93,51 @@
 
       .iconfont {
         font-size: 36px;
-        color: rgba(214, 214, 214, .3)
+        color: rgba(214, 214, 214, 0.3);
       }
 
       &:hover {
         background: #343437;
 
-        &>.iconfont {
-          color: rgba(214, 214, 214, .5);
+        & > .iconfont {
+          color: rgba(214, 214, 214, 0.6);
         }
       }
 
       &:active {
-        background: rgba(0, 0, 0, .2);
+        background: rgba(0, 0, 0, 0.2);
 
-        &>.iconfont {
-          color: rgba(214, 214, 214, .25);
+        & > .iconfont {
+          color: rgba(214, 214, 214, 0.25);
+        }
+      }
+    }
+
+    .icon-history {
+      @extend .icon-item;
+      border-radius: 50%;
+
+      .iconfont {
+        font-size: 14px;
+      }
+
+      .iconshuaxin {
+        font-size: 18px;
+        font-weight: 600;
+      }
+    }
+
+    .history-disabled {
+      opacity: 0.3;
+
+      &:hover,
+      &:active {
+        background-color: transparent;
+        color: rgba(214, 214, 214, 0.3);
+        cursor: default;
+
+        & > .iconfont {
+          color: rgba(214, 214, 214, 0.3);
         }
       }
     }

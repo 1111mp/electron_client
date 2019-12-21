@@ -21,7 +21,7 @@ export default class Home extends BasicComponent<IAnyObject> {
 
   confirm = (): void => {
     this.$confirm('是否确认清空所有消息？', '清空消息').then(() => {
-
+      console.log('点击确认')
     }, (err) => {
       console.log(err)
       console.log('点击取消')

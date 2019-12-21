@@ -25,12 +25,13 @@ export default class Dialog {
   }
 
   createWin() {
+    /** 在当前版本中new BrowserWindow添加model:true时 macOS上项目会crash windows正常 原因不明 */
     const winInstance = this.winInstance = new ChildWindow({
       width: DIALOG.width,
       height: DIALOG.height,
       parent: this.parent,
       center: true,
-      modal: true,
+      // modal: true,
       resizable: false,
       minimizable: false,
       alwaysOnTop: true

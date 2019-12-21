@@ -20,7 +20,9 @@ export default class Browser extends BasicComponent {
   state = {
     iscrollInstance: null,
     activeWebView: null,
-    isMaximized: false
+    isMaximized: false,
+    canGoBack: false,
+    canGoForward: false
   }
 
   didMount() {
@@ -35,9 +37,41 @@ export default class Browser extends BasicComponent {
       // }
     });
 
+    tabGroup.on('tab-added', (tab) => {
+      /** tab失去焦点是触发 包括被close也会触发 */
+      tab.on('inactive', (tab) => {
+        setTimeout(() => {
+          const { activeWebView } = this.state;
+          this.setState({
+            canGoBack: activeWebView.canGoBack(),
+            canGoForward: activeWebView.canGoForward(),
+          })
+        })
+      });
+
+      tab.webview.addEventListener('dom-ready', () => {
+        this.setState({
+          canGoBack: tab.webview.canGoBack(),
+          canGoForward: tab.webview.canGoForward(),
+        })
+        tab.webview.addEventListener('did-navigate-in-page', () => {
+          this.setState({
+            canGoBack: tab.webview.canGoBack(),
+            canGoForward: tab.webview.canGoForward(),
+          })
+        });
+      });
+    })
+
     /** 设置当前活动的webview */
-    tabGroup.on('tab-active', (tab) => {
-      this.setState({ activeWebView: tab.webview });
+    tabGroup.on('tab-active', (tab, tabGroup) => {
+      this.setState({
+        activeWebView: tab.webview,
+      });
+      const { iscrollInstance } = this.state;
+      if (iscrollInstance) {
+        iscrollInstance.scrollToElement(tab.tab, 500);
+      }
     });
 
     /** 没有tab，则关闭窗口 */
@@ -58,6 +92,14 @@ export default class Browser extends BasicComponent {
   initTabWebView = (tabInstance: any) => {
     const { iscrollInstance } = this.state;
     const { webview } = tabInstance;
+
+    tabInstance.on("close", (tab) => {
+      if (iscrollInstance) {
+        iscrollInstance.refresh();
+      } else {
+        this.initIscroll();
+      }
+    });
 
     webview.addEventListener('dom-ready', () => {
       tabInstance.setTitle(webview.getTitle());
@@ -106,7 +148,7 @@ export default class Browser extends BasicComponent {
         // scrollbars: true,
         mouseWheel: true,
         scrollX: true,
-        preventDefault: false
+        preventDefault: false,
       });
 
       this.setState({ iscrollInstance });
@@ -121,6 +163,37 @@ export default class Browser extends BasicComponent {
       /** 恢复大小需要重设尺寸 */
       !flag && this.$setSize(BROWSER.width, BROWSER.height);
     });
+  }
+
+  renderHistory = () => {
+    const { activeWebView, canGoBack, canGoForward } = this.state;
+
+    return (
+      <ul className="icons-container">
+        <li
+          className={'icon-history ' + (canGoBack ? '' : 'history-disabled')}
+          style={{ marginRight: '2px' }}
+          onMouseDown={e => e.stopPropagation()}
+          onClick={() => activeWebView && activeWebView.goBack()}
+        >
+          <i className="iconfont iconpre"></i>
+        </li>
+        <li
+          className={'icon-history ' + (canGoForward ? '' : 'history-disabled')}
+          onMouseDown={e => e.stopPropagation()}
+          onClick={() => activeWebView && activeWebView.goForward()}
+        >
+          <i className="iconfont iconnext"></i>
+        </li>
+        <li
+          className={'icon-history'}
+          onMouseDown={e => e.stopPropagation()}
+          onClick={() => activeWebView && activeWebView.reload()}
+        >
+          <i className="iconfont iconshuaxin"></i>
+        </li>
+      </ul>
+    );
   }
 
   renderController = () => {
@@ -151,13 +224,14 @@ export default class Browser extends BasicComponent {
           <i className={'iconfont icontop-close'}></i>
         </li>
       </ul>
-    )
+    );
   }
 
   $render() {
     return (
       <Fragment>
         <div className="etabs-tabgroup">
+          {this.renderHistory()}
           <div className="browser-tabs-container" ref="iscroll">
             <div className="etabs-tabs"></div>
           </div>
@@ -165,9 +239,7 @@ export default class Browser extends BasicComponent {
           <div className="empty"></div>
           {this.renderController()}
         </div>
-        <div className="etabs-views">
-
-        </div>
+        <div className="etabs-views"></div>
       </Fragment>
     )
   }
