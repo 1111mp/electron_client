@@ -227,18 +227,6 @@ export default class BasicComponent<Props = {}, State = {}, Other = any> extends
     });
   }
 
-  /** 打开模态窗 */
-  $openModal = ({ url, width, height, id }: OpenArgs) => {
-    if (typeof window === 'undefined') return;
-
-    this.$send(listener.CUSTOM_WIN_SHOW, {
-      url,
-      width,
-      height,
-      id
-    });
-  }
-
   /** 内置浏览器打开指定url页面 */
   $openBrowser = (url: string) => {
     if (typeof window === 'undefined') return;
