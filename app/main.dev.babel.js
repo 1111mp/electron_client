@@ -1,7 +1,10 @@
 const register = require('@babel/register').default;
 
 register({
-  extensions: ['.ts', '.tsx', '.js', '.json']
+  plugins: ['@babel/plugin-syntax-dynamic-import'],
+  presets: ['@babel/preset-env'],
+  extensions: ['.ts', '.tsx', '.js', '.json'],
+  cache: true
 });
 
 require('./main.dev.ts');

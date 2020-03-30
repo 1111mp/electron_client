@@ -15,9 +15,11 @@ import MenuBuilder from './menu';
 import Config, { Mainwin } from './config';
 import listener from './main-process';
 import TrayCreator from './main-process/tray';
+import debug from 'electron-debug'
+import path from 'path'
 
-const path = require('path');
-const debug = require('electron-debug');
+// const path = require('path');
+// const debug = require('electron-debug');
 
 /** 设置日志级别 */
 log.transports.console.level = 'silly';

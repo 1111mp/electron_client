@@ -12,6 +12,7 @@
     "pretty": true,
     "sourceMap": true,
     "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
     "lib": ["esnext", "dom"],
     "typeRoots": ["@types", "node_modules/@types"]
   },
