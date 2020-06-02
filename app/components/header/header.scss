@@ -1,0 +1,110 @@
+@import 'app/styles/mixin.scss';
+
+:global {
+
+  p,
+  ul,
+  li {
+    margin: 0;
+  }
+}
+
+.wrapper {
+  height: 100%;
+  @include flex($align:center);
+
+  .logoWrapper {
+    @include flex($justify:center, $align:center);
+    -webkit-app-region: no-drag;
+    position: relative;
+    width: 163px;
+    height: 100%;
+    margin: 0;
+    padding: 0 12px 0 18px;
+    color: #CCCCCC;
+    cursor: pointer;
+
+    .separater {
+      position: absolute;
+      right: 0;
+      width: 1px;
+      height: 28px;
+      background-color: #000;
+    }
+
+    &:hover {
+      background-color: #434345;
+
+      .separater {
+        display: none;
+      }
+    }
+  }
+
+  .widgetsWrapper {
+    @include flex($justify:space-between, $align:center);
+    flex: 1;
+
+    .leftWrapper {
+      padding-left: 12px;
+    }
+
+    .container {
+      @include flex($align:center);
+
+      .iconItem {
+        @include flex($direction:row, $justify:center, $align:center);
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+        overflow: hidden;
+        -webkit-app-region: no-drag;
+
+        .icon {
+          font-size: 36px;
+          color: rgba(214, 214, 214, .3)
+        }
+
+        &:hover {
+          background: #343437;
+
+          &>.icon {
+            color: rgba(214, 214, 214, .5);
+          }
+        }
+
+        &:active {
+          background: rgba(0, 0, 0, .2);
+
+          &>.icon {
+            color: rgba(214, 214, 214, .25);
+          }
+        }
+      }
+
+      .iconHistory {
+        @extend .iconItem;
+        border-radius: 50%;
+
+        .icon {
+          font-size: 14px;
+        }
+      }
+
+      .hisoryDisabled {
+        opacity: .3;
+
+        &:hover,
+        &:active {
+          background-color: transparent;
+          color: rgba(214, 214, 214, .3);
+          cursor: default;
+
+          &>.icon {
+            color: rgba(214, 214, 214, .3);
+          }
+        }
+      }
+    }
+  }
+}

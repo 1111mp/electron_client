@@ -1,32 +1,20 @@
 {
   "extends": "./paths.json",
   "compilerOptions": {
+    "experimentalDecorators": true,
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "rootDir": "./",
+    "jsx": "react",
     "module": "esnext",
     "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "pretty": true,
+    "sourceMap": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react",
-    "typeRoots": [
-      "@types",
-      "node_modules/@types"
-    ]
+    "allowSyntheticDefaultImports": true,
+    "lib": ["esnext", "dom"],
+    "typeRoots": ["@types", "node_modules/@types"]
   },
-  "include": [
-    "src",
-    "**/*.ts",
-    "**/*.tsx"
-  ]
+  "exclude": ["node_modules", "**/node_modules/*"]
 }

@@ -1,0 +1,60 @@
+@import 'app/styles/mixin.scss';
+
+/** 修改antd的样式 */
+:global {
+
+  p,
+  ul,
+  li {
+    margin: 0;
+    padding: 0;
+  }
+
+  .ant-layout-header {
+    @include flex($justify:space-between, $align:center);
+    height: 40px;
+    padding: 0 8px 0 16px;
+    margin: 0;
+    line-height: normal;
+    background-color: #252529;
+  }
+
+  .ant-layout-content {
+    padding: 24px;
+    background-color: #E0E0E0;
+  }
+}
+
+.layout {
+  height: 100%;
+
+  .title {
+    color: #CCCCCC;
+  }
+
+  .container {
+    @include flex($align:center);
+
+    .iconItem {
+      @include flex($direction:row, $justify:center, $align:center);
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      overflow: hidden;
+      -webkit-app-region: no-drag;
+
+      .icon {
+        font-size: 36px;
+        color: rgba(214, 214, 214, 0.3)
+      }
+
+      &:hover {
+        background: #343437;
+
+        &>.icon {
+          color: rgba(214, 214, 214, 0.5);
+        }
+      }
+    }
+  }
+}
