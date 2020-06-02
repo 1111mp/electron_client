@@ -1,0 +1,181 @@
+@import './assets/fonts/iconfont/iconfont.css';
+
+@font-face {
+  font-family: 'iconfont';
+  src: url('./assets/fonts/iconfont/iconfont.eot');
+  /* IE9 */
+  src: url('./assets/fonts/iconfont/iconfont.eot#iefix') format('embedded-opentype'),
+    url('./assets/fonts/iconfont/iconfont.woff') format('woff'),
+    url('./assets/fonts/iconfont/iconfont.ttf') format('truetype'),
+    url('./assets/fonts/iconfont/iconfont.svg#iconfont') format('svg');
+  /* iOS 4.1- */
+}
+
+body,
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+code,
+legend,
+button form,
+fieldset,
+input,
+textarea,
+p,
+blockquote,
+th,
+td {
+  padding: 0;
+  margin: 0;
+}
+
+/* 酌情修改 */
+body {
+  background: #fff;
+  color: #333;
+  font-size: 12px;
+  font-family: "SimSun", "宋体", "Arial Narrow";
+}
+
+/* 缩写，图片等无边框 */
+fieldset,
+img,
+abbr,
+acronym {
+  border: 0 none;
+}
+
+abbr,
+acronym {
+  font-variant: normal;
+}
+
+legend {
+  color: #000;
+}
+
+/* 清除特殊标记的字体和字号 */
+address,
+caption,
+cite,
+code,
+dfn,
+em,
+strong,
+th,
+var {
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* 上下标 */
+sup {
+  vertical-align: text-top;
+}
+
+sub {
+  vertical-align: text-bottom;
+}
+
+/* 设置表格的边框被合并为一个单一的边框, 指定分隔边框模型中单元格边界之间的距离为0*/
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* 表格标题及内容居左显示 */
+caption,
+th {
+  text-align: left;
+}
+
+input,
+img,
+select {
+  vertical-align: middle;
+}
+
+/* 清除列表样式 */
+ol,
+ul {
+  list-style: none;
+}
+
+/* 输入控件字体 */
+input,
+button,
+textarea,
+select,
+optgroup,
+option {
+  font-family: inherit;
+  font-size: inherit;
+  font-style: inherit;
+  font-weight: inherit;
+}
+
+/* 标题元素样式清除 */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: normal;
+  font-size: 100%;
+}
+
+/* 链接样式，颜色可酌情修改 */
+del,
+ins,
+a {
+  text-decoration: none;
+}
+
+a:link {
+  color: #009;
+}
+
+a:visited {
+  color: #800080;
+}
+
+a:hover,
+a:active,
+a:focus {
+  color: #c00;
+  text-decoration: underline;
+}
+
+/* 鼠标样式 */
+input[type="submit"] {
+  cursor: pointer;
+}
+
+button {
+  cursor: pointer;
+}
+
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+.clear {
+  clear: both;
+}
+
+#root {
+  height: 100%;
+}
