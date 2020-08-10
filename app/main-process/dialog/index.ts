@@ -21,9 +21,12 @@ function clearDialog(id: number) {
 export default {
   /** 显示对话框 默认type为alert */
   [listener.DIALOG_SHOW]() {
-    return (event: Event, args: IDialog.state = { type: 'alert', title: '', message: '', data: {} }) => {
-      const webContents: WebContents = event['sender'];
-      const parent = BrowserWindow.fromWebContents(webContents);
+    return (
+      event: Event,
+      args: IDialog.state = { type: 'alert', title: '', message: '', data: {} }
+    ) => {
+      const webContents: WebContents = (event as any).sender;
+      const parent: any = BrowserWindow.fromWebContents(webContents);
       const { type, title, message, data } = args;
 
       if (dialogStack[webContents.id]) return;
@@ -33,45 +36,45 @@ export default {
         title,
         message,
         parent,
-        data
+        data,
       });
 
       isAlwaysOnTop = parent.isAlwaysOnTop();
       !isAlwaysOnTop && parent.setAlwaysOnTop(true);
-    }
+    };
   },
   /** 对话框确认按钮 */
   [listener.DIALOG_CONFIRM]() {
     return (event: Event) => {
-      const webContents: WebContents = event['sender'];
-      const dialogWindow = BrowserWindow.fromWebContents(webContents);
+      const webContents: WebContents = (event as any).sender;
+      const dialogWindow: any = BrowserWindow.fromWebContents(webContents);
       const parent = dialogWindow.getParentWindow();
 
       send(parent.webContents, {
         channel: listener.DIALOG_CONFIRM,
-        data: 'ok'
+        data: 'ok',
       });
 
       dialogWindow.close();
       !isAlwaysOnTop && parent.setAlwaysOnTop(false);
       clearDialog(parent.webContents.id);
-    }
+    };
   },
   /** 对话框取消按钮 */
   [listener.DIALOG_CANCEL]() {
     return (event: Event) => {
-      const webContents: WebContents = event['sender'];
-      const dialogWindow = BrowserWindow.fromWebContents(webContents);
+      const webContents: WebContents = (event as any).sender;
+      const dialogWindow: any = BrowserWindow.fromWebContents(webContents);
       const parent = dialogWindow.getParentWindow();
 
       send(parent.webContents, {
         channel: listener.DIALOG_CANCEL,
-        data: 'cancel'
+        data: 'cancel',
       });
 
       !dialogWindow.isDestroyed() && dialogWindow.close();
       !isAlwaysOnTop && !parent.isDestroyed() && parent.setAlwaysOnTop(false);
       clearDialog(parent.webContents.id);
-    }
-  }
-}
+    };
+  },
+};

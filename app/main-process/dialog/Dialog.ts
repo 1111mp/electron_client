@@ -31,7 +31,7 @@ export default class Dialog {
       height: DIALOG.height,
       parent: this.parent,
       center: true,
-      // modal: true,
+      modal: true,
       resizable: false,
       minimizable: false,
       alwaysOnTop: true

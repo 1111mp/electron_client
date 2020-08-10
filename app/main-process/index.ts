@@ -4,6 +4,7 @@ import { openDevTools } from './devTools';
 import dialog from './dialog';
 import customWin from './customWin';
 import browser from './browser';
+import notifier from './notifier';
 
 const listener = require('../constants/listener.json');
 
@@ -35,7 +36,11 @@ export class MainProcess {
    * @param {ChannelType} type 是否注册为一次性的listener
    * @return: void
    */
-  regist(channel: string, cb: (event: Event, args: any) => void, type: ChannelType = 'on'): void {
+  regist(
+    channel: string,
+    cb: (event: Event, args: any) => void,
+    type: ChannelType = 'on'
+  ): void {
     if (channel in this._allEvents) {
       throw new Error('Event has been registed!');
     }
@@ -75,28 +80,29 @@ export class MainProcess {
     try {
       ipcMain.removeListener(channel, this._allEvents[channel]);
       delete this._allEvents[channel];
-    } catch (e) { }
+    } catch (e) {}
   }
 }
 
 /** 这里可以添加一些定义好的channel */
-const events = {
+const events: any = {
   // 开发者工具
   [listener.MAIN_DEVTOOLS]() {
     return (event: Event) => {
-      const webContent: WebContents = event['sender'];
+      const webContent: WebContents = (event as any).sender;
       openDevTools(webContent);
     };
   },
   ...dialog,
   ...customWin,
   ...browser,
-}
+  ...notifier,
+};
 
 export default function () {
   const mainProcess = MainProcess.getInstance();
 
-  Object.keys(events).forEach(event => {
+  Object.keys(events).forEach((event) => {
     mainProcess.on(event, events[event]());
   });
 

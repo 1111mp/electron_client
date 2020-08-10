@@ -193,6 +193,18 @@ export default class BasicComponent<Props = {}, State = {}, Other = any> extends
     });
   }
 
+  /** 系统通知 */
+  $notifier = (params: Notifier.Args) => {
+    return new Promise((resolve, reject) => {
+      this.$send(listener.NOTIFY, {...params});
+
+      /** 对所需要监听的事件进行处理 */
+      const {  } = params
+      /** 默认加上对timeout事件的处理 */
+
+    });
+  }
+
   /**
    * 将当前访问的search附加至传入的url上
    */

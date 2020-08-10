@@ -4,7 +4,7 @@ import { Component } from 'react';
 type Props = {};
 
 export default class Loading extends Component<Props> {
-  props: Props;
+  // props: Props;
 
   render(): JSX.Element {
     return (

@@ -35,7 +35,7 @@ export default class CustomWin extends BasicComponent<Props> {
           <Header className={(enableDrag ? 'enable-drag ' : '') + styles.header}>
             {title && <p className={styles.title}>{title}</p>}
             <ul className={styles.container}>
-              <li className={styles.iconItem} style={{ marginRight: '8px' }} onClick={this.close}>
+              <li className={styles.iconItem} style={{ marginRight: '8px' }} onClick={() => this.$minimize()}>
                 <i className={'iconfont icontop-minimum ' + styles.icon}></i>
               </li>
               <li className={styles.iconItem} onClick={this.close}>

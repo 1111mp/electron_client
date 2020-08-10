@@ -6,7 +6,7 @@ const path = require('path');
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebookincubator/create-react-app/issues/637
 const appDirectory = fs.realpathSync(process.cwd());
-const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
+const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
 
 module.exports = {
   alias: {
@@ -20,8 +20,8 @@ module.exports = {
     config: resolveApp('app/config'),
     constants: resolveApp('app/constants'),
     'renderer-process': resolveApp('app/renderer-process'),
-    'main-process': resolveApp('app/main-process')
+    'main-process': resolveApp('app/main-process'),
   },
-  extensions: ['.js', '.ts', '.tsx', '.json'],
-  modules: [path.join(__dirname, '..'), 'node_modules']
+  extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
+  modules: [path.join(__dirname, '..', 'app'), 'node_modules'],
 };

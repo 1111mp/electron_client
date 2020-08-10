@@ -1,7 +1,7 @@
 /*
  * @Author: 张逸凡
  * @Date: 2019-12-16 11:17:34
- * @LastEditTime: 2019-12-16 15:17:55
+ * @LastEditTime: 2020-08-05 14:02:38
  * @LastEditors: Please set LastEditors
  * @Description: electron系统托盘Tray
  * @FilePath: \electron_client\app\main-process\tray\index.ts
@@ -15,7 +15,7 @@ import menuItems from './menuItem';
  */
 export type TrayEvent =
   // windows
-  'click'
+  | 'click'
   | 'right-click'
   | 'double-click'
   | 'balloon-show'
@@ -56,7 +56,8 @@ export default class TrayCreator {
   _trayInstance: Tray | { [k: string]: any };
 
   constructor(options: TrayOptions) {
-    this._hasMenu = typeof options.hasMenu === 'undefined' ? true : options.hasMenu;
+    this._hasMenu =
+      typeof options.hasMenu === 'undefined' ? true : options.hasMenu;
     this._icon = options.icon;
     this._trayInstance = {};
   }
@@ -72,6 +73,11 @@ export default class TrayCreator {
   // 设置这个图标的内容菜单
   setContextMenu(menu: Menu): void {
     this._trayInstance && this._trayInstance.setContextMenu(menu);
+  }
+
+  // 设置鼠标指针在托盘图标上悬停时显示的文本
+  setToolTip(toolTip: string): void {
+    this._trayInstance && this._trayInstance.setToolTip(toolTip);
   }
 
   /**
@@ -96,7 +102,7 @@ export default class TrayCreator {
         log.error(`[tray event] ${error}`);
       }
       return res;
-    }
+    };
 
     this._trayInstance.addListener(event, this._allEvents[event]);
   }

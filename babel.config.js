@@ -1,10 +1,8 @@
-/* eslint global-require: off */
+/* eslint global-require: off, import/no-extraneous-dependencies: off */
 
 const developmentEnvironments = ['development', 'test'];
 
 const developmentPlugins = [require('react-hot-loader/babel')];
-// react-hot-loader报错: misconfiguration detected, using production version in non-production environment.
-// 解决方法见：https://github.com/gaearon/react-hot-loader/issues/1333
 
 const productionPlugins = [
   require('babel-plugin-dev-expression'),
@@ -12,26 +10,20 @@ const productionPlugins = [
   // babel-preset-react-optimize
   require('@babel/plugin-transform-react-constant-elements'),
   require('@babel/plugin-transform-react-inline-elements'),
-  require('babel-plugin-transform-react-remove-prop-types')
+  require('babel-plugin-transform-react-remove-prop-types'),
 ];
 
-module.exports = api => {
-  // see docs about api at https://babeljs.io/docs/en/config-files#apicache
+module.exports = (api) => {
+  // See docs about api at https://babeljs.io/docs/en/config-files#apicache
 
   const development = api.env(developmentEnvironments);
 
   return {
     presets: [
-      [
-        require('@babel/preset-env'),
-        {
-          targets: { electron: require('electron/package.json').version },
-          useBuiltIns: 'usage',
-          corejs: '3.0.0'
-        }
-      ],
+      // @babel/preset-env will automatically target our browserslist targets
+      require('@babel/preset-env'),
       require('@babel/preset-typescript'),
-      [require('@babel/preset-react'), { development }]
+      [require('@babel/preset-react'), { development }],
     ],
     plugins: [
       // Stage 0
@@ -43,11 +35,11 @@ module.exports = api => {
       [require('@babel/plugin-proposal-optional-chaining'), { loose: false }],
       [
         require('@babel/plugin-proposal-pipeline-operator'),
-        { proposal: 'minimal' }
+        { proposal: 'minimal' },
       ],
       [
         require('@babel/plugin-proposal-nullish-coalescing-operator'),
-        { loose: false }
+        { loose: false },
       ],
       require('@babel/plugin-proposal-do-expressions'),
 
@@ -66,6 +58,6 @@ module.exports = api => {
 
       ...(development ? developmentPlugins : productionPlugins),
       ['import', { libraryName: 'antd', libraryDirectory: 'es', style: 'css' }]
-    ]
+    ],
   };
 };
