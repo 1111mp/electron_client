@@ -1,7 +1,6 @@
-import * as React from 'react';
-import { ReactElement, Component, Fragment } from 'react';
+import React, { ReactElement, Component, Fragment } from 'react';
 import { Route, Redirect } from 'react-router-dom';
-import allRoutes, { RouterConfig } from './routeConfig';
+import allRoutes, { RouterConfig } from './route_config';
 import Config from 'app/config';
 
 export function parseRoutes(routes: RouterConfig[]): ReactElement[] {
@@ -12,7 +11,7 @@ export function parseRoutes(routes: RouterConfig[]): ReactElement[] {
   });
 }
 
-export default function createRoutes() {
+export default function createRoutes(): any {
   class Routes extends Component {
     render() {
       return (

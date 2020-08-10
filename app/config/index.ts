@@ -1,12 +1,10 @@
 // const path = require('path');
 // const url = require('url');
-const {
-  NODE_ENV
-} = (process as any).env;
+const { NODE_ENV } = process.env;
 
 interface Config {
-  isDev: boolean,
-  isBorwserHistory: boolean
+  isDev: boolean;
+  isBorwserHistory: boolean;
 }
 
 const config: Config = {
@@ -20,15 +18,15 @@ export const Mainwin = {
   width: 1024,
   height: 728,
   minWidth: 1024,
-  minHeight: 728
+  minHeight: 728,
 };
 
 /** 对话框 */
 export const DIALOG = {
   width: 480,
   height: 324,
-  url: '/dialog'
-}
+  url: '/dialog',
+};
 
 /** customWin模版
  * CUSTOMWIN = {
@@ -44,13 +42,13 @@ export const CUSTOMWIN = {
   width: 680,
   height: 600,
   id: 'userCenter',
-  url: '/userCenter'
+  url: '/userCenter',
 };
 
 export const BROWSER = {
   width: 1024,
   height: 768,
-  url: '/browser'
+  url: '/browser',
 };
 
 export default config;

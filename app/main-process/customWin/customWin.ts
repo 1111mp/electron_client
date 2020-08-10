@@ -12,7 +12,7 @@ export default class CustomWindow {
   height: number;
   url: string;
   close?: VoidFunction;
-  winInstance: ChildWindow
+  winInstance: ChildWindow | undefined
 
 
   constructor(args: CustomWindowArgs) {

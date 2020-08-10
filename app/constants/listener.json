@@ -8,5 +8,14 @@
   "CUSTOM_WIN_SHOW": "custom-win-show",
   "CUSTOM_WIN_CLOSE": "custom-win-close",
 
-  "BROWSER_OPEN_URL": "browser-open-url"
+  "BROWSER_OPEN_URL": "browser-open-url",
+
+  "NOTIFY": "notify",
+  "NOTIFY_CLICK": "notify_click",
+  "NOTIFY_OK": "notify_ok",
+  "NOTIFY_CANCEL": "notify_cancel",
+  "NOTIFY_ACTIVATE": "notify_activate",
+  "NOTIFY_DISMISSED": "notify_dismissed",
+  "NOTIFY_TIMEOUT": "notify_timeout",
+  "NOTIFY_REPLIED": "notify_replied"
 }

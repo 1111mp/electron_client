@@ -1,4 +1,4 @@
-/* eslint global-require: off */
+/* eslint global-require: off, no-console: off */
 
 /**
  * This module executes inside of electron's main process. You can start
@@ -8,6 +8,9 @@
  * When running `yarn build` or `yarn build-main`, this file is compiled to
  * `./app/main.prod.js` using webpack. This gives us some performance wins.
  */
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
+import path from 'path';
 import { app, BrowserWindow, dialog, nativeImage } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -15,11 +18,7 @@ import MenuBuilder from './menu';
 import Config, { Mainwin } from './config';
 import listener from './main-process';
 import TrayCreator from './main-process/tray';
-import debug from 'electron-debug'
-import path from 'path'
-
-// const path = require('path');
-// const debug = require('electron-debug');
+import debug from 'electron-debug';
 
 /** 设置日志级别 */
 log.transports.console.level = 'silly';
@@ -38,7 +37,7 @@ export default class AppUpdater {
   }
 }
 
-let mainWindow = null;
+let mainWindow: BrowserWindow | null = null;
 let tray = null; // 创建全局的变量 防止系统托盘被垃圾回收
 
 if (process.env.NODE_ENV === 'production') {
@@ -56,29 +55,14 @@ if (
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS'];
+  const extensions = ['REACT_DEVELOPER_TOOLS'];
 
   return Promise.all(
-    extensions.map(name => installer.default(installer[name], forceDownload))
+    extensions.map((name) => installer.default(installer[name], forceDownload))
   ).catch(console.log);
 };
 
-/**
- * Add event listeners...
- */
-
-app.on('window-all-closed', () => {
-  // Respect the OSX convention of having the application in memory even
-  // after all windows have been closed
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
-
-app.on('ready', async () => {
-  // 项目使用run-electron代替electron启动项目以解决Google Chrome的devtools的报错信息
-  // 详见 https://github.com/electron/electron/issues/12438#issuecomment-412172065
-  // https://github.com/sindresorhus/run-electron
+const createWindow = async () => {
   if (
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
@@ -94,12 +78,21 @@ app.on('ready', async () => {
     minHeight: Mainwin.minHeight,
     center: true,
     frame: false,
-    webPreferences: {
-      nodeIntegration: true
-    },
+    webPreferences:
+      (process.env.NODE_ENV === 'development' ||
+        process.env.E2E_BUILD === 'true') &&
+      process.env.ERB_SECURE !== 'true'
+        ? {
+            nodeIntegration: true,
+          }
+        : {
+            preload: path.join(__dirname, 'dist/renderer.prod.js'),
+          },
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
+  //开发者工具
+  mainWindow.webContents.openDevTools();
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -117,6 +110,7 @@ app.on('ready', async () => {
 
   /** 崩溃容错 */
   mainWindow.webContents.on('crashed', () => {
+    // @ts-ignore
     const choice = dialog.showMessageBox(mainWindow, {
       type: 'info',
       title: '崩溃啦',
@@ -124,7 +118,9 @@ app.on('ready', async () => {
       buttons: ['重新打开', '关闭']
     });
 
+    // @ts-ignore
     if (choice['response'] === 0) mainWindow.reload();
+    // @ts-ignore
     else mainWindow.close();
   });
 
@@ -140,10 +136,8 @@ app.on('ready', async () => {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
-    tray = null;
   });
 
-  /** 添加程序菜单 */
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 
@@ -156,7 +150,7 @@ app.on('ready', async () => {
 
   /** 添加主进程监听事件 */
   listener();
-});
+};
 
 function createTray() {
   const icon = path.join(__dirname, '../resources/icon.png');
@@ -167,7 +161,35 @@ function createTray() {
 
   tray.initTray();
 
+  tray.setToolTip('测试');
+
   tray.on('click', () => {
+    // @ts-ignore
     mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
   });
 }
+
+/**
+ * Add event listeners...
+ */
+
+app.on('window-all-closed', () => {
+  // Respect the OSX convention of having the application in memory even
+  // after all windows have been closed
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
+if (process.env.E2E_BUILD === 'true') {
+  // eslint-disable-next-line promise/catch-or-return
+  app.whenReady().then(createWindow);
+} else {
+  app.on('ready', createWindow);
+}
+
+app.on('activate', () => {
+  // On macOS it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (mainWindow === null) createWindow();
+});

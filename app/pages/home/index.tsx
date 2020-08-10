@@ -17,7 +17,7 @@ const { Header, Sider, Content } = Layout;
 })
 @observer
 export default class Home extends BasicComponent<IAnyObject> {
-  props: IAnyObject;
+  // props: IAnyObject;
 
   confirm = (): void => {
     this.$confirm('是否确认清空所有消息？', '清空消息').then(() => {
@@ -39,6 +39,10 @@ export default class Home extends BasicComponent<IAnyObject> {
     this.$openBrowser('https://www.baidu.com');
   }
 
+  notifyHandle = () => {
+    this.$send('notify')
+  }
+
   $render(): JSX.Element {
     return (
       <Fragment>
@@ -54,6 +58,7 @@ export default class Home extends BasicComponent<IAnyObject> {
               <Button type="primary" onClick={this.confirm}>confirm</Button>
               <Button type="primary" onClick={this.customWin}>customWin</Button>
               <Button type="primary" onClick={this.browser}>browser</Button>
+              <Button type="primary" onClick={this.notifyHandle}>notify</Button>
             </Content>
           </Layout>
         </Layout>

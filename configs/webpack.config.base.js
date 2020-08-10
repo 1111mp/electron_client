@@ -4,35 +4,32 @@
 
 import path from 'path';
 import webpack from 'webpack';
-import { dependencies } from '../package.json';
+import { dependencies as externals } from '../app/package.json';
 
 const resolve = require('./paths');
 
 export default {
-  externals: [...Object.keys(dependencies || {})],
+  externals: [...Object.keys(externals || {})],
 
   module: {
     rules: [
       {
-        test: /\.[jt]sx?$/,
+        test: /\.tsx?$/,
         exclude: /node_modules/,
-        use: [
-          {
-            loader: 'babel-loader',
-            options: {
-              cacheDirectory: true
-            }
+        use: {
+          loader: 'babel-loader',
+          options: {
+            cacheDirectory: true,
           },
-          'ts-loader'
-        ]
-      }
-    ]
+        },
+      },
+    ],
   },
 
   output: {
     path: path.join(__dirname, '..', 'app'),
     // https://github.com/webpack/webpack/issues/1114
-    libraryTarget: 'commonjs2'
+    libraryTarget: 'commonjs2',
   },
 
   /**
@@ -42,9 +39,9 @@ export default {
 
   plugins: [
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'production'
+      NODE_ENV: 'production',
     }),
 
-    new webpack.NamedModulesPlugin()
-  ]
+    new webpack.NamedModulesPlugin(),
+  ],
 };
