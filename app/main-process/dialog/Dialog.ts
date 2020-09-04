@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, screen } from 'electron';
 import ChildWindow from '../win/childWin';
 import { DIALOG } from '../../config';
 import { getOptions } from '../../utils/dialog';
@@ -25,10 +25,16 @@ export default class Dialog {
   }
 
   createWin() {
+    // let display = screen.getPrimaryDisplay();
+    // let WIDTH = display.bounds.width;
+    // let HEIGHT = display.bounds.height;
+
     /** 在当前版本中new BrowserWindow添加model:true时 macOS上项目会crash windows正常 原因不明 */
     const winInstance = this.winInstance = new ChildWindow({
       width: DIALOG.width,
       height: DIALOG.height,
+      // x: WIDTH - DIALOG.width,
+      // y: HEIGHT - DIALOG.height,
       parent: this.parent,
       center: true,
       modal: true,

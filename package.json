@@ -205,8 +205,8 @@
     "@types/react-test-renderer": "^16.9.2",
     "@types/webpack": "^4.41.21",
     "@types/webpack-env": "^1.15.2",
-    "@typescript-eslint/eslint-plugin": "^3.6.1",
-    "@typescript-eslint/parser": "^3.6.1",
+    "@typescript-eslint/eslint-plugin": "^4.0.1",
+    "@typescript-eslint/parser": "^4.0.1",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.1.0",
     "babel-loader": "^8.1.0",
@@ -243,7 +243,6 @@
     "eslint-plugin-react-hooks": "^4.0.8",
     "eslint-plugin-testcafe": "^0.2.1",
     "file-loader": "^6.0.0",
-    "husky": "^4.2.5",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^26.1.0",
     "lint-staged": "^10.2.11",
@@ -265,7 +264,7 @@
     "testcafe": "^1.8.8",
     "testcafe-browser-provider-electron": "^0.0.15",
     "testcafe-react-selectors": "^4.0.0",
-    "typescript": "^3.9.7",
+    "typescript": "^4.0.2",
     "typings-for-css-modules-loader": "^1.7.0",
     "url-loader": "^4.1.0",
     "webpack": "^4.43.0",
@@ -333,10 +332,5 @@
     "extends": [
       "bliss"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   }
 }

@@ -20,7 +20,7 @@ export default {
           message: 'Hello',
           wait: true,
           timeout: false,
-          actions: ['Ok', 'Cancel'],
+          actions: ['确认', 'Cancel'],
         },
         function (err, data) {
           // Will also wait until notification is closed.
@@ -39,7 +39,7 @@ export default {
         console.log('Dismissed!');
       });
       // Buttons actions (lower-case):
-      notifier.on('ok', () => {
+      notifier.on('确认', () => {
         console.log('"Ok" was pressed');
       });
       notifier.on('cancel', () => {
