@@ -84,6 +84,8 @@ export class PersistManager {
   }
 
   private persistChangeHandler(event: { source: string; keys: string[] }) {
+    console.log(888888888888)
+    console.log(this.changeCallbacks)
     this.changeCallbacks.forEach((callback) => {
       callback(event);
     });

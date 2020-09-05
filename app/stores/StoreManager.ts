@@ -126,7 +126,10 @@ class StoreManager {
     source: string;
     keys: string[];
   }) => {
+    console.log(source)
+    console.log(keys)
     const states = await this.persistManager.getItems(source, keys);
+    console.log(states)
     this.batchUpdate(states);
   };
 }

@@ -40,7 +40,7 @@ export default async function createStore() {
     console.log(e);
   }
 
-  await manager.init();
+  manager.init();
 
   return {
     ...store,

@@ -17,11 +17,12 @@ export default class UserStore extends Store {
     return new Promise((resolve) => {
       // 模拟接口请求
       setTimeout(() => {
+        // this.userId = '123456';
         this.mobile = '136455';
         this.email = '556677s';
         // 或者其他的接口数据
         resolve();
-      }, 500);
+      }, 5000);
     });
   }
 }

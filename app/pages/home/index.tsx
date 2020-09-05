@@ -5,6 +5,7 @@ import { inject, observer } from 'mobx-react';
 import AppHeader from 'components/header';
 import { Button, Layout } from 'antd';
 import { CUSTOMWIN } from 'app/config';
+import { setItem } from 'stores/Storage';
 
 const styles = require('./home.scss');
 
@@ -21,14 +22,20 @@ export default class Home extends BasicComponent<IAnyObject> {
   // props: IAnyObject;
 
   confirm = (): void => {
-    this.$confirm('是否确认清空所有消息？', '清空消息').then(
-      () => {
-        console.log('点击确认');
-      },
-      (err) => {
-        console.log(err);
-        console.log('点击取消');
-      }
+    // this.$confirm('是否确认清空所有消息？', '清空消息').then(
+    //   () => {
+    //     console.log('点击确认');
+    //   },
+    //   (err) => {
+    //     console.log(err);
+    //     console.log('点击取消');
+    //   }
+    // );
+
+    setItem(
+      '$___localstorage___user',
+      '{"userId":"1234","userName":"123"}',
+      true
     );
   };
 
@@ -40,7 +47,7 @@ export default class Home extends BasicComponent<IAnyObject> {
   };
 
   browser = () => {
-    this.$openBrowser('https://www.baidu.com');
+    this.$openBrowser('http://www.baidu.com');
   };
 
   notifyHandle = () => {

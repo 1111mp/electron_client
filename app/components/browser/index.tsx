@@ -27,6 +27,8 @@ export default class Browser extends BasicComponent {
 
   didMount() {
     this.$on(listener.BROWSER_OPEN_URL, args => {
+      console.log(333333333333)
+      console.log(args)
       this.openUrl(args.data);
     })
 
