@@ -16,7 +16,7 @@ export default function createRoutes(): any {
     render() {
       return (
         <Fragment>
-          {Config.isBorwserHistory && <Redirect to="/" />}
+          {/* {Config.isBorwserHistory && <Redirect to="/" />} */}
           {parseRoutes(allRoutes)}
         </Fragment>
       )

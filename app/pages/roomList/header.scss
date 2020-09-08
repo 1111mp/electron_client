@@ -1,0 +1,22 @@
+@import "app/styles/mixin.scss";
+
+.container {
+  :global {
+    .ant-input {
+      background-color: #e9e9e9;
+    }
+  }
+
+  @include flex($align: center);
+  padding: 6px 16px;
+
+  .avatar {
+    margin-right: 8px;
+  }
+
+  .search_input {
+    flex: 1;
+    border-radius: 6px;
+    background-color: #e9e9e9;
+  }
+}

@@ -1,3 +1,5 @@
+@import "app/styles/mixin.scss";
+
 :global {
   .ant-layout-header {
     height: 52px;
@@ -9,10 +11,21 @@
   }
 
   .ant-layout-sider {
-    background-color: #333335;
+    background-color: #f6f6f6;
+  }
+
+  .ant-layout-content {
+    background-color: #fff;
   }
 }
 
 .layout {
   height: 100%;
+
+  .empty_content {
+    @include flex($justify:center,$align:center);
+    width: 100%;
+    height: 90%;
+    overflow: hidden;
+  }
 }

@@ -1,0 +1,36 @@
+@keyframes spin{
+	0% {
+		transform: rotate(0deg)
+	}
+	25 {
+		transform: rotate(90deg)
+	}
+	50 {
+		transform: rotate(180deg)
+	}
+	75 {
+		transform: rotate(270deg)
+	}
+	100% {
+		transform: rotate(360deg)
+	}
+}
+
+.msgs_content-wrapper
+	// height 1000px
+	padding 8px 20px
+	.msg_container
+		flexBox(justify:flex-end)
+	.load_more-wrapper
+		flexBox(justify:center,align:center)
+		margin-bottom 16px
+		text-align center
+		color #72727f
+		font-weight bold
+		.load_more-icon
+			width 18px
+			height 18px
+			margin-right 4px
+			// background url('../../images/icon_loading.png') no-repeat center
+			background-size cover
+			animation spin .8s linear infinite

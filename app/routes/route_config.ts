@@ -1,10 +1,10 @@
 import loadable from '@loadable/component';
 
 export interface RouterConfig {
-  path: string,
-  component: any,
-  exact?: boolean,
-  routes?: RouterConfig[]
+  path: string;
+  component: any;
+  exact?: boolean;
+  routes?: RouterConfig[];
 }
 
 // react-router-config https://www.npmjs.com/package/react-router-config
@@ -14,30 +14,31 @@ export interface RouterConfig {
  */
 const allRoutes = [
   {
-    path: '/',
+    path: '/index',
     component: loadable(() => import('pages/home')),
-    exact: true
-  },
-  {
-    path: '/red',
-    component: loadable(() => import('pages/red')),
-    exact: true
+    // exact: true,
+    routes: [
+      {
+        path: '/index/chat',
+        component: loadable(() => import('pages/chatInterface')),
+      },
+    ],
   },
   {
     path: '/dialog',
     component: loadable(() => import('components/dialog')),
-    exact: true
+    exact: true,
   },
   {
     path: '/browser',
     component: loadable(() => import('components/browser')),
-    exact: true
+    exact: true,
   },
   {
     path: '/userCenter',
     component: loadable(() => import('pages/userCenter')),
-    exact: true
-  }
+    exact: true,
+  },
 ] as RouterConfig[];
 
 export default allRoutes;

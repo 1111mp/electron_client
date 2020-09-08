@@ -135,6 +135,27 @@ export default merge(baseConfig, {
           }
         ],
       },
+      {
+        test: /\.styl(us)?$/,
+        use: [
+          {
+            loader: 'style-loader'
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              // modules: {
+              //   localIdentName: '[name]__[local]__[hash:base64:5]',
+              // },
+              sourceMap: true,
+              importLoaders: 1
+            }
+          },
+          {
+            loader: 'stylus-loader'
+          }
+        ],
+      },
       // WOFF Font
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,

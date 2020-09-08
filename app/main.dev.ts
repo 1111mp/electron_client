@@ -26,7 +26,7 @@ log.transports.console.level = 'silly';
 /** 开发者工具 */
 debug({
   isEnabled: Config.isDev,
-  showDevTools: Config.isDev
+  showDevTools: Config.isDev,
 });
 
 export default class AppUpdater {
@@ -77,7 +77,7 @@ const createWindow = async () => {
     minWidth: Mainwin.minWidth,
     minHeight: Mainwin.minHeight,
     center: true,
-    frame: false,
+    // frame: false,
     webPreferences:
       (process.env.NODE_ENV === 'development' ||
         process.env.E2E_BUILD === 'true') &&
@@ -91,8 +91,8 @@ const createWindow = async () => {
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
-  //开发者工具
-  mainWindow.webContents.openDevTools();
+  //开发者工具 https://newsn.net/say/electron-devtools.html
+  mainWindow.webContents.openDevTools({ mode: 'detach' });
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -115,7 +115,7 @@ const createWindow = async () => {
       type: 'info',
       title: '崩溃啦',
       message: '好像出了点小问题...',
-      buttons: ['重新打开', '关闭']
+      buttons: ['重新打开', '关闭'],
     });
 
     // @ts-ignore
@@ -125,12 +125,12 @@ const createWindow = async () => {
   });
 
   app.on('gpu-process-crashed', () => {
-    debugger
+    debugger;
     app.exit();
   });
 
   app.on('renderer-process-crashed', () => {
-    debugger
+    debugger;
     app.exit();
   });
 
@@ -156,7 +156,7 @@ function createTray() {
   const icon = path.join(__dirname, '../resources/icon.png');
   const image = nativeImage.createFromPath(icon);
   tray = new TrayCreator({
-    icon: image.resize({ width: 16, height: 16 })
+    icon: image.resize({ width: 16, height: 16 }),
   });
 
   tray.initTray();
