@@ -10,7 +10,6 @@ export function setItem(key: string, value: string, custom: boolean = false) {
 
   if (custom) {
     let storageEvent: any = new Event(STORAGEEVENT);
-    console.log(key);
     storageEvent['key'] = key;
     storageEvent['newValue'] = value;
 
@@ -106,10 +105,6 @@ export default class Storage extends Persister {
   private _onStorageChange = (event: StorageEvent) => {
     /** 发生变化的键名 */
     const { key } = event;
-
-    console.log(444444444);
-    console.log(event);
-    console.log(key);
 
     this._changeHandler &&
       this._changeHandler({

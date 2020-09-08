@@ -2,7 +2,7 @@ import Store from './Store';
 import persistManager, { PersistManager } from './PersistManager';
 import Storage from './Storage';
 
-const PERSIST_LOCAL = 'local';
+export const PERSIST_LOCAL = 'local';
 const PersistMethods = [PERSIST_LOCAL];
 
 class StoreManager {
@@ -22,7 +22,6 @@ class StoreManager {
   async init(): Promise<void> {
     const stores = this.stores;
     const keys = Object.keys(stores);
-    console.log(keys)
     // keys ===> ['user', 'client']
     const states: any = {};
 
@@ -78,8 +77,6 @@ class StoreManager {
   }) => {
     // 这里只做全量更新，如果有需要，可以根据keys来做增量更新
     // state改变之后 通过persist方法 将数据同步到本地缓存
-    console.log(999999999)
-    console.log(keys)
     this.persist([target]);
   };
 
@@ -126,16 +123,13 @@ class StoreManager {
     source: string;
     keys: string[];
   }) => {
-    console.log(source)
-    console.log(keys)
     const states = await this.persistManager.getItems(source, keys);
-    console.log(states)
     this.batchUpdate(states);
   };
 }
 
 /** 注册localStorage做mobx的持久化方式 */
-persistManager.register('local', new Storage());
+persistManager.register(PERSIST_LOCAL, new Storage());
 
 const manager = new StoreManager(persistManager);
 

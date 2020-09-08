@@ -31,8 +31,6 @@ class Store implements Property {
   /** 将本地缓存中的数据同步到store中 */
   persist(state?: State): State | void {
     const keys = this.persistKeys();
-    console.log(keys)
-    console.log(state)
     if (!state) {
       return keys.reduce((pre, key: string) => {
         return {
@@ -43,14 +41,7 @@ class Store implements Property {
     } else {
       keys.forEach((key) => {
         if (state[key] !== undefined) {
-          console.log(key)
-          console.log(state)
-          try {
-            this[key] = state[key];
-          } catch(e) {
-            console.log(777777)
-            console.log(e)
-          }
+          this[key] = state[key];
         }
       });
     }
@@ -59,7 +50,6 @@ class Store implements Property {
   /** 记录store更改时候触发的方法 */
   onchange(callback: (event: { keys: string[]; target: Store }) => void) {
     this.changeHandler = callback;
-    console.log(this.changeHandler);
   }
 
   /** 获取所有需要做持久化的state的key 可获取指定source的需持久化的state的key */
