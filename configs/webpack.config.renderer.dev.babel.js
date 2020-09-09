@@ -132,6 +132,12 @@ export default merge(baseConfig, {
           },
           {
             loader: 'sass-loader'
+          },
+          {
+            loader: 'sass-resources-loader',
+            options: {
+              resources: [path.join(__dirname, '../app/styles/mixin.scss')]
+            }
           }
         ],
       },
@@ -139,7 +145,7 @@ export default merge(baseConfig, {
         test: /\.styl(us)?$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: 'style-loader',
           },
           {
             loader: 'css-loader',
@@ -152,7 +158,11 @@ export default merge(baseConfig, {
             }
           },
           {
-            loader: 'stylus-loader'
+            loader: 'stylus-loader',
+            options: {
+              import: [path.join(__dirname, '../app/styles/mixin.styl')], //你公共样式存放的位置
+              // paths: [] //公共样式文件位置
+            }
           }
         ],
       },

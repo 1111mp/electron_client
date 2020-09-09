@@ -118,6 +118,38 @@ export default merge(baseConfig, {
               sourceMap: true,
             },
           },
+          {
+            loader: 'sass-resources-loader',
+            options: {
+              resources: [path.join(__dirname, '../app/styles/mixin.scss')]
+            }
+          }
+        ],
+      },
+      {
+        test: /\.styl(us)?$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              // modules: {
+              //   localIdentName: '[name]__[local]__[hash:base64:5]',
+              // },
+              sourceMap: true,
+              importLoaders: 1
+            }
+          },
+          {
+            loader: 'stylus-loader',
+            options: {
+              sourceMap: true,
+              import: [path.join(__dirname, '../app/styles/mixin.styl')], //你公共样式存放的位置
+              // paths: [] //公共样式文件位置
+            }
+          }
         ],
       },
       // WOFF Font

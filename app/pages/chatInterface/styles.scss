@@ -25,6 +25,7 @@
     @include flex($align:center);
     width: 100%;
     height: 36px;
+    border-bottom: 1px solid #e7e7e7;
     background-color: #ffffff;
 
     .title {
@@ -32,7 +33,7 @@
       margin: 0;
       padding-left: 24px;
       font-size: 16px;
-      // text-align: center;
+      text-align: center;
       font-weight: bold;
     }
   }
@@ -40,11 +41,18 @@
   .content {
     width: 100%;
     flex: 1;
-    overflow-y: auto;
+    overflow: auto;
+
+    .loader {
+      margin: 4px 0 6px;
+      text-align: center;
+      color: #999999;
+    }
   }
 
   .footer {
     width: 100%;
     height: 146px;
+    border-top: 1px solid #e7e7e7;
   }
 }
