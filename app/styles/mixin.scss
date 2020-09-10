@@ -1,3 +1,5 @@
+$themeColor: #3478f6;
+
 @mixin flex($direction: row, $justify: flex-start, $align: flex-start) {
   display: flex;
   flex-direction: $direction;
