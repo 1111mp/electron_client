@@ -150,7 +150,7 @@ export default class ChatInterface extends BasicComponent<IAnyObject> {
           this.scrollToBtm();
         }
       );
-    }, 1000);
+    }, 0);
   }
 
   loadMore = () => {

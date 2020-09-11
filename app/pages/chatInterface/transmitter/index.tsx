@@ -1,6 +1,7 @@
 import React, { Component, KeyboardEvent } from 'react';
 
 import DropEmitter from 'components/dropEmitter';
+import { EmojiButton } from 'components/emoji/EmojiButton';
 
 const styles = require('./styles.scss');
 
@@ -44,9 +45,7 @@ export default class Transmitter extends Component<IAnyObject> {
       <DropEmitter dropHandler={this.dropHandler}>
         <div className={styles.container}>
           <ul className={styles.actions_container}>
-            <li className={styles.iconfont_content}>
-              <span className={'iconfont iconemoji ' + styles.iconfont}></span>
-            </li>
+            <EmojiButton />
             <li className={styles.iconfont_content}>
               <span
                 className={'iconfont iconwenjian ' + styles.iconfont}
