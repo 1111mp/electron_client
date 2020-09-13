@@ -14,6 +14,7 @@ interface Props {
   chatType?: 'p2p' | 'group' | 'room';
   hasMore?: boolean;
   fetchMore?: VoidFunction;
+  loading?: boolean;
 }
 
 @inject((stores: IAnyObject) => ({
@@ -43,9 +44,10 @@ export default class MsgsContainer extends Component<Props> {
   }
 
   render() {
-    const { messages, userId, chatType } = this.props;
+    const { messages, userId, chatType, loading } = this.props;
     return (
       <Fragment>
+        <p>loading...</p>
         <div className="msgs_content-wrapper" ref="scrollContent">
           {/* {this.renderLoadMore()} */}
           {messages &&

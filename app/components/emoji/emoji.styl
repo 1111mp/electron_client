@@ -1,0 +1,34 @@
+// Module: Emoji
+emoji-size($size)
+  &--{$size}
+    width $size
+    height $size
+    &--inline
+      display inline-block;
+      vertical-align bottom;
+      background-size $size $size;
+  &__image--{$size}
+    width $size
+    height $size
+    transform translate3d(0, 0, 0)
+    vertical-align baseline
+
+.module-emoji
+  display flex
+  justify-content center
+  align-items center
+  color transparent
+  font-family auto
+  +light-theme()
+    caret-color $color-gray-90
+  +dark-theme()
+    caret-color $color-gray-05
+  emoji-size(16px)
+  emoji-size(18px)
+  emoji-size(20px)
+  emoji-size(24px)
+  emoji-size(28px)
+  emoji-size(32px)
+  emoji-size(48px)
+  emoji-size(64px)
+  emoji-size(66px)

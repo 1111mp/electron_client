@@ -111,6 +111,12 @@ export default merge(baseConfig, {
           {
             loader: 'sass-loader',
           },
+          {
+            loader: 'sass-resources-loader',
+            options: {
+              resources: [path.join(__dirname, '../app/styles/mixin.scss')]
+            }
+          }
         ],
       },
       // SASS support - compile all other .scss files and pipe it to style.css

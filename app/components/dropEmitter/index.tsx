@@ -10,7 +10,6 @@ export default class DropEmitter extends Component<Props, any> {
   target: any = null;
 
   componentDidMount() {
-    console.log(this.target);
     // this.target.addEventListener('dragstart', this.handle_start);
     // this.target.addEventListener('drag', this.handle_drag);
     // this.target.addEventListener('dragend', this.handle_end);
