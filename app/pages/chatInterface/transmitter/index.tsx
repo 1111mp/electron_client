@@ -2,6 +2,7 @@ import React, { Component, KeyboardEvent } from 'react';
 
 import DropEmitter from 'components/dropEmitter';
 import { EmojiButton } from 'components/emoji/EmojiButton';
+import { CompositionInput } from 'app/components/compositionInput';
 
 const styles = require('./styles.scss');
 
@@ -39,13 +40,17 @@ export default class Transmitter extends Component<IAnyObject> {
     });
   };
 
+  onPickEmoji = (e: any) => {
+    console.log(e);
+  };
+
   render() {
     const { text } = this.state;
     return (
       <DropEmitter dropHandler={this.dropHandler}>
         <div className={styles.container}>
           <ul className={styles.actions_container}>
-            <EmojiButton />
+            <EmojiButton onPickEmoji={this.onPickEmoji} />
             <li className={styles.iconfont_content}>
               <span
                 className={'iconfont iconwenjian ' + styles.iconfont}
@@ -53,6 +58,7 @@ export default class Transmitter extends Component<IAnyObject> {
             </li>
           </ul>
           <div className={styles.textarea_container}>
+            {/* <CompositionInput onPickEmoji={this.onPickEmoji} /> */}
             <textarea
               value={text}
               className={styles.textarea}

@@ -4,12 +4,15 @@ import * as React from 'react';
 import { createPortal } from 'react-dom';
 
 import { Manager, Popper, Reference } from 'react-popper';
-import { EmojiPicker } from './EmojiPicker';
+import { EmojiPicker, Props as EmojiPickerProps } from './EmojiPicker';
 import { get, noop } from 'lodash';
 
-type Props = {};
+type Props = Pick<
+  EmojiPickerProps,
+  'doSend' | 'onPickEmoji' | 'onSetSkinTone' | 'recentEmojis' | 'skinTone'
+>;
 
-export const EmojiButton = React.memo(({}: Props) => {
+export const EmojiButton = React.memo(({ onPickEmoji }: Props) => {
   const [open, setOpen] = React.useState(false);
   const [popperRoot, setPopperRoot] = React.useState<HTMLElement | null>(null);
 
@@ -90,7 +93,11 @@ export const EmojiButton = React.memo(({}: Props) => {
         ? createPortal(
             <Popper placement="top-start">
               {({ ref, style }) => (
-                <EmojiPicker ref={ref} style={{ ...style, bottom: '12px' }} />
+                <EmojiPicker
+                  ref={ref}
+                  style={{ ...style, bottom: '12px' }}
+                  onPickEmoji={onPickEmoji}
+                />
               )}
             </Popper>,
             popperRoot

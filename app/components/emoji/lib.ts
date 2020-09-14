@@ -12,6 +12,7 @@ import {
   take,
 } from 'lodash';
 import Fuse from 'fuse.js';
+import is from '@sindresorhus/is';
 
 export const skinTones = ['1F3FB', '1F3FC', '1F3FD', '1F3FE', '1F3FF'];
 
@@ -87,7 +88,7 @@ const ROOT_PATH = get(
 );
 
 const makeImagePath = (src: string) => {
-  return `../node_modules/emoji-datasource-apple/img/apple/64/${src}`;
+  return `${ROOT_PATH}node_modules/emoji-datasource-apple/img/apple/64/${src}`;
 };
 
 export function getEmojiData(
@@ -140,6 +141,35 @@ export function search(query: string, count = 0): Array<EmojiData> {
   }
 
   return results;
+}
+
+export function unifiedToEmoji(unified: string): string {
+  return unified
+    .split('-')
+    .map(c => String.fromCodePoint(parseInt(c, 16)))
+    .join('');
+}
+
+export function convertShortName(
+  shortName: string,
+  skinTone: number | SkinToneKey = 0
+): string {
+  const base = dataByShortName[shortName];
+
+  if (!base) {
+    return '';
+  }
+
+  const toneKey = is.number(skinTone) ? skinTones[skinTone - 1] : skinTone;
+
+  if (skinTone && base.skin_variations) {
+    const variation = base.skin_variations[toneKey];
+    if (variation) {
+      return unifiedToEmoji(variation.unified);
+    }
+  }
+
+  return unifiedToEmoji(base.unified);
 }
 
 export function emojiToImage(emoji: string): string | undefined {

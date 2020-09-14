@@ -89,7 +89,6 @@ export default class ChatInterface extends BasicComponent<IAnyObject> {
 
   scrollTo = (x: number = 0, y: number = 0, time: number = 500) => {
     const instance = this.getIScrollInstance();
-    console.log(instance);
 
     instance && instance.scrollTo(x, y, time);
   };
@@ -97,7 +96,6 @@ export default class ChatInterface extends BasicComponent<IAnyObject> {
   scrollToBottom = () => {
     // const iscroll: IAnyObject = this.iScroll || {};
     const instance = this.getIScrollInstance();
-    console.log(instance);
 
     instance && instance.scrollTo(0, instance.maxScrollY);
   };
