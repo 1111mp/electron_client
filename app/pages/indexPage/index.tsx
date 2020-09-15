@@ -1,8 +1,8 @@
 import * as React from 'react';
-import BasicComponent from 'components/BasicComponent';
+import { Redirect } from 'react-router-dom';
 
-export default class Home extends BasicComponent<IAnyObject> {
-  $render(): JSX.Element {
-    return <div>indexPaage</div>;
-  }
-}
+const IndexPage = React.memo(() => {
+  return <div>indexPage</div>;
+});
+
+export default IndexPage;
