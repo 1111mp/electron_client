@@ -5,7 +5,7 @@
   overflow: hidden;
 
   .actions_container {
-    width: calc(100% - 40px);
+    width: 100%;
     margin: 0;
     padding: 4px 20px 6px;
     @include flex($align:center);

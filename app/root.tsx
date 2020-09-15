@@ -21,14 +21,15 @@ type Props = {
   statusCode: number;
 };
 
-const Root = ({ stores, statusCode }: Props) => (
-  <Provider {...stores}>
-    <Router history={syncHistoryWithStore(History, stores.routerStore)}>
-      {/* <Routes /> */}
-      <Redirect to="/index" />
-      {renderRoutes(allRoutes)}
-    </Router>
-  </Provider>
-);
+const Root = ({ stores, statusCode }: Props) => {
+  return (
+    <Provider {...stores}>
+      <Router history={syncHistoryWithStore(History, stores.routerStore)}>
+        {/* <Routes /> */}
+        {renderRoutes(allRoutes)}
+      </Router>
+    </Provider>
+  );
+};
 
 export default hot(Root);

@@ -1,5 +1,9 @@
+import './styles.global.scss';
+
 import * as React from 'react';
+import { createPortal } from 'react-dom';
 import { Manager, Popper, Reference } from 'react-popper';
+import classNames from 'classNames';
 
 import {
   Editor,
@@ -15,7 +19,7 @@ import {
 } from 'draft-js';
 import emojiRegex from 'emoji-regex';
 import { Emoji } from '../emoji/Emoji';
-import { get, head, trimEnd } from 'lodash';
+import { get, head, trimEnd, noop } from 'lodash';
 import { convertShortName, EmojiData, search } from '../emoji/lib';
 import { EmojiPickDataType } from '../emoji/EmojiPicker';
 
@@ -25,13 +29,21 @@ const triggerEmojiRegex = /^(?:[-+]\d|[a-z]{2})/i;
 
 export type Props = {
   readonly editorRef?: React.RefObject<Editor>;
+  readonly inputApi?: React.MutableRefObject<InputApi | undefined>;
   readonly startingText?: string;
   readonly skinTone?: EmojiPickDataType['skinTone'];
-  onTextTooLong(): unknown;
-  onPickEmoji(o: EmojiPickDataType): unknown;
-  onSubmit(message: string): unknown;
-  getQuotedMessage(): unknown;
-  clearQuotedMessage(): unknown;
+  onTextTooLong?(): unknown;
+  onPickEmoji?(o: EmojiPickDataType): unknown;
+  onSubmit?(message: string): unknown;
+  getQuotedMessage?(): unknown;
+  clearQuotedMessage?(): unknown;
+};
+
+export type InputApi = {
+  insertEmoji: (e: EmojiPickDataType) => void;
+  reset: () => void;
+  resetEmojiResults: () => void;
+  submit: () => void;
 };
 
 export type CompositionInputEditorCommand =
@@ -152,7 +164,7 @@ const compositeDecorator = new CompositeDecorator([
       children: React.ReactNode;
       contentState: ContentState;
       entityKey: string;
-    }) => {
+    }) =>
       entityKey ? (
         <Emoji
           shortName={contentState.getEntity(entityKey).getData().shortName}
@@ -164,8 +176,7 @@ const compositeDecorator = new CompositeDecorator([
         </Emoji>
       ) : (
         children
-      );
-    },
+      ),
   },
 ]);
 
@@ -192,6 +203,7 @@ const getInitialEditorState = (startingText?: string) => {
 export const CompositionInput = React.memo(
   ({
     editorRef,
+    inputApi,
     onTextTooLong,
     onPickEmoji,
     onSubmit,
@@ -208,6 +220,10 @@ export const CompositionInput = React.memo(
       []
     );
     const [emojiResultsIndex, setEmojiResultsIndex] = React.useState<number>(0);
+    // const [editorWidth, setEditorWidth] = React.useState<number>(0);
+    const [popperRoot, setPopperRoot] = React.useState<HTMLDivElement | null>(
+      null
+    );
 
     const focusRef = React.useRef(false);
     const editorStateRef = React.useRef<EditorState>(editorRenderState);
@@ -239,6 +255,8 @@ export const CompositionInput = React.memo(
           caretLocation,
           colonsRegex
         );
+
+        console.log(focusRef.current);
 
         const newSearchText = match ? match.trim().substr(1) : '';
         if (newSearchText.endsWith(':')) {
@@ -292,7 +310,7 @@ export const CompositionInput = React.memo(
     const submit = React.useCallback(() => {
       const { current: state } = editorStateRef;
       const trimmedText = state.getCurrentContent().getPlainText().trim();
-      onSubmit(trimmedText);
+      onSubmit && onSubmit(trimmedText);
     }, [editorStateRef, onSubmit]);
 
     const selectEmojiResult = React.useCallback(
@@ -388,7 +406,7 @@ export const CompositionInput = React.memo(
       const selectedTextLength = getLengthOfSelectedText(editorState);
 
       if (plainText.length - selectedTextLength > MAX_LENGTH - 1) {
-        onTextTooLong();
+        onTextTooLong && onTextTooLong();
 
         return 'handled';
       }
@@ -410,7 +428,7 @@ export const CompositionInput = React.memo(
           plainText.length + pastedText.length - selectedTextLength >
           MAX_LENGTH
         ) {
-          onTextTooLong();
+          onTextTooLong && onTextTooLong();
 
           return 'handled';
         }
@@ -419,6 +437,12 @@ export const CompositionInput = React.memo(
       },
       [onTextTooLong, editorStateRef]
     );
+
+    const resetEditorState = React.useCallback(() => {
+      const newEmptyState = EditorState.createEmpty(compositeDecorator);
+      setAndTrackEditorState(newEmptyState);
+      resetEmojiResults();
+    }, [editorStateRef, resetEmojiResults, setAndTrackEditorState]);
 
     const handleEditorCommand = React.useCallback(
       (
@@ -470,7 +494,7 @@ export const CompositionInput = React.memo(
           );
           setAndTrackEditorState(newState);
           resetEmojiResults();
-          onPickEmoji({ shortName });
+          onPickEmoji && onPickEmoji({ shortName });
 
           return 'handled';
         }
@@ -502,6 +526,30 @@ export const CompositionInput = React.memo(
       ]
     );
 
+    // Create popper root
+    React.useEffect(() => {
+      if (emojiResults.length > 0) {
+        const root = document.createElement('div');
+        setPopperRoot(root);
+        document.body.appendChild(root);
+
+        return () => {
+          document.body.removeChild(root);
+          setPopperRoot(null);
+        };
+      }
+
+      return noop;
+    }, [setPopperRoot, emojiResults]);
+
+    const onFocus = React.useCallback(() => {
+      focusRef.current = true;
+    }, [focusRef]);
+
+    const onBlur = React.useCallback(() => {
+      focusRef.current = false;
+    }, [focusRef]);
+
     const handleEditorArrowKey = React.useCallback(
       (e: React.KeyboardEvent) => {
         if (e.key === 'ArrowUp') {
@@ -520,8 +568,8 @@ export const CompositionInput = React.memo(
         if (emojiResults.length > 0) {
           e.preventDefault();
           resetEmojiResults();
-        } else if (getQuotedMessage()) {
-          clearQuotedMessage();
+        } else if (getQuotedMessage && getQuotedMessage()) {
+          clearQuotedMessage && clearQuotedMessage();
         }
       },
       [resetEmojiResults, emojiResults]
@@ -604,25 +652,95 @@ export const CompositionInput = React.memo(
       [emojiResults /** large */]
     );
 
+    if (inputApi) {
+      inputApi.current = {
+        reset: resetEditorState,
+        submit,
+        insertEmoji,
+        resetEmojiResults,
+      };
+    }
+
     return (
-      <div>
-        <Editor
-          ref={editorRef}
-          editorState={editorRenderState}
-          onChange={handleEditorStateChange}
-          placeholder="send message"
-          onUpArrow={handleEditorArrowKey}
-          onDownArrow={handleEditorArrowKey}
-          onEscape={handleEscapeKey}
-          onTab={onTab}
-          handleKeyCommand={handleEditorCommand}
-          handleBeforeInput={handleBeforeInput}
-          handlePastedText={handlePastedText}
-          keyBindingFn={editorKeybindingFn}
-          spellCheck={true}
-          stripPastedStyles={true}
-        />
-      </div>
+      <Manager>
+        <Reference>
+          {({ ref: popperRef }) => (
+            <div ref={popperRef} className="module-composition-input">
+              <Editor
+                ref={editorRef}
+                editorState={editorRenderState}
+                onChange={handleEditorStateChange}
+                placeholder="send message"
+                onUpArrow={handleEditorArrowKey}
+                onDownArrow={handleEditorArrowKey}
+                onEscape={handleEscapeKey}
+                onTab={onTab}
+                handleKeyCommand={handleEditorCommand}
+                handleBeforeInput={handleBeforeInput}
+                handlePastedText={handlePastedText}
+                keyBindingFn={editorKeybindingFn}
+                spellCheck={true}
+                stripPastedStyles={true}
+                onFocus={onFocus}
+                onBlur={onBlur}
+              />
+            </div>
+          )}
+        </Reference>
+        {emojiResults.length > 0 && popperRoot
+          ? createPortal(
+              <Popper placement="top-start" key={searchText}>
+                {({ ref, style }) => (
+                  <div
+                    ref={ref}
+                    className="module-composition-input__emoji-suggestions"
+                    style={{
+                      ...style,
+                      left: '20px',
+                      bottom: '12px',
+                    }}
+                    role="listbox"
+                    aria-expanded={true}
+                    aria-activedescendant={`emoji-result--${emojiResults[emojiResultsIndex].short_name}`}
+                  >
+                    {emojiResults.map((emoji, index) => (
+                      <button
+                        key={emoji.short_name}
+                        id={`emoji-result--${emoji.short_name}`}
+                        role="option button"
+                        aria-selected={emojiResultsIndex === index}
+                        onMouseDown={() => {
+                          insertEmoji(
+                            { shortName: emoji.short_name, skinTone },
+                            true
+                          );
+                          onPickEmoji &&
+                            onPickEmoji({ shortName: emoji.short_name });
+                        }}
+                        className={classNames(
+                          'module-composition-input__emoji-suggestions__row',
+                          emojiResultsIndex === index
+                            ? 'module-composition-input__emoji-suggestions__row--selected'
+                            : null
+                        )}
+                      >
+                        <Emoji
+                          shortName={emoji.short_name}
+                          size={16}
+                          skinTone={skinTone}
+                        />
+                        <div className="module-composition-input__emoji-suggestions__row__short-name">
+                          :{emoji.short_name}:
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </Popper>,
+              popperRoot
+            )
+          : null}
+      </Manager>
     );
   }
 );

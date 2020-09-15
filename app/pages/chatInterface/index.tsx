@@ -6,7 +6,7 @@ import iScroll from 'iscroll/build/iscroll-probe';
 import { Button, Drawer } from 'antd';
 import { EllipsisOutlined } from '@ant-design/icons';
 import MsgsContainer from './msgsContainer';
-import Transmitter from './transmitter';
+import { Transmitter } from './transmitter';
 import _ from 'lodash';
 
 const styles = require('./styles.scss');

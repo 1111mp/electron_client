@@ -30,6 +30,9 @@ export default class Home extends BasicComponent<IAnyObject> {
               <RoomList />
             </Sider>
             <Content>
+              <div onClick={() => this.$openBrowser('https://www.baidu.com')}>
+                sssssss
+              </div>
               {pathname === '/index' ? (
                 <div className={styles.empty_content}>
                   <Empty

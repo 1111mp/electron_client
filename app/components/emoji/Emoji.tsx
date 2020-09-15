@@ -1,4 +1,4 @@
-import './emoji.styl';
+import './emoji.global.scss';
 
 import * as React from 'react';
 import classNames from 'classNames';

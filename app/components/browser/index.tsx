@@ -107,22 +107,22 @@ export default class Browser extends BasicComponent {
       tabInstance.setTitle(webview.getTitle());
 
       /** 重写滚动条样式 */
-      // webview.insertCSS(
-      //   `
-      //     ::-webkit-scrollbar {
-      //       width: 6px;
-      //       height: 6px;
-      //       background: transparent;
-      //     }
-      //     ::-webkit-scrollbar-thumb {
-      //       background: rgba(0,0,0,0.1);
-      //       border-radius: 3px;
-      //     }
-      //     ::-webkit-scrollbar-thumb:hover {
-      //       background: rgba(0,0,0,0.2);
-      //     }
-      //   `
-      // );
+      webview.insertCSS(
+        `
+          ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+            background: transparent;
+          }
+          ::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.1);
+            border-radius: 3px;
+          }
+          ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0,0,0,0.2);
+          }
+        `
+      );
 
       /** init iscroll */
       if (iscrollInstance) {

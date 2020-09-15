@@ -13,14 +13,20 @@ export interface RouterConfig {
  *
  */
 const allRoutes = [
+  // {
+  //   path: '/',
+  //   component: loadable(() => import('pages/home')),
+  //   exact: true,
+  // },
   {
-    path: '/index',
+    path: '/',
     component: loadable(() => import('pages/home')),
-    // exact: true,
+    exact: true,
     routes: [
       {
-        path: '/index/chat',
+        path: '/chat',
         component: loadable(() => import('pages/chatInterface')),
+        exact: true,
       },
     ],
   },
