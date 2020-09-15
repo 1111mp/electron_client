@@ -16,7 +16,7 @@ export default class RoomList extends Component<IAnyObject> {
   checkRoom = () => {
     console.log(111111111);
     const { routerStore } = this.props;
-    routerStore.push('/chat')
+    routerStore.push('/index/chat')
   };
 
   render() {
