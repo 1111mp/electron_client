@@ -49,8 +49,19 @@ function preloadComponent() {
 
 const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
 
+function loadLocaleData(locale: string): Promise<Record<string, any>> {
+  switch (locale) {
+    case 'en':
+      return import('../_locales/en/messages.json');
+    case 'zh-CN':
+    default:
+      return import('../_locales/zh_CN/messages.json');
+  }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   const stores = await createStore();
+  const messages = await loadLocaleData(navigator.language);
 
   const loadAsyncComponents = preloadComponent();
 
@@ -68,7 +79,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const Root = require('./root').default;
   render(
     <AppContainer>
-      <Root stores={stores} statusCode={statusCode} />
+      <Root stores={stores} statusCode={statusCode} messages={messages} />
     </AppContainer>,
     document.getElementById('root')
   );

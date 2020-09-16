@@ -5,6 +5,7 @@ import { Router, Redirect } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
 import { createBrowserHistory, createHashHistory } from 'history';
 import { syncHistoryWithStore } from 'mobx-react-router';
+import { IntlProvider } from 'react-intl';
 import Config from './config';
 // import createRoutes from './routes';
 import allRoutes from 'app/routes/route_config';
@@ -19,17 +20,24 @@ const History = Config.isBorwserHistory
 type Props = {
   stores: any;
   statusCode: number;
+  messages: any;
 };
 
-const Root = ({ stores, statusCode }: Props) => {
+const Root = ({ stores, statusCode, messages }: Props) => {
   return (
-    <Provider {...stores}>
-      <Router history={syncHistoryWithStore(History, stores.routerStore)}>
-        {/* <Routes /> */}
-        {renderRoutes(allRoutes)}
-        {window.location.hash === '#/' ? <Redirect to="index" /> : null}
-      </Router>
-    </Provider>
+    <IntlProvider
+      locale={navigator.language}
+      defaultLocale={navigator.language}
+      messages={messages}
+    >
+      <Provider {...stores}>
+        <Router history={syncHistoryWithStore(History, stores.routerStore)}>
+          {/* <Routes /> */}
+          {renderRoutes(allRoutes)}
+          {window.location.hash === '#/' ? <Redirect to="index" /> : null}
+        </Router>
+      </Provider>
+    </IntlProvider>
   );
 };
 

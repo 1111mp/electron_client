@@ -23,10 +23,11 @@ export function queryMergeToObj(search: string, target: string = '') {
   const getQueryObj = (match?: string[] | null) => {
     const obj = {};
 
-    match && match.forEach(str => {
-      const v = str.match(SPLIT_QUERY_REGEXP);
-      v && (obj[v[1]] = v[2]);
-    });
+    match &&
+      match.forEach((str) => {
+        const v = str.match(SPLIT_QUERY_REGEXP);
+        v && (obj[v[1]] = v[2]);
+      });
 
     return obj;
   };
@@ -43,7 +44,7 @@ export function queryMergeToStr(search: string, target: string = '') {
   const obj = queryMergeToObj(search, target);
 
   let queryStr = '';
-  Object.keys(obj).forEach(key => {
+  Object.keys(obj).forEach((key) => {
     queryStr += `${queryStr ? '&' : ''}${key}=${obj[key]}`;
   });
 
@@ -63,3 +64,20 @@ export function queryParse(search?: string): IAnyObject {
     return query.parse(getLocationSearch());
   }
 }
+
+export type Message = {
+  message: string;
+  description: string;
+};
+
+/** 获取国际化之后的指定key的文字 */
+export function getMessage(
+  // messages: {
+  //   [key: string]: Message;
+  // },
+  messages: Record<string, string | any>,
+  key: string
+): string {
+  return messages[key].message;
+}
+

@@ -22,6 +22,8 @@ import { Emoji } from '../emoji/Emoji';
 import { get, head, trimEnd, noop } from 'lodash';
 import { convertShortName, EmojiData, search } from '../emoji/lib';
 import { EmojiPickDataType } from '../emoji/EmojiPicker';
+import { useIntl } from 'react-intl';
+import { getMessage } from 'utils/index';
 
 const MAX_LENGTH = 64 * 1024;
 const colonsRegex = /(?:^|\s):[a-z0-9-_+]+:?/gi;
@@ -224,6 +226,8 @@ export const CompositionInput = React.memo(
     const [popperRoot, setPopperRoot] = React.useState<HTMLDivElement | null>(
       null
     );
+    // 国际化
+    const { messages } = useIntl();
 
     const focusRef = React.useRef(false);
     const editorStateRef = React.useRef<EditorState>(editorRenderState);
@@ -670,7 +674,7 @@ export const CompositionInput = React.memo(
                 ref={editorRef}
                 editorState={editorRenderState}
                 onChange={handleEditorStateChange}
-                placeholder="send message"
+                placeholder={getMessage(messages, 'sendMessageToContact')}
                 onUpArrow={handleEditorArrowKey}
                 onDownArrow={handleEditorArrowKey}
                 onEscape={handleEscapeKey}
