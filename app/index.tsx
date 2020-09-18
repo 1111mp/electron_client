@@ -59,9 +59,17 @@ function loadLocaleData(locale: string): Promise<Record<string, any>> {
   }
 }
 
+function applyTheme() {
+  window.document.body.classList.remove('dark-theme');
+  window.document.body.classList.remove('light-theme');
+  window.document.body.classList.add(`${(window as any).systemTheme}-theme`);
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   const stores = await createStore();
   const messages = await loadLocaleData(navigator.language);
+
+  applyTheme();
 
   const loadAsyncComponents = preloadComponent();
 

@@ -3,6 +3,7 @@ import Config from 'app/config';
 import manager from './StoreManager';
 import ClientStore from './client';
 import UserStore from './user';
+import sequelize from '../db';
 
 Config.isDev &&
   import('mobx-logger').then((logger) => {
@@ -23,6 +24,8 @@ const storageMap: any = {
 export default async function createStore() {
   const keys = Object.keys(storageMap);
   let store: IAnyObject;
+
+  console.log(sequelize)
 
   store = {};
 

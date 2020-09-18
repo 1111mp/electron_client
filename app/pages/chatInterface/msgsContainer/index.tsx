@@ -63,7 +63,7 @@ export default class MsgsContainer extends Component<Props> {
                 currentMessage: item,
                 previousMessage,
                 nextMessage,
-                position: item.user.userId === userId ? 'right' : 'left',
+                position: item.user.userId === 1811763 ? 'right' : 'left',
                 user: item.user,
               };
               return <Message key={item.msgId} {...messageProps} />;
