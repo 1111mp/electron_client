@@ -1,7 +1,7 @@
 import './emoji.global.scss';
 
 import * as React from 'react';
-import classNames from 'classNames';
+import classNames from 'classnames';
 
 import { emojiToImage, getImagePath, SkinToneKey } from './lib';
 

@@ -1921,7 +1921,9 @@
     "description": "Shown as a placeholder inside the emoji picker search field."
   },
   "EmojiPicker--skin-tone": {
+    "id": "EmojiPicker--skin",
     "message": "Skin tone $tone$",
+    "defaultMessage": "Skin tone {tone}",
     "placeholders": {
       "status": {
         "content": "$1",

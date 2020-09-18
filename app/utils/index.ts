@@ -78,6 +78,5 @@ export function getMessage(
   messages: Record<string, string | any>,
   key: string
 ): string {
-  return messages[key].message;
+  return messages[key] ? messages[key].message : '';
 }
-

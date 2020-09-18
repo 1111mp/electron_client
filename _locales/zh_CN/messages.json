@@ -1930,7 +1930,9 @@
         "description": "Shown as a placeholder inside the emoji picker search field."
     },
     "EmojiPicker--skin-tone": {
+        "id": "EmojiPicker--skin",
         "message": "肤色 $tone$",
+        "defaultMessage": "肤色 {tone}",
         "description": "Shown as a tooltip over the emoji tone buttons.",
         "placeholders": {
             "status": {

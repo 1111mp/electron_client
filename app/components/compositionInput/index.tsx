@@ -3,7 +3,7 @@ import './styles.global.scss';
 import * as React from 'react';
 import { createPortal } from 'react-dom';
 import { Manager, Popper, Reference } from 'react-popper';
-import classNames from 'classNames';
+import classNames from 'classnames';
 
 import {
   Editor,
@@ -23,7 +23,7 @@ import { get, head, trimEnd, noop } from 'lodash';
 import { convertShortName, EmojiData, search } from '../emoji/lib';
 import { EmojiPickDataType } from '../emoji/EmojiPicker';
 import { useIntl } from 'react-intl';
-import { getMessage } from 'utils/index';
+import { getMessage } from 'app/utils';
 
 const MAX_LENGTH = 64 * 1024;
 const colonsRegex = /(?:^|\s):[a-z0-9-_+]+:?/gi;
@@ -50,7 +50,7 @@ export type InputApi = {
 
 export type CompositionInputEditorCommand =
   | DraftEditorCommand
-  | ('enter-emoji' | 'next-emoji' | 'prev-emoji' | 'submit');
+  | ('enter-emoji' | 'next-emoji' | 'prev-emoji' | 'submit' | 'escape');
 
 function getTrimmedMatchAtIndex(str: string, index: number, pattern: RegExp) {
   let match;
@@ -268,7 +268,7 @@ export const CompositionInput = React.memo(
           const emoji = head(search(bareText));
 
           if (emoji && bareText === emoji.short_name) {
-            handleEditorCommand('enter-emoji', newState, emoji);
+            handleEditorCommand('enter-emoji', newState, undefined, emoji);
 
             // Prevent inserted colon from persisting to state
             return;
@@ -448,10 +448,19 @@ export const CompositionInput = React.memo(
       resetEmojiResults();
     }, [editorStateRef, resetEmojiResults, setAndTrackEditorState]);
 
+    const handleEscapeKey = React.useCallback(() => {
+      if (emojiResults.length > 0) {
+        resetEmojiResults();
+      } else if (getQuotedMessage && getQuotedMessage()) {
+        clearQuotedMessage && clearQuotedMessage();
+      }
+    }, [resetEmojiResults, emojiResults]);
+
     const handleEditorCommand = React.useCallback(
       (
         command: CompositionInputEditorCommand,
         state: EditorState,
+        eventTimeStamp?: number,
         emojiOverride?: EmojiData
       ): DraftHandleValue => {
         if (command === 'enter-emoji') {
@@ -517,6 +526,10 @@ export const CompositionInput = React.memo(
           selectEmojiResult('prev');
         }
 
+        if (command === 'escape') {
+          handleEscapeKey();
+        }
+
         return 'not-handled';
       },
       [
@@ -525,6 +538,7 @@ export const CompositionInput = React.memo(
         resetEmojiResults,
         selectEmojiResult,
         setAndTrackEditorState,
+        handleEscapeKey,
         skinTone,
         submit,
       ]
@@ -554,42 +568,30 @@ export const CompositionInput = React.memo(
       focusRef.current = false;
     }, [focusRef]);
 
-    const handleEditorArrowKey = React.useCallback(
-      (e: React.KeyboardEvent) => {
-        if (e.key === 'ArrowUp') {
-          selectEmojiResult('prev', e);
-        }
+    // const handleEditorArrowKey = React.useCallback(
+    //   (e: React.KeyboardEvent) => {
+    //     if (e.key === 'ArrowUp') {
+    //       selectEmojiResult('prev', e);
+    //     }
 
-        if (e.key === 'ArrowDown') {
-          selectEmojiResult('next', e);
-        }
-      },
-      [selectEmojiResult]
-    );
+    //     if (e.key === 'ArrowDown') {
+    //       selectEmojiResult('next', e);
+    //     }
+    //   },
+    //   [selectEmojiResult]
+    // );
 
-    const handleEscapeKey = React.useCallback(
-      (e: React.KeyboardEvent) => {
-        if (emojiResults.length > 0) {
-          e.preventDefault();
-          resetEmojiResults();
-        } else if (getQuotedMessage && getQuotedMessage()) {
-          clearQuotedMessage && clearQuotedMessage();
-        }
-      },
-      [resetEmojiResults, emojiResults]
-    );
+    // const onTab = React.useCallback(
+    //   (e: React.KeyboardEvent) => {
+    //     if (e.shiftKey || emojiResults.length === 0) {
+    //       return;
+    //     }
 
-    const onTab = React.useCallback(
-      (e: React.KeyboardEvent) => {
-        if (e.shiftKey || emojiResults.length === 0) {
-          return;
-        }
-
-        e.preventDefault();
-        handleEditorCommand('enter-emoji', editorStateRef.current);
-      },
-      [emojiResults, editorStateRef, handleEditorCommand, resetEmojiResults]
-    );
+    //     e.preventDefault();
+    //     handleEditorCommand('enter-emoji', editorStateRef.current);
+    //   },
+    //   [emojiResults, editorStateRef, handleEditorCommand, resetEmojiResults]
+    // );
 
     const editorKeybindingFn = React.useCallback(
       // tslint:disable-next-line cyclomatic-complexity
@@ -651,6 +653,32 @@ export const CompositionInput = React.memo(
           return null;
         }
 
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+
+          return 'next-emoji';
+        }
+
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+
+          return 'prev-emoji';
+        }
+
+        if (e.key === 'Escape') {
+          e.preventDefault();
+
+          return 'escape';
+        }
+
+        console.log(e.key);
+
+        if (e.key === 'Tab' && emojiResults.length > 0) {
+          e.preventDefault();
+
+          return 'enter-emoji';
+        }
+
         return getDefaultKeyBinding(e);
       },
       [emojiResults /** large */]
@@ -675,10 +703,10 @@ export const CompositionInput = React.memo(
                 editorState={editorRenderState}
                 onChange={handleEditorStateChange}
                 placeholder={getMessage(messages, 'sendMessageToContact')}
-                onUpArrow={handleEditorArrowKey}
-                onDownArrow={handleEditorArrowKey}
-                onEscape={handleEscapeKey}
-                onTab={onTab}
+                // onUpArrow={handleEditorArrowKey}
+                // onDownArrow={handleEditorArrowKey}
+                // onEscape={handleEscapeKey}
+                // onTab={onTab}
                 handleKeyCommand={handleEditorCommand}
                 handleBeforeInput={handleBeforeInput}
                 handlePastedText={handlePastedText}
