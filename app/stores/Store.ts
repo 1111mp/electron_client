@@ -55,7 +55,7 @@ class Store implements Property {
   /** 获取所有需要做持久化的state的key 可获取指定source的需持久化的state的key */
   persistKeys(source?: string) {
     if (source) {
-      return this.persistMap[source];
+      return this.persistMap[source] || [];
     } else {
       return Object.keys(this.persistMap).reduce(
         (pre: string[], cur: string) => {

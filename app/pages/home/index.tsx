@@ -14,20 +14,35 @@ const { Sider, Content } = Layout;
 @inject((stores: IAnyObject) => {
   return {
     location: stores.routerStore.location || {},
+    user: stores.user,
+    setting: stores.Setting,
   };
 })
 @observer
 export default class Home extends BasicComponent<IAnyObject> {
   $render(): JSX.Element {
-    const { route, location } = this.props;
+    const { route, location, user, setting } = this.props;
     const { pathname } = location;
-
+    console.log(setting.theme);
     return (
       <Fragment>
         <Layout className={styles.layout}>
           <Layout>
             <Sider width="250">
               <RoomList />
+              <input
+                value={user.userId}
+                onChange={(e) => {
+                  user.userId = e.target.value;
+                }}
+              />
+              <input
+                value={setting.theme}
+                onChange={(e) => {
+                  setting.theme = e.target.value;
+                }}
+              />
+              <p>{setting.theme}</p>
             </Sider>
             <Content>
               {pathname === '/index' ? (

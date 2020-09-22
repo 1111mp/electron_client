@@ -63,6 +63,9 @@ const installExtensions = async () => {
 };
 
 const createWindow = async () => {
+  console.log(app.getPath('home'))
+  console.log(app.getPath('appData'))
+  console.log(app.getPath('userData'))
   if (
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'

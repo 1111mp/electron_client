@@ -3,6 +3,7 @@ import Config from 'app/config';
 import manager from './StoreManager';
 import ClientStore from './client';
 import UserStore from './user';
+import SettingStore from './setting';
 import sequelize from '../db';
 
 Config.isDev &&
@@ -25,7 +26,27 @@ export default async function createStore() {
   const keys = Object.keys(storageMap);
   let store: IAnyObject;
 
-  console.log(sequelize)
+  // try {
+  //   await sequelize.authenticate();
+  //   console.log('Database connection OK!');
+  // } catch (error) {
+  //   console.log('Unable to connect to the database:');
+  //   console.log(error.message);
+  //   // process.exit(1);
+  // }
+
+  // // sequelize.models.Setting.create({ theme: 'dark' });
+  // console.log(88888);
+  // let res = await sequelize.models.Setting.findOne({
+  //   attributes: { exclude: ['id', 'updatedAt', 'createdAt'] },
+  // });
+  // console.log(res.toJSON());
+  // console.log(
+  //   await sequelize.models.Setting.findOne({
+  //     attributes: { exclude: ['id', 'updatedAt', 'createdAt'] },
+  //   })
+  // );
+  // console.log(777777);
 
   store = {};
 
@@ -38,6 +59,7 @@ export default async function createStore() {
   try {
     manager.stores = {
       user: new UserStore('user'),
+      Setting: new SettingStore('Setting'),
     };
   } catch (e) {
     console.log(e);

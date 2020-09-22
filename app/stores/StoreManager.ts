@@ -1,9 +1,11 @@
 import Store from './Store';
 import persistManager, { PersistManager } from './PersistManager';
 import Storage from './Storage';
+import Sqlite from './Sqlite';
 
 export const PERSIST_LOCAL = 'local';
-const PersistMethods = [PERSIST_LOCAL];
+export const PERSIST_SQLITE = 'sqlite';
+const PersistMethods = [PERSIST_LOCAL, PERSIST_SQLITE];
 
 class StoreManager {
   persistManager: PersistManager;
@@ -22,15 +24,13 @@ class StoreManager {
   async init(): Promise<void> {
     const stores = this.stores;
     const keys = Object.keys(stores);
-    // keys ===> ['user', 'client']
+    // keys ===> ['user', 'setting']
     const states: any = {};
 
     for (let i = 0; i < PersistMethods.length; i++) {
       const source = PersistMethods[i]; // local
-
       /** 从本地缓存中获取所有已经持久化的数据state的值 */
       const data = await this.persistManager.getItems(source, keys);
-
       /** 依次赋值给state */
       keys.forEach((key: string) => {
         if (data[key]) {
@@ -94,20 +94,22 @@ class StoreManager {
       const states: any = {}; // 用来保存 最新的state
 
       stores.forEach((store) => {
+        // debugger
         const keys = store.persistKeys(source); // ['username','userId']
 
-        keys.forEach((key: string) => {
-          const v = store[key]; // state的值
+        keys &&
+          keys.forEach((key: string) => {
+            const v = store[key]; // state的值
 
-          let state = states[store.name] || []; // 比如user store下所有的state
+            let state = states[store.name] || []; // 比如user store下所有的state
 
-          state = {
-            ...state,
-            [key]: v,
-          };
+            state = {
+              ...state,
+              [key]: v,
+            };
 
-          states[store.name] = state;
-        });
+            states[store.name] = state;
+          });
       });
 
       /** 将最新的state数据同步到本地缓存中 */
@@ -124,12 +126,14 @@ class StoreManager {
     keys: string[];
   }) => {
     const states = await this.persistManager.getItems(source, keys);
+    console.log(states);
     this.batchUpdate(states);
   };
 }
 
 /** 注册localStorage做mobx的持久化方式 */
 persistManager.register(PERSIST_LOCAL, new Storage());
+persistManager.register(PERSIST_SQLITE, new Sqlite());
 
 const manager = new StoreManager(persistManager);
 

@@ -37,10 +37,11 @@ export class PersistManager {
     this.persisters[name] = persister;
     /**
      * local ===>>> new Storage   localStorage
+     * sqlote ===>>> new Sqlite   sqlite
      */
 
     /** 执行 持久化方式的监听回调 比如localStorage的storage事件 */
-    persister.onRegister();
+    persister.onRegister && persister.onRegister();
 
     persister.onChange(({ keys }) => {
       this.persistChangeHandler({
@@ -51,6 +52,8 @@ export class PersistManager {
   }
 
   setItems(source: string, state: State): Promise<void> {
+    console.log(source)
+    console.log(state)
     return new Promise((resolve, reject) => {
       const persister = this.persisters[source];
 
@@ -65,6 +68,7 @@ export class PersistManager {
     });
   }
 
+  // sqlite =====>>> user client
   getItems(source: string, keys: string[]): Promise<State> {
     return new Promise((resolve, reject) => {
       const persister = this.persisters[source]; // localStorage

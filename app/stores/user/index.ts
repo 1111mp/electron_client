@@ -1,4 +1,4 @@
-import 'mobx-react-lite/batchingForReactDom'
+import 'mobx-react-lite/batchingForReactDom';
 import Store, { State } from '../Store';
 import { observable } from 'mobx';
 
@@ -7,9 +7,11 @@ export default class UserStore extends Store {
   @observable userName?: string = '';
   @observable mobile?: string = '';
   @observable email?: string = '';
+  @observable theme?: string = '';
 
   persistMap = {
     local: ['userId', 'userName'],
+    // sqlite: ['theme'],
   };
 
   ready(): Promise<void> {

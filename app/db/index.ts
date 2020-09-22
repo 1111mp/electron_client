@@ -1,11 +1,11 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const Sequelize = require('sequelize/lib/sequelize');
+import Sequelize from 'sequelize/lib/sequelize';
 import { userInfo } from 'os';
+import User from './models/user';
+import Setting from './models/setting';
 
-let sequelize;
+let sequelize: Sequelize;
 
 try {
   sequelize = new Sequelize('database', '', userInfo().username, {
@@ -18,6 +18,12 @@ try {
       idle: 10000,
     },
   });
+
+  User(sequelize);
+  Setting(sequelize);
+
+  // sequelize.sync({ alter: true });
+
 } catch (error) {
   console.log(error);
 }
