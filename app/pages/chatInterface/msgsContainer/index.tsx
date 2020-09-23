@@ -47,7 +47,7 @@ export default class MsgsContainer extends Component<Props> {
     const { messages, userId, chatType, loading } = this.props;
     return (
       <Fragment>
-        <p>loading...</p>
+        <p className="module-message-loading">loading...</p>
         <div className="msgs_content-wrapper" ref="scrollContent">
           {/* {this.renderLoadMore()} */}
           {messages &&

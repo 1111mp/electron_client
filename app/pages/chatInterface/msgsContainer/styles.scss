@@ -1,3 +1,15 @@
+.module-message-loading {
+  text-align: center;
+
+  @include light-theme() {
+    color: $color-gray-90;
+  }
+
+  @include dark-theme() {
+    color: $color-gray-05;
+  }
+}
+
 .msgs_content-wrapper{
   padding: 8px 20px;
 
