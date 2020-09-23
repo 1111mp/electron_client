@@ -1,4 +1,6 @@
-import React, { Component, KeyboardEvent } from 'react';
+import './styles.scss';
+
+import * as React from 'react';
 
 // import DropEmitter from 'components/dropEmitter';
 import { EmojiButton } from 'components/emoji/EmojiButton';
@@ -6,76 +8,9 @@ import { CompositionInput, InputApi } from 'app/components/compositionInput';
 import { EmojiPickDataType } from 'app/components/emoji/EmojiPicker';
 import { Editor } from 'draft-js';
 
-const styles = require('./styles.scss');
-
-// export default class Transmitter extends Component<IAnyObject> {
-//   state = {
-//     text: '',
-//   };
-
-//   /** https://juejin.im/post/6844904112882974728#heading-10 */
-//   onKeyDownHandle = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-//     if (
-//       event.keyCode === 13 &&
-//       !event.ctrlKey &&
-//       !event.shiftKey &&
-//       !event.altKey
-//     ) {
-//       event.preventDefault();
-//       /** enter */
-//       console.log('enter键...');
-//     } else if (
-//       event.keyCode === 13 &&
-//       !event.ctrlKey &&
-//       event.shiftKey &&
-//       !event.altKey
-//     ) {
-//       event.preventDefault();
-//       /** shift + enter */
-//       console.log('换行键...');
-//     }
-//   };
-
-//   dropHandler = (text: any) => {
-//     this.setState({
-//       text: this.state.text + text,
-//     });
-//   };
-
-//   onPickEmoji = (e: any) => {
-//     console.log(e);
-//   };
-
-//   render() {
-//     const { text } = this.state;
-//     return (
-//       <DropEmitter dropHandler={this.dropHandler}>
-//         <div className={styles.container}>
-//           <ul className={styles.actions_container}>
-//             <EmojiButton onPickEmoji={this.onPickEmoji} />
-//             <li className={styles.iconfont_content}>
-//               <span
-//                 className={'iconfont iconwenjian ' + styles.iconfont}
-//               ></span>
-//             </li>
-//           </ul>
-//           <div className={styles.textarea_container}>
-//             {/* <CompositionInput onPickEmoji={this.onPickEmoji} /> */}
-//             <textarea
-//               value={text}
-//               className={styles.textarea}
-//               onChange={(e: any) => this.setState({ text: e.target.value })}
-//               onKeyDown={this.onKeyDownHandle}
-//             ></textarea>
-//           </div>
-//         </div>
-//       </DropEmitter>
-//     );
-//   }
-// }
-
 type Props = {};
 
+/** https://juejin.im/post/6844904112882974728#heading-10 */
 export const Transmitter = React.memo(() => {
   const editorRef = React.useRef<Editor>(null);
   const inputApiRef = React.useRef<InputApi | undefined>();
@@ -91,26 +26,20 @@ export const Transmitter = React.memo(() => {
   );
 
   return (
-    <div className={styles.container}>
-      <ul className={styles.actions_container}>
+    <div className="module-transmitter">
+      <ul className="module-transmitter-actions">
         <EmojiButton onPickEmoji={insertEmoji} />
-        <li className={styles.iconfont_content}>
-          <span className={'iconfont iconwenjian ' + styles.iconfont}></span>
+        <li className="module-transmitter-actions-content">
+          <span className="iconfont iconwenjian"></span>
         </li>
       </ul>
-      <div className={styles.textarea_container}>
+      <div className="module-transmitter-textarea">
         <CompositionInput
           editorRef={editorRef}
           inputApi={inputApiRef}
           startingText={''}
           // onPickEmoji={onPickEmoji}
         />
-        {/* <textarea
-          value={text}
-          className={styles.textarea}
-          onChange={(e: any) => this.setState({ text: e.target.value })}
-          onKeyDown={this.onKeyDownHandle}
-        ></textarea> */}
       </div>
     </div>
   );

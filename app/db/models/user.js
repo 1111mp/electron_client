@@ -1,6 +1,6 @@
 'use strict';
 
-import { Sequelize, DataTypes } from 'sequelize';
+const { Sequelize, DataTypes } = require('sequelize');
 
 /**
  * sequelize + ts 文档：https://www.gobeta.net/books/demopark-sequelize-docs-zh-cn/typescript/
@@ -8,7 +8,7 @@ import { Sequelize, DataTypes } from 'sequelize';
  * Cannot use namespace 'DataTypes' as a type.
  * https://github.com/sequelize/sequelize-auto/issues/384
  */
-export default (sequelize: Sequelize) => {
+module.exports = (sequelize) => {
   const User = sequelize.define('User', {
     id: {
       type: DataTypes.INTEGER,

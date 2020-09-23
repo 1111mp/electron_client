@@ -1,4 +1,4 @@
-import './button.styl';
+import './button.scss';
 
 import * as React from 'react';
 import { createPortal } from 'react-dom';

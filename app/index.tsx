@@ -18,6 +18,7 @@ import createStore from 'app/stores';
 import routerConfig from 'app/routes/route_config';
 import './app.global.css';
 import './app.global.scss';
+import { applyTheme, getThemeFromDatabase } from './utils';
 
 function getPathname() {
   return Config.isBorwserHistory
@@ -59,19 +60,14 @@ function loadLocaleData(locale: string): Promise<Record<string, any>> {
   }
 }
 
-function applyTheme() {
-  window.document.body.classList.remove('dark-theme');
-  window.document.body.classList.remove('light-theme');
-  window.document.body.classList.add(`${(window as any).systemTheme}-theme`);
-}
-
 document.addEventListener('DOMContentLoaded', async () => {
   const stores = await createStore();
   const messages = await loadLocaleData(navigator.language);
-
-  applyTheme();
-
   const loadAsyncComponents = preloadComponent();
+
+  /** 初始化设置主题 */
+  const { theme = 'system' } = await getThemeFromDatabase();
+  applyTheme(theme);
 
   let statusCode = 200;
 

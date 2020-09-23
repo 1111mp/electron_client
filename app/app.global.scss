@@ -50,3 +50,32 @@
   -webkit-user-select: none;
   -webkit-app-region: drag;
 }
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+
+  @include light-theme {
+    background: $color-gray-25;
+    border: 2px solid $color-white;
+  }
+
+  @include dark-theme() {
+    background: $color-gray-25;
+    border: 2px solid $color-white;
+  }
+
+  &:hover {
+    @include light-theme {
+      background: $color-gray-45;
+    }
+
+    @include dark-theme {
+      background: $color-gray-25;
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import './styles.styl';
+import './styles.scss';
 
 import React, { Component, Fragment } from 'react';
 import Day from '../day';
@@ -91,7 +91,7 @@ export default class Message extends Component<Props> {
                 }
               ></p>
             ) : null}
-            {position === 'right' && currentMessage.status === 5 ? (
+            {/* {position === 'right' && currentMessage.status === 5 ? (
               <i
                 className={
                   'iconfont iconicon_alert' +
@@ -100,9 +100,9 @@ export default class Message extends Component<Props> {
                     : '')
                 }
               ></i>
-            ) : null}
+            ) : null} */}
             <div className="message-container">
-              {chatType === 'group' || chatType === 'room' ? (
+              {chatType === 'group' ? (
                 <p className="user_name">{user.name}</p>
               ) : null}
               {this.renderBubble()}

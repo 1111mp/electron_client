@@ -1,0 +1,8 @@
+.msgs_content-wrapper{
+  padding: 8px 20px;
+
+  .msg_container{
+    @include flex($justify:flex-end);
+  }
+}
+

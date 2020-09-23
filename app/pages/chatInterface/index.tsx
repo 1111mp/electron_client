@@ -1,3 +1,5 @@
+import './styles.scss';
+
 import React from 'react';
 import BasicComponent from 'components/BasicComponent';
 
@@ -8,8 +10,6 @@ import { EllipsisOutlined } from '@ant-design/icons';
 import MsgsContainer from './msgsContainer';
 import { Transmitter } from './transmitter';
 import _ from 'lodash';
-
-const styles = require('./styles.scss');
 
 function getData(): any[] {
   let res: any[] = [];
@@ -118,9 +118,9 @@ export default class ChatInterface extends BasicComponent<IAnyObject> {
     const { visible, messages, loading } = this.state;
 
     return (
-      <div className={styles.container}>
-        <header className={styles.header}>
-          <p className={styles.title}>张逸凡</p>
+      <div className="module-chat_interface">
+        <header className="module-chat_interface-header">
+          <p className="module-chat_interface-header--title">张逸凡</p>
           <Button type="link" onClick={() => this.setState({ visible: true })}>
             <EllipsisOutlined style={{ fontSize: '20px' }} />
           </Button>
@@ -138,11 +138,11 @@ export default class ChatInterface extends BasicComponent<IAnyObject> {
           }}
           onScrollEnd={this.onScrollHandler}
         >
-          <div className={styles.content}>
+          <div className="module-chat_interface--scroll">
             <MsgsContainer messages={messages} loading={loading} />
           </div>
         </ReactIScroll>
-        <footer className={styles.footer}>
+        <footer className="module-chat_interface--footer">
           <Transmitter />
         </footer>
         <Drawer

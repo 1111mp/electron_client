@@ -80,3 +80,21 @@ export function getMessage(
 ): string {
   return messages[key] ? messages[key].message : '';
 }
+
+/** 从数据库获取theme */
+export async function getThemeFromDatabase() {
+  let setting = await (window as any).sequelize.models.Setting.findOne({
+    attributes: { exclude: ['id', 'updatedAt', 'createdAt'] },
+  });
+
+  return setting.toJSON();
+}
+
+/** 设置主题 */
+export function applyTheme(theme: string) {
+  theme = theme !== 'system' ? theme : (window as any).systemTheme;
+
+  window.document.body.classList.remove('dark-theme');
+  window.document.body.classList.remove('light-theme');
+  window.document.body.classList.add(`${theme}-theme`);
+}

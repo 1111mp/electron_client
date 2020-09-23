@@ -1,6 +1,6 @@
 @import "app/styles/mixin.scss";
 
-.container {
+.module-roomitem {
   @include flex($align: center);
   height: 64px;
   padding: 0 12px;
@@ -8,11 +8,32 @@
   cursor: pointer;
   overflow: hidden;
 
-  &:hover {
-    background-color: #e9e9e9;
+  .ant-badge-count {
+
+    @include light-theme() {
+      background-color: $ultramarine-ui-light;
+      box-shadow: 0 0 0 1px $ultramarine-ui-light;
+    }
+
+    @include dark-theme() {
+      background-color: $ultramarine-ui-dark;
+      box-shadow: 0 0 0 1px $ultramarine-ui-dark;
+    }
   }
 
-  .middle_content {
+  @include light-theme() {
+    &:hover {
+      background-color: $color-gray-05;
+    }
+  }
+
+  @include dark-theme() {
+    &:hover {
+      background-color: $color-gray-75;
+    }
+  }
+
+  .module-roomitem-middle_content {
     @include flex($direction: column, $justify: center);
     flex: 1;
     height: 100%;
@@ -20,22 +41,44 @@
     margin-left: 12px;
     overflow: hidden;
 
-    .name {
+    &-name {
       font-size: 14px;
       font-weight: bold;
+
+      @include light-theme() {
+        color: $color-gray-90;
+      }
+
+      @include dark-theme() {
+        color: $color-gray-05;
+      }
     }
 
-    .detail {
+    &-detail {
       @include ellipse;
       max-width: 100%;
-      color: #999999;
+
+      @include light-theme() {
+        color: $color-gray-60;
+      }
+
+      @include dark-theme() {
+        color: $color-gray-25;
+      }
     }
   }
 
-  .right_content {
+  .module-roomitem-right_content {
 
-    .timer {
-      color: #b9b9b9;
+    &-timer {
+
+      @include dark-theme() {
+        color: $color-gray-60;
+      }
+
+      @include dark-theme() {
+        color: $color-gray-25;
+      }
     }
   }
 }

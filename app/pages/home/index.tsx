@@ -1,62 +1,41 @@
+import './styles.scss';
+
 import * as React from 'react';
 import { Fragment } from 'react';
 import BasicComponent from 'components/BasicComponent';
 import { inject, observer } from 'mobx-react';
 import { renderRoutes } from 'react-router-config';
 
-import { Layout, Empty } from 'antd';
 import RoomList from '../roomList';
+import Empty from 'components/empty';
 
-const styles = require('./home.scss');
-
-const { Sider, Content } = Layout;
+const themes = [
+  { label: '系统', value: 'system' },
+  { label: '浅色', value: 'light' },
+  { label: '深色', value: 'dark' },
+];
 
 @inject((stores: IAnyObject) => {
   return {
     location: stores.routerStore.location || {},
-    user: stores.user,
-    setting: stores.Setting,
   };
 })
 @observer
 export default class Home extends BasicComponent<IAnyObject> {
   $render(): JSX.Element {
-    const { route, location, user, setting } = this.props;
+    const { route, location } = this.props;
     const { pathname } = location;
-    console.log(setting.theme);
     return (
       <Fragment>
-        <Layout className={styles.layout}>
-          <Layout>
-            <Sider width="250">
-              <RoomList />
-              <input
-                value={user.userId}
-                onChange={(e) => {
-                  user.userId = e.target.value;
-                }}
-              />
-              <input
-                value={setting.theme}
-                onChange={(e) => {
-                  setting.theme = e.target.value;
-                }}
-              />
-              <p>{setting.theme}</p>
-            </Sider>
-            <Content>
-              {pathname === '/index' ? (
-                <div className={styles.empty_content}>
-                  <Empty
-                    description={false}
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  />
-                </div>
-              ) : null}
-              {renderRoutes(route.routes)}
-            </Content>
-          </Layout>
-        </Layout>
+        <div className="module-home">
+          <div className="module-home-sider">
+            <RoomList />
+          </div>
+          <div className="module-home-content">
+            {pathname === '/index' ? <Empty /> : null}
+            {renderRoutes(route.routes)}
+          </div>
+        </div>
       </Fragment>
     );
   }

@@ -1,14 +1,6 @@
-@import "app/styles/mixin.scss";
-
-.container {
-  :global {
-    .ant-input {
-      background-color: #e9e9e9;
-    }
-  }
-
+.module-roomlist-header {
   @include flex($align: center);
-  padding: 6px 16px;
+  padding: 8px 16px;
 
   .avatar {
     margin-right: 8px;
@@ -17,6 +9,48 @@
   .search_input {
     flex: 1;
     border-radius: 6px;
-    background-color: #e9e9e9;
+
+    @include light-theme() {
+      border-color: $color-gray-02;
+      background-color: $color-gray-05;
+
+      .ant-input-prefix {
+        color: $color-gray-75;
+      }
+
+      input {
+        color: $color-gray-90;
+        background-color: $color-gray-05;
+      }
+    }
+
+    @include dark-theme() {
+      border-color: $color-gray-80;
+      background-color: $color-gray-95;
+
+      .ant-input-prefix {
+        color: $color-gray-25;
+      }
+
+      input {
+        color: $color-gray-05;
+        background-color: $color-gray-95;
+      }
+
+      .ant-input-clear-icon {
+        color: $color-gray-25;
+      }
+    }
+
+    input {
+      &::placeholder {
+        font-size: 12px;
+        color: $color-gray-45;
+      }
+    }
+
+    &:hover {
+      border-color: $ultramarine-ui-light;
+    }
   }
 }

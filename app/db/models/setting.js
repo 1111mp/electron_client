@@ -1,8 +1,8 @@
 'use strict';
 
-import { Sequelize, DataTypes } from 'sequelize';
+const { Sequelize, DataTypes } = require('sequelize');
 
-export default (sequelize: Sequelize) => {
+module.exports = (sequelize) => {
   const Setting = sequelize.define('Setting', {
     id: {
       type: DataTypes.INTEGER,

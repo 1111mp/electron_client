@@ -1,8 +1,16 @@
 $themeColor: #3478f6;
 
-$inter: Inter, 'Helvetica Neue', 'Source Sans Pro', 'Source Han Sans SC',
-  'Source Han Sans CN', 'Hiragino Sans GB', 'Hiragino Kaku Gothic',
-  'Microsoft Yahei UI', Helvetica, Arial, sans-serif;
+$inter: Inter,
+'Helvetica Neue',
+'Source Sans Pro',
+'Source Han Sans SC',
+'Source Han Sans CN',
+'Hiragino Sans GB',
+'Hiragino Kaku Gothic',
+'Microsoft Yahei UI',
+Helvetica,
+Arial,
+sans-serif;
 
 // -- V3 Colors
 
@@ -134,8 +142,7 @@ $color-conversation-ultramarine-shade: $ultramarine-brand-dark;
 
 // Maps for easy manipulation
 
-$conversation-colors: (
-  'red': $color-conversation-red,
+$conversation-colors: ('red': $color-conversation-red,
   'deep_orange': $color-conversation-deep_orange,
   'brown': $color-conversation-brown,
   'pink': $color-conversation-pink,
@@ -148,8 +155,7 @@ $conversation-colors: (
   'blue_grey': $color-conversation-blue_grey,
   'ultramarine': $color-conversation-ultramarine,
 );
-$conversation-colors-tint: (
-  'red': $color-conversation-red-tint,
+$conversation-colors-tint: ('red': $color-conversation-red-tint,
   'deep_orange': $color-conversation-deep_orange-tint,
   'brown': $color-conversation-brown-tint,
   'pink': $color-conversation-pink-tint,
@@ -162,8 +168,7 @@ $conversation-colors-tint: (
   'blue_grey': $color-conversation-blue_grey-tint,
   'ultramarine': $color-conversation-ultramarine-tint,
 );
-$conversation-colors-shade: (
-  'red': $color-conversation-red-shade,
+$conversation-colors-shade: ('red': $color-conversation-red-shade,
   'deep_orange': $color-conversation-deep_orange-shade,
   'brown': $color-conversation-brown-shade,
   'pink': $color-conversation-pink-shade,
@@ -230,14 +235,17 @@ $ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
   line-height: 21px;
   letter-spacing: -0.14px;
 }
+
 @mixin font-body-1-bold {
   @include font-body-1;
   font-weight: bold;
 }
+
 @mixin font-body-1-italic {
   @include font-body-1;
   font-style: italic;
 }
+
 @mixin font-body-1-bold-italic {
   @include font-body-1;
   font-weight: bold;
@@ -250,14 +258,17 @@ $ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
   line-height: 18px;
   letter-spacing: -0.03px;
 }
+
 @mixin font-body-2-bold {
   @include font-body-2;
   font-weight: bold;
 }
+
 @mixin font-body-2-italic {
   @include font-body-2;
   font-style: italic;
 }
+
 @mixin font-body-2-bold-italic {
   @include font-body-2;
   font-weight: bold;
@@ -277,10 +288,12 @@ $ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
   line-height: 16px;
   letter-spacing: 0.06px;
 }
+
 @mixin font-caption-bold {
   @include font-caption;
   font-weight: bold;
 }
+
 @mixin font-caption-bold-italic {
   @include font-caption;
   font-weight: bold;
@@ -315,21 +328,26 @@ $ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
 
 @mixin color-svg($svg, $color, $stretch: true) {
   -webkit-mask: url($svg) no-repeat center;
+
   @if $stretch {
     -webkit-mask-size: 100%;
   }
+
   background-color: $color;
 }
 
 @mixin header-icon-white($svg) {
   @include color-svg($svg, $color-white-alpha-80);
+
   &:focus,
   &:hover {
     @include color-svg($svg, $color-white);
   }
 }
+
 @mixin header-icon-black($svg) {
   @include color-svg($svg, $color-black-alpha-40);
+
   &:focus,
   &:hover {
     @include color-svg($svg, black);
@@ -355,6 +373,7 @@ $ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
     @content;
   }
 }
+
 @mixin ios-keyboard-mode() {
   .ios-theme.keyboard-mode & {
     @content;
@@ -366,6 +385,7 @@ $ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
     @content;
   }
 }
+
 @mixin ios-mouse-mode() {
   .ios-theme.mouse-mode & {
     @content;
@@ -395,4 +415,3 @@ $ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
   outline: inherit;
   text-align: inherit;
 }
-

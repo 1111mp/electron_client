@@ -1,5 +1,4 @@
 import { Persister, State } from './PersistManager';
-import sequelize from '../db';
 import { Op } from 'sequelize';
 
 /**
@@ -37,16 +36,10 @@ export default class Sqlite extends Persister {
    * 自定义storage事件 实现同一页面监听storage的变化
    */
   async setItems(models: State, custom: boolean = false) {
-    console.log(77777777);
-    console.log(models);
-    // const { models } = sequelize;
-    // user：{userId, userName}
-    // user：{Setting}
     for (let model in models) {
-      console.log(model);
       try {
         let value = models[model];
-        sequelize.models[model].update({ ...value }, {
+        (window as any).sequelize.models[model].update({ ...value }, {
           where: {
             id: {
               [Op.eq]: 1
@@ -64,7 +57,7 @@ export default class Sqlite extends Persister {
     let res = await Promise.all(
       models.map(async (model) => {
         try {
-          let res = await sequelize.models[model].findOne({
+          let res = await (window as any).sequelize.models[model].findOne({
             attributes: { exclude: ['id', 'updatedAt', 'createdAt'] },
           });
 

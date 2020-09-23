@@ -26,35 +26,11 @@ export default async function createStore() {
   const keys = Object.keys(storageMap);
   let store: IAnyObject;
 
-  // try {
-  //   await sequelize.authenticate();
-  //   console.log('Database connection OK!');
-  // } catch (error) {
-  //   console.log('Unable to connect to the database:');
-  //   console.log(error.message);
-  //   // process.exit(1);
-  // }
-
-  // // sequelize.models.Setting.create({ theme: 'dark' });
-  // console.log(88888);
-  // let res = await sequelize.models.Setting.findOne({
-  //   attributes: { exclude: ['id', 'updatedAt', 'createdAt'] },
-  // });
-  // console.log(res.toJSON());
-  // console.log(
-  //   await sequelize.models.Setting.findOne({
-  //     attributes: { exclude: ['id', 'updatedAt', 'createdAt'] },
-  //   })
-  // );
-  // console.log(777777);
-
   store = {};
 
   keys.forEach((key) => {
     store[key] = new storageMap[key]();
   });
-
-  // return store;
 
   try {
     manager.stores = {

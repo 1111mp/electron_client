@@ -52,8 +52,6 @@ export class PersistManager {
   }
 
   setItems(source: string, state: State): Promise<void> {
-    console.log(source)
-    console.log(state)
     return new Promise((resolve, reject) => {
       const persister = this.persisters[source];
 

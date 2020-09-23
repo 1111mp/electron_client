@@ -1,4 +1,4 @@
-import './styles.styl';
+import './styles.scss';
 
 import React, { Component, Fragment } from 'react';
 import { inject, observer } from 'mobx-react';
@@ -27,21 +27,21 @@ export default class MsgsContainer extends Component<Props> {
     hasMore: false,
   };
 
-  renderLoadMore() {
-    const { hasMore } = this.props;
-    return (
-      <div className="load_more-wrapper">
-        {hasMore ? (
-          <Fragment>
-            <p className="load_more-icon"></p>
-            加载中...
-          </Fragment>
-        ) : (
-          <Fragment>没有更多消息了</Fragment>
-        )}
-      </div>
-    );
-  }
+  // renderLoadMore() {
+  //   const { hasMore } = this.props;
+  //   return (
+  //     <div className="load_more-wrapper">
+  //       {hasMore ? (
+  //         <Fragment>
+  //           <p className="load_more-icon"></p>
+  //           加载中...
+  //         </Fragment>
+  //       ) : (
+  //         <Fragment>没有更多消息了</Fragment>
+  //       )}
+  //     </div>
+  //   );
+  // }
 
   render() {
     const { messages, userId, chatType, loading } = this.props;
@@ -63,7 +63,7 @@ export default class MsgsContainer extends Component<Props> {
                 currentMessage: item,
                 previousMessage,
                 nextMessage,
-                position: item.user.userId === 1811763 ? 'right' : 'left',
+                position: item.user.userId === 1 ? 'right' : 'left',
                 user: item.user,
               };
               return <Message key={item.msgId} {...messageProps} />;

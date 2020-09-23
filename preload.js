@@ -1,6 +1,7 @@
 try {
   const { remote } = require('electron');
   const { nativeTheme } = remote.require('electron');
+  const { initDatabase, getThemeFromDatabase } = require('./app/db/index');
 
   // nativeTheme.themeSource = 'dark'
 
@@ -20,6 +21,8 @@ try {
       fn();
     });
   };
+
+  initDatabase();
 } catch (error) {
   console.log(error);
 }
