@@ -60,13 +60,26 @@ function loadLocaleData(locale: string): Promise<Record<string, any>> {
   }
 }
 
+function appInit() {
+  return Promise.all([
+    createStore(),
+    loadLocaleData(navigator.language),
+    getThemeFromDatabase(),
+  ]).then((res) => {
+    return {
+      stores: res[0],
+      messages: res[1],
+      setting: res[2],
+    };
+  });
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
-  const stores = await createStore();
-  const messages = await loadLocaleData(navigator.language);
   const loadAsyncComponents = preloadComponent();
+  let { stores, messages, setting } = await appInit();
 
   /** 初始化设置主题 */
-  const { theme = 'system' } = await getThemeFromDatabase();
+  const { theme = 'system' } = setting;
   applyTheme(theme);
 
   let statusCode = 200;

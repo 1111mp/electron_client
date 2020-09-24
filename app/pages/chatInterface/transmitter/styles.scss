@@ -45,6 +45,7 @@
     @include flex($direction:column);
     flex: 1;
     width: 100%;
-    padding-bottom: 12px;
+    margin-bottom: 12px;
+    overflow: hidden;
   }
 }

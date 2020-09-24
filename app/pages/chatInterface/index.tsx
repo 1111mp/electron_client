@@ -74,9 +74,10 @@ export default class ChatInterface extends BasicComponent<IAnyObject> {
 
   didMount() {
     setTimeout(() => {
+      let messages = getData()
       this.setState(
         {
-          messages: getData(),
+          messages
         },
         () => {
           this.scrollToBottom();
@@ -161,7 +162,7 @@ export default class ChatInterface extends BasicComponent<IAnyObject> {
           options={{
             probeType: 2,
             mouseWheel: true,
-            scrollbars: true,
+            scrollbars: 'custom',
             freeScroll: true,
             fadeScrollbars: true,
             shrinkScrollbars: 'scale',

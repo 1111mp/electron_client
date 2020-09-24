@@ -2,9 +2,32 @@
   flex: 1;
   width: 100%;
   padding: 0 20px;
+  overflow: hidden;
 
   .DraftEditor-root {
     height: 100%;
+    overflow: auto;
+
+    @include light-theme() {
+      color: $color-gray-90;
+    }
+
+    @include dark-theme() {
+      color: $color-gray-05;
+    }
+
+    .public-DraftEditorPlaceholder-root {
+      color: $color-gray-45;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      @include light-theme {
+        border: 1px solid $color-gray-25;
+      }
+      @include dark-theme {
+        border: 1px solid $color-gray-45;
+      }
+    }
   }
 
   &__emoji-suggestions {

@@ -1,4 +1,4 @@
-import './styles.global.scss';
+import './styles.scss';
 
 import * as React from 'react';
 import { createPortal } from 'react-dom';

@@ -16,8 +16,6 @@ let sequelize;
 
 function initDatabase() {
   try {
-    console.log(userDataPath);
-
     sequelize = new Sequelize('database', '', userInfo().username, {
       dialect: 'sqlite',
       dialectModule: require('@journeyapps/sqlcipher'),

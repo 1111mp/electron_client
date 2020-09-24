@@ -7,6 +7,34 @@
   height: 100%;
   overflow: hidden;
 
+  .iScrollVerticalScrollbar {
+    position: absolute;
+    z-index: 9999;
+    width: 6px;
+    bottom: 2px;
+    top: 2px;
+    right: 1px;
+
+    .iScrollIndicator {
+      box-sizing: border-box;
+      position: absolute;
+      // background: rgba(0, 0, 0, 0.5);
+      // border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 3px;
+      width: 100%;
+
+      @include light-theme() {
+        background: $color-gray-25;
+        border: 1px solid $color-gray-25;
+      }
+
+      @include dark-theme() {
+        background: $color-gray-45;
+        border: 1px solid $color-gray-45;
+      }
+    }
+  }
+
   &-header {
     @include flex($align:center);
     width: 100%;

@@ -94,6 +94,8 @@ export async function getThemeFromDatabase() {
 export function applyTheme(theme: string) {
   theme = theme !== 'system' ? theme : (window as any).systemTheme;
 
+  if (window.document.body.classList.contains(theme)) return;
+
   window.document.body.classList.remove('dark-theme');
   window.document.body.classList.remove('light-theme');
   window.document.body.classList.add(`${theme}-theme`);
