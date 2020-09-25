@@ -2,6 +2,7 @@ import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 import { LoadFileOption } from 'app/utils/dialog';
 
 const merge = require('lodash/merge');
+const path = require('path');
 const os = require('os');
 
 export interface WindowListener {
@@ -23,18 +24,20 @@ export default class ChildWindow {
   }
 
   createMainWindow = () => {
-    this.win = new BrowserWindow(merge(
-      {
-        center: true,
-        frame: false,
-        show: false,
-        resizable: false,
-        transparent: false,
-        webPreferences: {
-          nodeIntegration: true,
-        }
-      },
-      this.winOptions)
+    this.win = new BrowserWindow(
+      merge(
+        {
+          center: true,
+          frame: false,
+          show: false,
+          resizable: false,
+          transparent: false,
+          webPreferences: {
+            nodeIntegration: true,
+          },
+        },
+        this.winOptions
+      )
     );
 
     if (os.platform() === 'win32') {
@@ -45,7 +48,7 @@ export default class ChildWindow {
         return;
       });
     }
-  }
+  };
 
   bind = (cb?: WindowListener) => {
     this.win.once('ready-to-show', () => {
@@ -63,72 +66,73 @@ export default class ChildWindow {
     this.win.webContents.once('did-finish-load', () => {
       cb && cb.finish && cb.finish();
     });
-  }
+  };
 
   loadURL = (url: string) => {
     const userAgent = this.win.webContents.getUserAgent();
     this.win.loadURL(url, { userAgent });
-  }
+  };
 
   loadFile = (options: LoadFileOption) => {
     this.win.loadFile('./app.html', {
-      ...options
+      ...options,
     });
-  }
+  };
 
   getWebContents = () => {
     return this.win ? this.win.webContents : null;
-  }
+  };
 
   getUrl = () => {
     const webContents = this.win.webContents;
 
-    if (!webContents || webContents.isDestroyed() || webContents.isCrashed()) return '';
+    if (!webContents || webContents.isDestroyed() || webContents.isCrashed())
+      return '';
 
     return webContents.getURL();
-  }
+  };
 
   show = () => {
     this.win.show();
-  }
+  };
 
   focus = () => {
     this.win.focus();
-  }
+  };
 
   isVisible = () => {
     return this.win.isVisible();
-  }
+  };
 
   isDestroyed = () => {
     return this.win.isDestroyed();
-  }
+  };
 
   isMinimized = () => {
     return this.win.isMinimized();
-  }
+  };
 
   restore = () => {
     this.win.restore();
-  }
+  };
 
   mini = () => {
     this.win.minimize();
-  }
+  };
 
   hide = () => {
     this.win.hide();
-  }
+  };
 
   max = () => {
     this.win.maximize();
-  }
+  };
 
   reload = () => {
     this.win.reload();
-  }
+  };
 
   close = () => {
     this.win.close();
-  }
+  };
 }

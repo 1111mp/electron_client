@@ -21,7 +21,7 @@ export function queryMergeToObj(search: string, target: string = '') {
   const matchQuery = search.match(QUERY_REGEXP);
   const matchTarget = target.match(QUERY_REGEXP);
   const getQueryObj = (match?: string[] | null) => {
-    const obj = {};
+    const obj: any = {};
 
     match &&
       match.forEach((str) => {
@@ -41,7 +41,7 @@ export function queryMergeToObj(search: string, target: string = '') {
  * @param target
  */
 export function queryMergeToStr(search: string, target: string = '') {
-  const obj = queryMergeToObj(search, target);
+  const obj: any = queryMergeToObj(search, target);
 
   let queryStr = '';
   Object.keys(obj).forEach((key) => {
@@ -63,6 +63,17 @@ export function queryParse(search?: string): IAnyObject {
   } else {
     return query.parse(getLocationSearch());
   }
+}
+
+/**
+ * 获取query值
+ * @param key
+ */
+export function queryString(key?: string): any {
+  if (typeof window === 'undefined') return '';
+
+  const queryObj = query.parse(getLocationSearch());
+  return key ? queryObj[key] || '' : queryObj;
 }
 
 export type Message = {
@@ -94,7 +105,7 @@ export async function getThemeFromDatabase() {
 export function applyTheme(theme: string) {
   theme = theme !== 'system' ? theme : (window as any).systemTheme;
 
-  if (window.document.body.classList.contains(theme)) return;
+  if (window.document.body.classList.contains(`${theme}-theme`)) return;
 
   window.document.body.classList.remove('dark-theme');
   window.document.body.classList.remove('light-theme');

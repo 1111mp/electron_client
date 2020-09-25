@@ -282,8 +282,8 @@ export default class BasicComponent<Props = {}, State = {}, Other = any> extends
   }
 
   /** 获取当前窗口对象 */
-  $geCurrentWin = (): BrowserWindow => {
-    return this.$renderer.geCurrentWin();
+  $getCurrentWin = (): BrowserWindow => {
+    return this.$renderer.getCurrentWin();
   }
 
   /** 设置窗口尺寸 */

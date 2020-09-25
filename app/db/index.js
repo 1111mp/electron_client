@@ -32,7 +32,6 @@ function initDatabase() {
 
     // sequelize.sync({ alter: true });
     window.sequelize = sequelize;
-    console.log(sequelize);
   } catch (error) {
     console.log(error);
   }

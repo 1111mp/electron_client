@@ -15,17 +15,17 @@ export interface RouterConfig {
 const allRoutes = [
   {
     path: '/',
-    component: loadable(() => import('pages/indexPage')),
+    component: loadable(() => import('appMain/pages/indexPage')),
     exact: true,
   },
   {
     path: '/index',
-    component: loadable(() => import('pages/home')),
+    component: loadable(() => import('appMain/pages/home')),
     // exact: true,
     routes: [
       {
         path: '/index/chat',
-        component: loadable(() => import('pages/chatInterface')),
+        component: loadable(() => import('appMain/pages/chatInterface')),
         exact: true,
       },
     ],
@@ -42,7 +42,7 @@ const allRoutes = [
   },
   {
     path: '/userCenter',
-    component: loadable(() => import('pages/userCenter')),
+    component: loadable(() => import('appMain/pages/userCenter')),
     exact: true,
   },
 ] as RouterConfig[];

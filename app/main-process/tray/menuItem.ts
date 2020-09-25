@@ -1,10 +1,10 @@
 /*
  * @Author: 张逸凡
  * @Date: 2019-12-16 12:23:00
- * @LastEditTime: 2020-08-05 15:12:42
+ * @LastEditTime: 2020-09-25 15:09:25
  * @LastEditors: Please set LastEditors
  * @Description: 系统托盘的菜单选项
- * @FilePath: \electron_client\app\main-process\tray\menuItem.ts
+ * @FilePath: \electron_client\process\main-process\tray\menuItem.ts
  */
 import { MenuItemConstructorOptions } from 'electron';
 import { createCusWin } from '../customWin';

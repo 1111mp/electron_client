@@ -23,16 +23,23 @@ export default merge(baseConfig, {
 
   target: process.env.E2E_BUILD ? 'electron-renderer' : 'electron-preload',
 
-  entry: [
-    'core-js',
-    'regenerator-runtime/runtime',
-    path.join(__dirname, '..', 'app/index.tsx'),
-  ],
+  entry: {
+    appMain: [
+      'core-js',
+      'regenerator-runtime/runtime',
+      path.join(__dirname, '..', 'app/appMain/index.tsx'),
+    ],
+    appBrowser: [
+      'core-js',
+      'regenerator-runtime/runtime',
+      path.join(__dirname, '..', 'app/appBrowser/index.tsx'),
+    ],
+  },
 
   output: {
     path: path.join(__dirname, '..', 'app/dist'),
     publicPath: './dist/',
-    filename: 'renderer.prod.js',
+    filename: 'renderer.prod.[name].js',
   },
 
   module: {
@@ -121,9 +128,9 @@ export default merge(baseConfig, {
           {
             loader: 'sass-resources-loader',
             options: {
-              resources: [path.join(__dirname, '../app/styles/mixin.scss')]
-            }
-          }
+              resources: [path.join(__dirname, '../app/styles/mixin.scss')],
+            },
+          },
         ],
       },
       {
@@ -139,8 +146,8 @@ export default merge(baseConfig, {
               //   localIdentName: '[name]__[local]__[hash:base64:5]',
               // },
               sourceMap: true,
-              importLoaders: 1
-            }
+              importLoaders: 1,
+            },
           },
           {
             loader: 'stylus-loader',
@@ -148,8 +155,8 @@ export default merge(baseConfig, {
               sourceMap: true,
               import: [path.join(__dirname, '../app/styles/mixin.styl')], //你公共样式存放的位置
               // paths: [] //公共样式文件位置
-            }
-          }
+            },
+          },
         ],
       },
       // WOFF Font

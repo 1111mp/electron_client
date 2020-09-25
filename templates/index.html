@@ -42,9 +42,9 @@
       if (process.env.START_HOT) {
         // Dynamically insert the bundled app script in the renderer process
         const port = process.env.PORT || 1212;
-        scripts.push(`http://localhost:${port}/dist/renderer.dev.js`);
+        scripts.push(`http://localhost:${port}/dist/renderer.appMain.js`);
       } else {
-        scripts.push('./dist/renderer.prod.js');
+        scripts.push('./dist/renderer.prod.appMain.js');
       }
 
       if (scripts.length) {

@@ -4,7 +4,6 @@ import manager from './StoreManager';
 import ClientStore from './client';
 import UserStore from './user';
 import SettingStore from './setting';
-import sequelize from '../db';
 
 Config.isDev &&
   import('mobx-logger').then((logger) => {

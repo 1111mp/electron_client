@@ -3,9 +3,10 @@
     "baseUrl": ".",
     "paths": {
       "app/*": ["app/*"],
+      "appMain/*": ["app/appMain/*"],
+      "appBrowser/*": ["app/appBrowser/*"],
       "components/*": ["app/components/*"],
       "containers/*": ["app/containers/*"],
-      "pages/*": ["app/pages/*"],
       "stores/*": ["app/stores/*"],
       "routes/*": ["app/routes/*"],
       "utils/*": ["app/utils/*"],

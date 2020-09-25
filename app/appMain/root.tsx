@@ -6,9 +6,9 @@ import { renderRoutes } from 'react-router-config';
 import { createBrowserHistory, createHashHistory } from 'history';
 import { syncHistoryWithStore } from 'mobx-react-router';
 import { IntlProvider } from 'react-intl';
-import Config from './config';
+import Config from 'app/config';
 // import createRoutes from './routes';
-import allRoutes from 'app/routes/route_config';
+import allRoutes from './routes/route_config';
 
 const History = Config.isBorwserHistory
   ? createBrowserHistory({

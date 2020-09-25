@@ -1,14 +1,24 @@
-import { Event, ipcMain, WebContents } from 'electron';
+import { Event, ipcMain, WebContents, IpcMainEvent } from 'electron';
 import log from 'electron-log';
 import { openDevTools } from './devTools';
 import dialog from './dialog';
 import customWin from './customWin';
 import browser from './browser';
 import notifier from './notifier';
+import _ from 'lodash';
 
 const listener = require('../constants/listener.json');
 
 export type ChannelType = 'on' | 'once';
+
+export type Callbacks = {
+  [cbName: string]: number[];
+};
+
+export type Callback = {
+  id: number;
+  cbName: string;
+};
 
 export class MainProcess {
   /** 单例模式（仅适用于单线程） */
@@ -23,9 +33,24 @@ export class MainProcess {
   }
 
   private _allEvents: IAnyObject;
+  private _rendererCallbacks: Callbacks;
 
   constructor() {
     this._allEvents = {};
+    this._rendererCallbacks = {};
+  }
+
+  registCallback(cb: Callback) {
+    const { id, cbName } = cb;
+    this._rendererCallbacks[cbName] &&
+      this._rendererCallbacks[cbName].indexOf(id) === -1 &&
+      this._rendererCallbacks[cbName].push(id);
+  }
+
+  revokeCallback(cb: Callback) {
+    const { id, cbName } = cb;
+    this._rendererCallbacks[cbName] &&
+      _.remove(this._rendererCallbacks[cbName], id);
   }
 
   /**
@@ -84,6 +109,8 @@ export class MainProcess {
   }
 }
 
+export const mainProcess = MainProcess.getInstance();
+
 /** 这里可以添加一些定义好的channel */
 const events: any = {
   // 开发者工具
@@ -93,6 +120,21 @@ const events: any = {
       openDevTools(webContent);
     };
   },
+  [listener.REGIST_CALLBACK]() {
+    return (event: IpcMainEvent, cbName: string) => {
+      mainProcess.registCallback({ id: event.sender.id, cbName });
+    };
+  },
+  [listener.REVOKE_CALLBACK]() {
+    return (event: IpcMainEvent, cbName: string) => {
+      mainProcess.revokeCallback({ id: event.sender.id, cbName });
+    };
+  },
+  [listener.THEME_SETTING]() {
+    return (event: IpcMainEvent) => {
+      // event.reply(window.)
+    };
+  },
   ...dialog,
   ...customWin,
   ...browser,
@@ -100,7 +142,7 @@ const events: any = {
 };
 
 export default function () {
-  const mainProcess = MainProcess.getInstance();
+  let mainProcess = MainProcess.getInstance();
 
   Object.keys(events).forEach((event) => {
     mainProcess.on(event, events[event]());

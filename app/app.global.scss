@@ -1,5 +1,3 @@
-@import './styles/mixin.scss';
-
 .dialog-btn {
   @include flex($justify:center, $align:center);
   width: 160px;

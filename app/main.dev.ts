@@ -63,9 +63,6 @@ const installExtensions = async () => {
 };
 
 const createWindow = async () => {
-  console.log(app.getPath('home'))
-  console.log(app.getPath('appData'))
-  console.log(app.getPath('userData'))
   if (
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
@@ -95,7 +92,9 @@ const createWindow = async () => {
           },
   });
 
-  mainWindow.loadURL(`file://${__dirname}/app.html`);
+  mainWindow.loadURL(
+    `file://${path.resolve(__dirname, '../templates/index.html')}`
+  );
   //开发者工具 https://newsn.net/say/electron-devtools.html
   mainWindow.webContents.openDevTools({ mode: 'undocked' });
 

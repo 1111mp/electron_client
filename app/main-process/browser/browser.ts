@@ -1,6 +1,8 @@
 import ChildWindow from '../win/childWin';
 import { BROWSER } from '../../config';
 
+const path = require('path');
+
 export default class Browser {
   isShown: boolean;
   winInstance?: ChildWindow;
@@ -16,11 +18,11 @@ export default class Browser {
     this.onFinish = args && args.finish;
     this.onClosed = args && args.closed;
 
-    this.createWindow();
+    this.createWindow(args.url || '');
   }
 
-  createWindow() {
-    const winInstance = this.winInstance = new ChildWindow({
+  createWindow(url: string) {
+    const winInstance = (this.winInstance = new ChildWindow({
       width: BROWSER.width,
       height: BROWSER.height,
       minWidth: BROWSER.width,
@@ -28,9 +30,9 @@ export default class Browser {
       center: true,
       resizable: true,
       webPreferences: {
-        webviewTag: true
-      }
-    });
+        webviewTag: true,
+      },
+    }));
 
     winInstance.bind({
       readyToShow: () => {
@@ -38,10 +40,12 @@ export default class Browser {
         this.isShown = true;
       },
       finish: this.onFinish,
-      closed: this.onClosed
+      closed: this.onClosed,
     });
 
-    winInstance.loadFile({ hash: BROWSER.url });
+    winInstance.loadURL(
+      `file://${path.resolve(__dirname, '../../../templates/browser.html')}?url=${url}`
+    );
 
     return winInstance;
   }

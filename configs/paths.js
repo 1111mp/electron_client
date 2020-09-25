@@ -11,9 +11,10 @@ const resolveApp = (relativePath) => path.resolve(appDirectory, relativePath);
 module.exports = {
   alias: {
     app: resolveApp('app/'),
+    appMain: resolveApp('app/appMain'),
+    appBrowser: resolveApp('app/appBrowser'),
     components: resolveApp('app/components'),
     containers: resolveApp('app/containers'),
-    pages: resolveApp('app/pages'),
     stores: resolveApp('app/stores'),
     routes: resolveApp('app/routes'),
     utils: resolveApp('app/utils'),

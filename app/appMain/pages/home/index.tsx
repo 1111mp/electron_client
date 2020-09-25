@@ -22,6 +22,10 @@ const themes = [
 })
 @observer
 export default class Home extends BasicComponent<IAnyObject> {
+  openBrowser = () => {
+    this.$openBrowser('https://www.baidu.com')
+  };
+
   $render(): JSX.Element {
     const { route, location } = this.props;
     const { pathname } = location;
@@ -30,6 +34,7 @@ export default class Home extends BasicComponent<IAnyObject> {
         <div className="module-home">
           <div className="module-home-sider">
             <RoomList />
+            <p onClick={this.openBrowser}>browser</p>
           </div>
           <div className="module-home-content">
             {pathname === '/index' ? <Empty /> : null}

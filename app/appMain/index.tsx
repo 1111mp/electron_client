@@ -14,11 +14,12 @@ import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
 import { matchRoutes } from 'react-router-config';
 // import Root from './root';
 import Config from 'app/config';
-import createStore from 'app/stores';
-import routerConfig from 'app/routes/route_config';
-import './app.global.css';
-import './app.global.scss';
-import { applyTheme, getThemeFromDatabase } from './utils';
+import createStore from './stores';
+import routerConfig from './routes/route_config';
+import './main.global.css';
+import 'app/app.global.css';
+import 'app/app.global.scss';
+import { applyTheme, getThemeFromDatabase } from 'app/utils';
 
 function getPathname() {
   return Config.isBorwserHistory
@@ -53,10 +54,10 @@ const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
 function loadLocaleData(locale: string): Promise<Record<string, any>> {
   switch (locale) {
     case 'en':
-      return import('../_locales/en/messages.json');
+      return import('../../_locales/en/messages.json');
     case 'zh-CN':
     default:
-      return import('../_locales/zh_CN/messages.json');
+      return import('../../_locales/zh_CN/messages.json');
   }
 }
 

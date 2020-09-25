@@ -15,7 +15,7 @@ export default class RendererProcess {
   }
 
   private _electron?: any;
-  private _win: BrowserWindow;
+  private _win?: BrowserWindow;
   private _allEvents: IAnyObject;
 
   _onWindowStatusChanged?: (e: Event, status: string) => void;
@@ -31,13 +31,13 @@ export default class RendererProcess {
       get() {
         const { remote } = require('electron');
         return remote.getCurrentWindow();
-      }
+      },
     });
 
     Object.defineProperty(this, '_electron', {
       get() {
         return require('electron');
-      }
+      },
     });
   }
 
@@ -63,13 +63,14 @@ export default class RendererProcess {
       'enter-full-screen', // 窗口进入全屏状态时触发
       'leave-full-screen', // 窗口离开全屏状态时触发
       'minimize', // 窗口最小化时触发
-      'restore' // 当窗口从最小化状态恢复时触发
-    ]
+      'restore', // 当窗口从最小化状态恢复时触发
+    ];
     const method = isBind ? 'on' : 'removeListener';
     events.forEach((event: any) => {
       win[method](
         event,
-        (e: Event) => this._onWindowStatusChanged && this._onWindowStatusChanged(e, event)
+        (e: Event) =>
+          this._onWindowStatusChanged && this._onWindowStatusChanged(e, event)
       );
     });
 
@@ -82,7 +83,7 @@ export default class RendererProcess {
    * @description: 获取当前窗口对象
    * @return: 当前窗口对象
    */
-  geCurrentWin(): BrowserWindow {
+  getCurrentWin(): BrowserWindow | void {
     if (!this._electron) return;
 
     const { remote } = this._electron;
@@ -158,10 +159,10 @@ export default class RendererProcess {
     if (!this._electron) return;
 
     const events = Object.keys(this._allEvents);
-    events.forEach(channel => {
+    events.forEach((channel) => {
       /** 也可使用removeAllListeners一次性清楚所有注册过的channel
-      * https://electronjs.org/docs/api/ipc-renderer#ipcrendererremovealllistenerschannel
-      */
+       * https://electronjs.org/docs/api/ipc-renderer#ipcrendererremovealllistenerschannel
+       */
       if (this._allEvents[channel]) {
         this._electron.ipcRenderer.removeListener(
           channel,
@@ -177,7 +178,9 @@ export default class RendererProcess {
    * @return: boolean
    */
   isResizable(): boolean {
-    return this._win && this._win.isResizable();
+    return this._win && this._win.isResizable()
+      ? this._win.isResizable()
+      : false;
   }
 
   /**
@@ -247,7 +250,7 @@ export default class RendererProcess {
    * @return: Integer []
    */
   getSize(): number[] {
-    return this._win && this._win.getSize();
+    return this._win && this._win.getSize() ? this._win.getSize() : [];
   }
 
   /**

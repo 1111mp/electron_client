@@ -28,6 +28,8 @@ const requiredByDLLConfig = module.parent.filename.includes(
   'webpack.config.renderer.dev.dll'
 );
 
+// const CompressionWebpackPlugin = require('compression-webpack-plugin');
+
 /**
  * Warn if the DLL is not built
  */
@@ -40,6 +42,11 @@ if (!requiredByDLLConfig && !(fs.existsSync(dll) && fs.existsSync(manifest))) {
   execSync('yarn build-dll');
 }
 
+/**
+ * webpack 详解
+ * https://github.com/sisterAn/blog/issues/68
+ */
+
 export default merge(baseConfig, {
   devtool: 'inline-source-map',
 
@@ -47,18 +54,30 @@ export default merge(baseConfig, {
 
   target: 'electron-renderer',
 
-  entry: [
-    'core-js',
-    'regenerator-runtime/runtime',
-    ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
-    `webpack-dev-server/client?http://localhost:${port}/`,
-    'webpack/hot/only-dev-server',
-    require.resolve('../app/index.tsx'),
-  ],
+  /**
+   * webpack-dev-server 的inline模式
+   * https://segmentfault.com/a/1190000006964335
+   */
+  entry: {
+    appMain: [
+      'core-js',
+      'regenerator-runtime/runtime',
+      ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
+      `webpack-dev-server/client?http://localhost:${port}/`,
+      'webpack/hot/only-dev-server',
+      require.resolve('../app/appMain/index.tsx'),
+    ],
+    appBrowser: [
+      ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
+      `webpack-dev-server/client?http://localhost:${port}/`,
+      'webpack/hot/only-dev-server',
+      require.resolve('../app/appBrowser/index.tsx'),
+    ],
+  },
 
   output: {
     publicPath: `http://localhost:${port}/dist/`,
-    filename: 'renderer.dev.js',
+    filename: 'renderer.[name].js',
   },
 
   module: {
@@ -141,9 +160,9 @@ export default merge(baseConfig, {
           {
             loader: 'sass-resources-loader',
             options: {
-              resources: [path.join(__dirname, '../app/styles/mixin.scss')]
-            }
-          }
+              resources: [path.join(__dirname, '../app/styles/mixin.scss')],
+            },
+          },
         ],
       },
       // SASS support - compile all other .scss files and pipe it to style.css
@@ -187,16 +206,16 @@ export default merge(baseConfig, {
               //   localIdentName: '[name]__[local]__[hash:base64:5]',
               // },
               sourceMap: true,
-              importLoaders: 1
-            }
+              importLoaders: 1,
+            },
           },
           {
             loader: 'stylus-loader',
             options: {
               import: [path.join(__dirname, '../app/styles/mixin.styl')], //你公共样式存放的位置
               // paths: [] //公共样式文件位置
-            }
-          }
+            },
+          },
         ],
       },
       // WOFF Font
@@ -272,6 +291,17 @@ export default merge(baseConfig, {
     new webpack.HotModuleReplacementPlugin({
       multiStep: true,
     }),
+
+    // new CompressionWebpackPlugin({
+    //   filename: '[path][base].gz',
+    //   algorithm: 'gzip',
+    //   compressionOptions: {
+    //     level: 1
+    //   },
+    //   test: new RegExp('\\.(' + ['js', 'css'].join('|') + ')$'),
+    //   threshold: 10240,
+    //   minRatio: 0.8,
+    // }),
 
     new webpack.NoEmitOnErrorsPlugin(),
 

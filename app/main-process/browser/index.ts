@@ -1,6 +1,7 @@
-import { Event } from 'electron';
+import { IpcMainEvent } from 'electron';
 import Browser from './browser';
-import { send } from '../common';
+import { mainProcess } from 'app/main-process';
+// import { send } from '../common';
 
 const listener = require('../../constants/listener.json');
 
@@ -13,12 +14,15 @@ function clearDialog() {
 }
 
 /** 创建browser */
-function getBrowser(finish?: VoidFunction) {
+function getBrowser(finish?: VoidFunction, url?: string) {
   if (!browserStack.length) {
-    browserStack = [new Browser({
-      finish,
-      closed: clearDialog
-    })];
+    browserStack = [
+      new Browser({
+        url,
+        finish,
+        closed: clearDialog,
+      }),
+    ];
   } else {
     setTimeout(() => finish && finish());
   }
@@ -29,18 +33,22 @@ function getBrowser(finish?: VoidFunction) {
 export default {
   /** 创建browser */
   [listener.BROWSER_SHOW]() {
-    return (event: Event) => getBrowser();
+    return (event: IpcMainEvent) => getBrowser();
   },
 
   /** 内置浏览器打开指定url页面 */
   [listener.BROWSER_OPEN_URL]() {
-    return (event: Event, url: string) => {
+    return (event: IpcMainEvent, url: string) => {
+      console.log(777777777);
+      console.log(event.sender.id);
+
       const browser = getBrowser(() => {
-        send(browser.winInstance.win.webContents, {
-          channel: listener.BROWSER_OPEN_URL,
-          data: url
-        });
-      });
-    }
+        // send(browser.winInstance.win.webContents, {
+        //   channel: listener.BROWSER_OPEN_URL,
+        //   data: url
+        // });
+        console.log('browser finished');
+      }, url);
+    };
   },
-}
+};

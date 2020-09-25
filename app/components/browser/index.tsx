@@ -1,72 +1,88 @@
-import './browser.global.scss';
+import './browser.scss';
 
 import * as React from 'react';
-import { Fragment } from 'react';
 
-import BasicComponent from "components/BasicComponent";
-// import { Tag } from 'antd';
+import BasicComponent from 'components/BasicComponent';
+import { WebviewTag } from 'electron';
 import { BROWSER } from 'app/config';
+import { queryParse } from 'app/utils';
 
-const TabGroup = require('electron-tabs');
+import TabGroup, { Tab } from 'electron-tabs';
 
-const listener = require('app/constants/listener.json');
+// const listener = require('app/constants/listener.json');
 // const { Header, Content } = Layout;
 // const styles = require();
+type State = {
+  iscrollInstance: any;
+  activeWebView: WebviewTag | null;
+  isMaximized: boolean;
+  canGoBack: boolean;
+  canGoForward: boolean;
+};
 
 export default class Browser extends BasicComponent {
-  private tabGroup?: any;
-  // state: IDialog.state;
+  private tabGroup?: TabGroup;
+  private scrollInstance?: any;
 
-  state = {
+  state: State = {
     iscrollInstance: null,
     activeWebView: null,
     isMaximized: false,
     canGoBack: false,
-    canGoForward: false
-  }
+    canGoForward: false,
+  };
 
   didMount() {
-    this.$on(listener.BROWSER_OPEN_URL, args => {
-      console.log(333333333333)
-      console.log(args)
-      this.openUrl(args.data);
-    })
+    const { url } = queryParse(location.search);
+    this.initTabGroup();
+    this.openUrl(url);
+  }
 
-    const tabGroup = this.tabGroup = new TabGroup({
+  willUnmount() {
+    // this.tabGroup = null;
+  }
+
+  initTabGroup = () => {
+    this.tabGroup = new TabGroup({
       /** 不展示新建窗口按钮 如需展示 设置newTab属性 */
       // newTab: {
       //   title: 'New Tab'
       // }
     });
 
-    tabGroup.on('tab-added', (tab) => {
+    // tabGroup.addTab({
+    //   title: 'Google',
+    //   src: 'https://www.baidu.com'
+    // });
+
+    this.tabGroup.on('tab-added', (tab: Tab) => {
       /** tab失去焦点是触发 包括被close也会触发 */
-      tab.on('inactive', (tab) => {
+      tab.on('inactive', (tab: Tab) => {
         setTimeout(() => {
           const { activeWebView } = this.state;
           this.setState({
-            canGoBack: activeWebView.canGoBack(),
-            canGoForward: activeWebView.canGoForward(),
-          })
-        })
+            canGoBack: (activeWebView as WebviewTag).canGoBack(),
+            canGoForward: (activeWebView as WebviewTag).canGoForward(),
+          });
+        });
       });
 
       tab.webview.addEventListener('dom-ready', () => {
         this.setState({
           canGoBack: tab.webview.canGoBack(),
           canGoForward: tab.webview.canGoForward(),
-        })
+        });
         tab.webview.addEventListener('did-navigate-in-page', () => {
           this.setState({
             canGoBack: tab.webview.canGoBack(),
             canGoForward: tab.webview.canGoForward(),
-          })
+          });
         });
       });
-    })
+    });
 
     /** 设置当前活动的webview */
-    tabGroup.on('tab-active', (tab, tabGroup) => {
+    this.tabGroup.on('tab-active', (tab, tabGroup) => {
       this.setState({
         activeWebView: tab.webview,
       });
@@ -77,25 +93,26 @@ export default class Browser extends BasicComponent {
     });
 
     /** 没有tab，则关闭窗口 */
-    tabGroup.on('tab-removed', (tab, group) => {
+    this.tabGroup.on('tab-removed', (tab: Tab, group) => {
       !group.tabs.length && this.$close();
     });
-  }
+  };
 
   openUrl = (src: string) => {
-    this.tabGroup && this.tabGroup.addTab({
-      title: 'loading...',
-      active: true,
-      src,
-      ready: (tab) => this.initTabWebView(tab),
-    });
-  }
+    this.tabGroup &&
+      this.tabGroup.addTab({
+        title: 'loading...',
+        active: true,
+        src,
+        ready: (tab) => this.initTabWebView(tab),
+      });
+  };
 
   initTabWebView = (tabInstance: any) => {
     const { iscrollInstance } = this.state;
     const { webview } = tabInstance;
 
-    tabInstance.on("close", (tab) => {
+    tabInstance.on('close', (tab: Tab) => {
       if (iscrollInstance) {
         iscrollInstance.refresh();
       } else {
@@ -141,12 +158,13 @@ export default class Browser extends BasicComponent {
     webview.addEventListener('did-fail-load', (...args: any[]) => {
       console.log('load failed', args);
     });
-  }
+  };
 
   initIscroll = () => {
+    // @ts-ignore
     import('iscroll').then((iscroll) => {
       const IScroll = iscroll.default;
-      const iscrollInstance = new IScroll(this.refs.iscroll, {
+      const iscrollInstance = new IScroll(this.scrollInstance, {
         // scrollbars: true,
         mouseWheel: true,
         scrollX: true,
@@ -155,7 +173,7 @@ export default class Browser extends BasicComponent {
 
       this.setState({ iscrollInstance });
     });
-  }
+  };
 
   setMaximize = (flag: boolean) => {
     const method = flag ? '$maximize' : '$unmaximize';
@@ -165,7 +183,7 @@ export default class Browser extends BasicComponent {
       /** 恢复大小需要重设尺寸 */
       !flag && this.$setSize(BROWSER.width, BROWSER.height);
     });
-  }
+  };
 
   renderHistory = () => {
     const { activeWebView, canGoBack, canGoForward } = this.state;
@@ -175,28 +193,28 @@ export default class Browser extends BasicComponent {
         <li
           className={'icon-history ' + (canGoBack ? '' : 'history-disabled')}
           style={{ marginRight: '2px' }}
-          onMouseDown={e => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
           onClick={() => activeWebView && activeWebView.goBack()}
         >
           <i className="iconfont iconpre"></i>
         </li>
         <li
           className={'icon-history ' + (canGoForward ? '' : 'history-disabled')}
-          onMouseDown={e => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
           onClick={() => activeWebView && activeWebView.goForward()}
         >
           <i className="iconfont iconnext"></i>
         </li>
         <li
           className={'icon-history'}
-          onMouseDown={e => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
           onClick={() => activeWebView && activeWebView.reload()}
         >
           <i className="iconfont iconshuaxin"></i>
         </li>
       </ul>
     );
-  }
+  };
 
   renderController = () => {
     const { isMaximized } = this.state;
@@ -205,7 +223,7 @@ export default class Browser extends BasicComponent {
         <li
           className="icon-item"
           style={{ marginRight: '8px' }}
-          onMouseDown={e => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
           onClick={() => this.$minimize()}
         >
           <i className={'iconfont icontop-minimum'}></i>
@@ -213,28 +231,36 @@ export default class Browser extends BasicComponent {
         <li
           className="icon-item"
           style={{ marginRight: '8px' }}
-          onMouseDown={e => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
           onClick={() => this.setMaximize(!isMaximized)}
         >
-          <i className={'iconfont ' + (isMaximized ? 'icontop-tonormal ' : 'icontop-maximize')}></i>
+          <i
+            className={
+              'iconfont ' +
+              (isMaximized ? 'icontop-tonormal ' : 'icontop-maximize')
+            }
+          ></i>
         </li>
         <li
           className="icon-item"
-          onMouseDown={e => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
           onClick={() => this.$close()}
         >
           <i className={'iconfont icontop-close'}></i>
         </li>
       </ul>
     );
-  }
+  };
 
   $render() {
     return (
-      <Fragment>
+      <div className="module-browser">
         <div className="etabs-tabgroup">
           {this.renderHistory()}
-          <div className="browser-tabs-container" ref="iscroll">
+          <div
+            className="browser-tabs-container"
+            ref={(ref) => (this.scrollInstance = ref)}
+          >
             <div className="etabs-tabs"></div>
           </div>
           {/* <div className="etabs-buttons"></div> */}
@@ -242,7 +268,7 @@ export default class Browser extends BasicComponent {
           {this.renderController()}
         </div>
         <div className="etabs-views"></div>
-      </Fragment>
-    )
+      </div>
+    );
   }
 }

@@ -1,5 +1,9 @@
 {
   "MAIN_DEVTOOLS": "devtools",
+  "REGIST_CALLBACK": "regist-callback",
+  "REVOKE_CALLBACK": "revoke-callback",
+
+  "THEME_SETTING": "theme-setting",
 
   "DIALOG_SHOW": "dialog-show",
   "DIALOG_CONFIRM": "dialog-confirm",
