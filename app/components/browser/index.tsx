@@ -252,6 +252,10 @@ export default class Browser extends BasicComponent {
     );
   };
 
+  // callEvent = () => {
+  //   this.$callEvent('get_name', { name: 123456789 });
+  // };
+
   $render() {
     return (
       <div className="module-browser">

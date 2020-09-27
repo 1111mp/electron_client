@@ -22,9 +22,23 @@ const themes = [
 })
 @observer
 export default class Home extends BasicComponent<IAnyObject> {
-  openBrowser = () => {
-    this.$openBrowser('https://www.baidu.com')
-  };
+  // invokeEvent = () => {
+  //   this.$registEvent('get_name', this.getName);
+  // };
+
+  // revokeEvent = () => {
+  //   this.$revokeEvent('get_name', this.getName);
+  // };
+
+  // openBrowser = () => {
+  //   this.$openBrowser('https://www.baidu.com');
+  // };
+
+  // getName = (data: any) => {
+  //   console.log('namenamenamenamename');
+  //   console.log(data);
+  //   console.log(this.invokeEvent);
+  // };
 
   $render(): JSX.Element {
     const { route, location } = this.props;
@@ -34,7 +48,6 @@ export default class Home extends BasicComponent<IAnyObject> {
         <div className="module-home">
           <div className="module-home-sider">
             <RoomList />
-            <p onClick={this.openBrowser}>browser</p>
           </div>
           <div className="module-home-content">
             {pathname === '/index' ? <Empty /> : null}

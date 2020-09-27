@@ -1,7 +1,9 @@
 {
   "MAIN_DEVTOOLS": "devtools",
-  "REGIST_CALLBACK": "regist-callback",
-  "REVOKE_CALLBACK": "revoke-callback",
+
+  "REGIST_EVENT": "regist-event",
+  "REVOKE_EVENT": "revoke-event",
+  "INVOKE_EVENT": "invoke-event",
 
   "THEME_SETTING": "theme-setting",
 

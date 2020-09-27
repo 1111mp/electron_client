@@ -1,4 +1,4 @@
-import { Event, ipcMain, WebContents, IpcMainEvent } from 'electron';
+import { Event, ipcMain, IpcMainEvent, WebContents } from 'electron';
 import log from 'electron-log';
 import { openDevTools } from './devTools';
 import dialog from './dialog';
@@ -6,18 +6,24 @@ import customWin from './customWin';
 import browser from './browser';
 import notifier from './notifier';
 import _ from 'lodash';
+const { webContents } = require('electron');
 
 const listener = require('../constants/listener.json');
 
 export type ChannelType = 'on' | 'once';
 
-export type Callbacks = {
-  [cbName: string]: number[];
+export type CbEvents = {
+  [eventId: string]: number[];
 };
 
-export type Callback = {
+export type CbEvent = {
   id: number;
-  cbName: string;
+  eventId: string;
+};
+
+export type InvokeCb = {
+  eventId: string;
+  [key: string]: any;
 };
 
 export class MainProcess {
@@ -33,24 +39,48 @@ export class MainProcess {
   }
 
   private _allEvents: IAnyObject;
-  private _rendererCallbacks: Callbacks;
+  private _rendererEvents: CbEvents;
 
   constructor() {
     this._allEvents = {};
-    this._rendererCallbacks = {};
+    this._rendererEvents = {};
   }
 
-  registCallback(cb: Callback) {
-    const { id, cbName } = cb;
-    this._rendererCallbacks[cbName] &&
-      this._rendererCallbacks[cbName].indexOf(id) === -1 &&
-      this._rendererCallbacks[cbName].push(id);
+  registEvent(cb: CbEvent) {
+    const { id, eventId } = cb;
+    this._rendererEvents[eventId] = this._rendererEvents[eventId] || [];
+
+    this._rendererEvents[eventId] &&
+      this._rendererEvents[eventId].indexOf(id) === -1 &&
+      this._rendererEvents[eventId].push(id);
+
+    console.log(this._rendererEvents);
   }
 
-  revokeCallback(cb: Callback) {
-    const { id, cbName } = cb;
-    this._rendererCallbacks[cbName] &&
-      _.remove(this._rendererCallbacks[cbName], id);
+  invokeEvent(args: InvokeCb) {
+    const { eventId } = args;
+
+    this._rendererEvents[eventId] &&
+      webContents
+        .getAllWebContents()
+        .filter(
+          (content) => this._rendererEvents[eventId].indexOf(content.id) !== -1
+        )
+        .forEach((content) => {
+          content.executeJavaScript(
+            `window.nts.${eventId} && window.nts.${eventId}.forEach(cb => cb(${JSON.stringify({
+              ...args,
+            })}))`
+          );
+        });
+  }
+
+  revokeEvent(cb: CbEvent) {
+    const { id, eventId } = cb;
+    this._rendererEvents[eventId] &&
+      _.remove(this._rendererEvents[eventId], id);
+
+    console.log(this._rendererEvents);
   }
 
   /**
@@ -120,14 +150,28 @@ const events: any = {
       openDevTools(webContent);
     };
   },
-  [listener.REGIST_CALLBACK]() {
-    return (event: IpcMainEvent, cbName: string) => {
-      mainProcess.registCallback({ id: event.sender.id, cbName });
+  [listener.REGIST_EVENT]() {
+    return (event: IpcMainEvent, eventId: string) => {
+      console.log(11111111111);
+      console.log(eventId);
+      console.log(event.sender.id);
+      mainProcess.registEvent({ id: event.sender.id, eventId });
     };
   },
-  [listener.REVOKE_CALLBACK]() {
-    return (event: IpcMainEvent, cbName: string) => {
-      mainProcess.revokeCallback({ id: event.sender.id, cbName });
+  [listener.REVOKE_EVENT]() {
+    return (event: IpcMainEvent, eventId: string) => {
+      console.log(22222222222);
+      console.log(eventId);
+      console.log(event.sender.id);
+      mainProcess.revokeEvent({ id: event.sender.id, eventId });
+    };
+  },
+  [listener.INVOKE_EVENT]() {
+    return (event: IpcMainEvent, args: InvokeCb) => {
+      console.log(3333333333);
+      console.log(args);
+      console.log(event.sender.id);
+      mainProcess.invokeEvent({ ...args });
     };
   },
   [listener.THEME_SETTING]() {
