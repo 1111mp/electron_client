@@ -1,4 +1,4 @@
-import './styles.styl'
+import './styles.scss'
 
 import React, { Component } from 'react'
 // import moment from 'moment'

@@ -88,6 +88,16 @@ export default class BasicComponent<
     this.$renderer.send(channel, args);
   };
 
+  /** 向主线程发送消息 同步获取结果 */
+  $sendSync = (channel: string, args?: any): any => {
+    return this.$renderer.sendSync(channel, args);
+  };
+
+  /** 向主线程发送消息 异步获取结果 */
+  $invoke = async (channel: string, args?: any): Promise<any> => {
+    return this.$renderer.invoke(channel, args);
+  };
+
   /** 往渲染线程中注册channel */
   $on = (channel: string, cb: CallBack): void => {
     this.$renderer.on(channel, cb);

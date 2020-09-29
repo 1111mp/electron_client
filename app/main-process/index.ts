@@ -10,7 +10,7 @@ const { webContents } = require('electron');
 
 const listener = require('../constants/listener.json');
 
-export type ChannelType = 'on' | 'once';
+export type ChannelType = 'on' | 'once' | 'handle';
 
 export type CbEvents = {
   [eventId: string]: number[];
@@ -24,6 +24,10 @@ export type CbEvent = {
 export type InvokeCb = {
   eventId: string;
   [key: string]: any;
+};
+
+export type MainDatas = {
+  [key: string]: string;
 };
 
 export class MainProcess {
@@ -40,10 +44,12 @@ export class MainProcess {
 
   private _allEvents: IAnyObject;
   private _rendererEvents: CbEvents;
+  private _datas: MainDatas;
 
   constructor() {
     this._allEvents = {};
     this._rendererEvents = {};
+    this._datas = new Object() as MainDatas;
   }
 
   registEvent(cb: CbEvent) {
@@ -53,8 +59,6 @@ export class MainProcess {
     this._rendererEvents[eventId] &&
       this._rendererEvents[eventId].indexOf(id) === -1 &&
       this._rendererEvents[eventId].push(id);
-
-    console.log(this._rendererEvents);
   }
 
   invokeEvent(args: InvokeCb) {
@@ -68,9 +72,11 @@ export class MainProcess {
         )
         .forEach((content) => {
           content.executeJavaScript(
-            `window.nts.${eventId} && window.nts.${eventId}.forEach(cb => cb(${JSON.stringify({
-              ...args,
-            })}))`
+            `window.nts.${eventId} && window.nts.${eventId}.forEach(cb => cb(${JSON.stringify(
+              {
+                ...args,
+              }
+            )}))`
           );
         });
   }
@@ -79,8 +85,28 @@ export class MainProcess {
     const { id, eventId } = cb;
     this._rendererEvents[eventId] &&
       _.remove(this._rendererEvents[eventId], id);
+  }
 
-    console.log(this._rendererEvents);
+  setData(datas: MainDatas) {
+    this._datas = {
+      ...this._datas,
+      ...datas,
+    };
+  }
+
+  getData(keys: string[]) {
+    try {
+      return keys.map((key) => this._datas[key] || '');
+    } catch (error) {
+      throw new Error('Cannot find the specified data!');
+    }
+  }
+
+  deleteData(keys: string[]) {
+    keys &&
+      keys.forEach((key) => {
+        this._datas[key] && delete this._datas[key];
+      });
   }
 
   /**
@@ -124,6 +150,10 @@ export class MainProcess {
     this.regist(channel, cb, 'once');
   }
 
+  handle(channel: string, cb: any): void {
+    this.regist(channel, cb, 'handle');
+  }
+
   /**
    * @description: 从主线程中移除指定channel的listener
    * @param {string} channel  channel名
@@ -150,33 +180,41 @@ const events: any = {
       openDevTools(webContent);
     };
   },
+  /** 渲染线程向主线程注册事件 */
   [listener.REGIST_EVENT]() {
     return (event: IpcMainEvent, eventId: string) => {
-      console.log(11111111111);
-      console.log(eventId);
-      console.log(event.sender.id);
       mainProcess.registEvent({ id: event.sender.id, eventId });
     };
   },
+  /** 移除渲染线程向主线程注册的事件 */
   [listener.REVOKE_EVENT]() {
     return (event: IpcMainEvent, eventId: string) => {
-      console.log(22222222222);
-      console.log(eventId);
-      console.log(event.sender.id);
       mainProcess.revokeEvent({ id: event.sender.id, eventId });
     };
   },
+  /** 触发对应渲染线程注册过的事件 */
   [listener.INVOKE_EVENT]() {
     return (event: IpcMainEvent, args: InvokeCb) => {
-      console.log(3333333333);
-      console.log(args);
-      console.log(event.sender.id);
       mainProcess.invokeEvent({ ...args });
     };
   },
-  [listener.THEME_SETTING]() {
-    return (event: IpcMainEvent) => {
-      // event.reply(window.)
+  /** 渲染线程向主线程存数据 方便其他渲染线程获取 json格式数据 可传多个数据 */
+  [listener.SET_DATA]() {
+    return (event: IpcMainEvent, datas: MainDatas) => {
+      mainProcess.setData(datas);
+    };
+  },
+  /** 渲染线程向主线程获取数据 可传多个key */
+  [listener.GET_DATA]() {
+    return (event: IpcMainEvent, keys: string[]) => {
+      const res = mainProcess.getData(keys);
+      event.returnValue = res;
+    };
+  },
+  /** 删除指定key的数据 可传多个key */
+  [listener.DELETE_DATA]() {
+    return (event: IpcMainEvent, keys: string[]) => {
+      mainProcess.deleteData(keys);
     };
   },
   ...dialog,
@@ -185,11 +223,31 @@ const events: any = {
   ...notifier,
 };
 
+/** https://www.electronjs.org/docs/api/ipc-main#ipcmainhandlechannel-listener */
+const handleEvents: { [key: string]: Function } = {
+  [listener.GET_DATA_ASYNC]() {
+    return async (event: IpcMainEvent, keys: any[]) => {
+      // const res = mainProcess.getData(keys);
+      // return res;
+      try {
+        const res = mainProcess.getData(keys);
+        return Promise.resolve(res);
+      } catch (error) {
+        return Promise.reject(error);
+      }
+    };
+  },
+};
+
 export default function () {
   let mainProcess = MainProcess.getInstance();
 
   Object.keys(events).forEach((event) => {
     mainProcess.on(event, events[event]());
+  });
+
+  Object.keys(handleEvents).forEach((handle) => {
+    mainProcess.handle(handle, handleEvents[handle]());
   });
 
   return mainProcess;

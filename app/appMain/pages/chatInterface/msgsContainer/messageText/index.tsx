@@ -1,4 +1,4 @@
-import './styles.styl';
+import './styles.scss';
 
 import React, { PureComponent, Fragment } from 'react';
 import _ from 'lodash';

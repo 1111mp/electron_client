@@ -103,6 +103,22 @@ export default class RendererProcess {
   }
 
   /**
+   * @description: 渲染线程往主线程中发送channel 同步
+   * @param {string} channel  事件名
+   * @param {any} args  参数
+   * @return: void
+   */
+  sendSync(channel: string, args: any): any {
+    if (!this._electron) return;
+    return this._electron.ipcRenderer.sendSync(channel, args);
+  }
+
+  /** 向主线程发送消息 异步获取结果 */
+  async invoke(channel: string, args: any): Promise<any> {
+    return this._electron.ipcRenderer.invoke(channel, args);
+  }
+
+  /**
    * @description: 往渲染线程中注册事件
    * @param {string} channel  事件名
    * @param {CallBack} cb  执行事件的回调方法

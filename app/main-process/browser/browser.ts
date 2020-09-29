@@ -18,7 +18,7 @@ export default class Browser {
     this.onFinish = args && args.finish;
     this.onClosed = args && args.closed;
 
-    this.createWindow(args.url || '');
+    this.createWindow(args!.url || '');
   }
 
   createWindow(url: string) {

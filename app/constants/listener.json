@@ -5,7 +5,10 @@
   "REVOKE_EVENT": "revoke-event",
   "INVOKE_EVENT": "invoke-event",
 
-  "THEME_SETTING": "theme-setting",
+  "SET_DATA": "set-data",
+  "GET_DATA": "get-data",
+  "GET_DATA_ASYNC": "get-data-async",
+  "DELETE_DATA": "delete-data",
 
   "DIALOG_SHOW": "dialog-show",
   "DIALOG_CONFIRM": "dialog-confirm",

@@ -9,7 +9,7 @@ type Props = {
   clickHandler?: VoidFunction;
 };
 
-const RoomItem = React.memo(({ clickHandler }: Props) => {
+const RoomItem: React.FC<Props> = React.memo(({ clickHandler }) => {
   return (
     <li className="module-roomitem" onClick={clickHandler}>
       <Badge size="small" count={100} offset={[-6, 0]}>

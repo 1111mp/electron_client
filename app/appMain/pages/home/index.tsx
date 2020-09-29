@@ -5,6 +5,7 @@ import { Fragment } from 'react';
 import BasicComponent from 'components/BasicComponent';
 import { inject, observer } from 'mobx-react';
 import { renderRoutes } from 'react-router-config';
+import listener from 'app/constants/listener.json';
 
 import RoomList from '../roomList';
 import Empty from 'components/empty';
@@ -39,6 +40,15 @@ export default class Home extends BasicComponent<IAnyObject> {
   //   console.log(data);
   //   console.log(this.invokeEvent);
   // };
+  didMount() {
+    // console.log(this.$sendSync(listener.GET_DATA, 'ping'));
+    this.$invoke(listener.GET_DATA_ASYNC, 'pingsss').then((res) => {
+      console.log(res);
+    }, err => {
+      console.log(11111111)
+      console.log(err)
+    });
+  }
 
   $render(): JSX.Element {
     const { route, location } = this.props;
