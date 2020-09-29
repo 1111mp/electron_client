@@ -42,12 +42,12 @@ export default class Home extends BasicComponent<IAnyObject> {
   // };
   didMount() {
     // console.log(this.$sendSync(listener.GET_DATA, 'ping'));
-    this.$invoke(listener.GET_DATA_ASYNC, 'pingsss').then((res) => {
-      console.log(res);
-    }, err => {
-      console.log(11111111)
-      console.log(err)
-    });
+    // this.$invoke(listener.GET_DATA_ASYNC, 'pingsss').then((res) => {
+    //   console.log(res);
+    // }, err => {
+    //   console.log(11111111)
+    //   console.log(err)
+    // });
   }
 
   $render(): JSX.Element {
