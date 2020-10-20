@@ -10257,27 +10257,27 @@ mobx-logger@^0.7.1:
   resolved "https://registry.yarnpkg.com/mobx-logger/-/mobx-logger-0.7.1.tgz#6be44c726e14433463f5fa566f24f1768e2a9355"
   integrity sha512-kAcNjzDGjILjvNiVrQZfVY6Bxs5YKt35rtwNuU/uneLq+E9zF5grnGmr95EMqqYSVpE6RjJLID3y3j0yQ/cvRA==
 
-mobx-react-lite@>=2.0.6:
-  version "2.0.7"
-  resolved "https://registry.yarnpkg.com/mobx-react-lite/-/mobx-react-lite-2.0.7.tgz#1bfb3b4272668e288047cf0c7940b14e91cba284"
-  integrity sha512-YKAh2gThC6WooPnVZCoC+rV1bODAKFwkhxikzgH18wpBjkgTkkR9Sb0IesQAH5QrAEH/JQVmy47jcpQkf2Au3Q==
+mobx-react-lite@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/mobx-react-lite/-/mobx-react-lite-3.0.1.tgz#417f54a819d1e3e00c073077f29373399c95b005"
+  integrity sha512-Ue8uGgT5iOjMyNf5ptoFW7BTvyLIwggzIkoFpwORrqf73TPqu47iLpz/DNvaba3v40kSsEpp050qYroMNuA1xw==
 
 mobx-react-router@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/mobx-react-router/-/mobx-react-router-4.1.0.tgz#de014848207d8aa32f6a4e67ed861bd2cb6516e5"
   integrity sha512-2knsbDqVorWLngZWbdO8tr7xcZXaLpVFsFlCaGaoyZ+EP9erVGRxnlWGqKyFObs3EH1JPLyTDOJ2LPTxb/lB6Q==
 
-mobx-react@^6.2.5:
-  version "6.2.5"
-  resolved "https://registry.yarnpkg.com/mobx-react/-/mobx-react-6.2.5.tgz#9020a17b79cc6dc3d124ad89ab36eb9ea540a45b"
-  integrity sha512-LxtXXW0GkOAO6VOIg2m/6WL6ZuKlzOWwESIFdrWelI0ZMIvtKCMZVUuulcO5GAWSDsH0ApaMkGLoaPqKjzyziQ==
+mobx-react@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/mobx-react/-/mobx-react-7.0.0.tgz#c2eb0c3f79ade93ffb07b1ffa07cbaeb5f04e9b6"
+  integrity sha512-yxbTG+ovn/GbgF3+QdQahkL5sXiITtwvkoXM6PNqd0V4jvO53cnr/YM4PYuA+0Ig95IW1nojA3qViJx9ufJm6w==
   dependencies:
-    mobx-react-lite ">=2.0.6"
+    mobx-react-lite "^3.0.0"
 
-mobx@^5.15.4:
-  version "5.15.4"
-  resolved "https://registry.yarnpkg.com/mobx/-/mobx-5.15.4.tgz#9da1a84e97ba624622f4e55a0bf3300fb931c2ab"
-  integrity sha512-xRFJxSU2Im3nrGCdjSuOTFmxVDGeqOHL+TyADCGbT0k4HHqGmx5u2yaHNryvoORpI4DfbzjJ5jPmuv+d7sioFw==
+mobx@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/mobx/-/mobx-6.0.1.tgz#ec23520848527bf7834d7b4c0b54b2a8eb6e7c14"
+  integrity sha512-Pk6uJXZ34yqd661yRmS6z/9avm4FOGXpFpVjnEfiYYOsZXnAxv1fpYjxTCEZ9tuwk0Xe1qnUUlgm+rJtGe0YJA==
 
 module-not-found-error@^1.0.0:
   version "1.0.1"

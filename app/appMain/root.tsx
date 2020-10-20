@@ -7,7 +7,6 @@ import { createBrowserHistory, createHashHistory } from 'history';
 import { syncHistoryWithStore } from 'mobx-react-router';
 import { IntlProvider } from 'react-intl';
 import Config from 'app/config';
-// import createRoutes from './routes';
 import allRoutes from './routes/route_config';
 
 const History = Config.isBorwserHistory
@@ -15,23 +14,22 @@ const History = Config.isBorwserHistory
       basename: window.location.pathname,
     })
   : createHashHistory();
-// const Routes = createRoutes();
 
 type Props = {
-  stores: any;
+  store: any;
   statusCode: number;
   messages: any;
 };
 
-const Root = ({ stores, statusCode, messages }: Props) => {
+const Root = ({ store, statusCode, messages }: Props) => {
   return (
     <IntlProvider
       locale={navigator.language}
       defaultLocale={navigator.language}
       messages={messages}
     >
-      <Provider {...stores}>
-        <Router history={syncHistoryWithStore(History, stores.routerStore)}>
+      <Provider {...store}>
+        <Router history={syncHistoryWithStore(History, store.routerStore)}>
           {/* <Routes /> */}
           {renderRoutes(allRoutes)}
           {window.location.hash === '#/' ? <Redirect to="index" /> : null}

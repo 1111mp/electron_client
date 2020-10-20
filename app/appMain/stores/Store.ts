@@ -1,4 +1,4 @@
-import { observe, IObjectDidChange } from 'mobx';
+import { makeObservable, autorun } from 'mobx';
 
 export interface State {
   [key: string]: unknown;
@@ -17,7 +17,8 @@ class Store implements Property {
   }
 
   ready(): Promise<void> {
-    observe(this, this._observe);
+    makeObservable(this);
+    autorun(this._observe);
     return Promise.resolve();
   }
 
@@ -66,7 +67,8 @@ class Store implements Property {
     }
   }
 
-  private _observe = ({ name }: IObjectDidChange) => {
+  _observe = () => {
+    const { name } = { ...this };
     this.changeHandler &&
       this.changeHandler({ keys: [name as string], target: this });
   };

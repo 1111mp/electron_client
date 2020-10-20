@@ -6,7 +6,7 @@ import { Avatar, Badge } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 
 type Props = {
-  clickHandler?: VoidFunction;
+  clickHandler?: (event: React.MouseEvent) => void;
 };
 
 const RoomItem: React.FC<Props> = React.memo(({ clickHandler }) => {

@@ -68,3 +68,11 @@ body {
   width: 100%;
   height: 100%;
 }
+
+* {
+  transition: background .3s, color .3s, border .3s;
+}
+
+*::before {
+  transition: all .3s;
+}

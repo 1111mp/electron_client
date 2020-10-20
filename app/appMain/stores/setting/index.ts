@@ -1,19 +1,24 @@
 import 'mobx-react-lite/batchingForReactDom';
-import Store, { State } from '../Store';
-import { observable, computed, reaction } from 'mobx';
+import Store from '../Store';
+import { observable, reaction } from 'mobx';
 import { applyTheme } from 'app/utils';
 
 export default class SettingStore extends Store {
   @observable theme: string = '';
 
-  constructor(props: any) {
-    super(props);
+  // constructor(props: any) {
+  //   super(props);
+  // }
+
+  ready(): Promise<void> {
+    super.ready();
     reaction(
       () => this.theme,
       (theme) => {
         this.theme && applyTheme(theme);
       }
     );
+    return Promise.resolve();
   }
 
   persistMap = {

@@ -1,5 +1,5 @@
 import 'mobx-react-lite/batchingForReactDom';
-import Store, { State } from '../Store';
+import Store from '../Store';
 import { observable } from 'mobx';
 
 export default class UserStore extends Store {
