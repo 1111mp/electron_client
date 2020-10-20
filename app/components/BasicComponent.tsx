@@ -47,7 +47,7 @@ export default class BasicComponent<
     super(props);
 
     // 实例化RendererProcess渲染进程监听函数
-    this.$renderer = new RendererProcess();
+    this.$renderer = RendererProcess.getInstance();
   }
 
   /** 重命名componentDidMount 让BasicComponent与React的Component生命周期区分开 */

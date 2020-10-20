@@ -73,6 +73,12 @@ export default merge(baseConfig, {
       'webpack/hot/only-dev-server',
       require.resolve('../app/appBrowser/index.tsx'),
     ],
+    appSetting: [
+      ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
+      `webpack-dev-server/client?http://localhost:${port}/`,
+      'webpack/hot/only-dev-server',
+      require.resolve('../app/appSetting/index.tsx'),
+    ]
   },
 
   output: {

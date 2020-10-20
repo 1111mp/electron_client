@@ -34,6 +34,11 @@ export default merge(baseConfig, {
       'regenerator-runtime/runtime',
       path.join(__dirname, '..', 'app/appBrowser/index.tsx'),
     ],
+    appSetting: [
+      'core-js',
+      'regenerator-runtime/runtime',
+      path.join(__dirname, '..', 'app/appSetting/index.tsx'),
+    ],
   },
 
   output: {

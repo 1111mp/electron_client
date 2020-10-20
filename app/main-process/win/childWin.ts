@@ -73,8 +73,8 @@ export default class ChildWindow {
     this.win.loadURL(url, { userAgent });
   };
 
-  loadFile = (options: LoadFileOption) => {
-    this.win.loadFile('./app.html', {
+  loadFile = (temp: string, options: LoadFileOption) => {
+    this.win.loadFile(path.resolve(process.cwd(), `templates/${temp}.html`), {
       ...options,
     });
   };

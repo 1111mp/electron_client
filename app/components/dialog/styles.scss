@@ -1,17 +1,13 @@
 @import 'app/styles/mixin.scss';
 
-/** 修改antd的样式 */
-:global {
-
-  p,
-  ul,
-  li {
-    margin: 0;
-    padding: 0;
-  }
+.module-dialog {
+  @include flex($direction: column);
+  height: 100%;
+  font-size: 14px;
 
   .ant-layout-header {
     @include flex($justify:space-between, $align:center);
+    width: 100%;
     height: 40px;
     padding: 0 16px;
     margin: 0;
@@ -22,30 +18,28 @@
   }
 
   .ant-layout-content {
-    background-color: #1E1E21;
-    padding: 24px;
     @include flex($direction:row, $justify:center, $align:center);
+    flex: 1;
+    width: 100%;
+    padding: 24px;
+    background-color: #1E1E21;
   }
 
   .ant-layout-footer {
     @include flex($direction:row, $justify:center, $align:center);
+    width: 100%;
     height: 80px;
     background-color: #252529;
   }
-}
 
-.layout {
-  height: 100%;
-  font-size: 14px;
-
-  .title {
+  &-title {
     color: #CCCCCC;
   }
 
-  .container {
+  &-container {
     @include flex($align:center);
 
-    .iconItem {
+    &-iconItem {
       @include flex($direction:row, $justify:center, $align:center);
       width: 28px;
       height: 28px;
@@ -53,7 +47,7 @@
       overflow: hidden;
       -webkit-app-region: no-drag;
 
-      .icon {
+      .iconfont {
         font-size: 36px;
         color: rgba(214, 214, 214, 0.3)
       }

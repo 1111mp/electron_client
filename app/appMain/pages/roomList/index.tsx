@@ -14,12 +14,12 @@ const RoomList: React.FC = observer(() => {
       event.stopPropagation();
       routerStore.push('/index/chat');
     },
-    [routerStore]
+    [routerStore.location]
   );
 
   const emptyAreaHandler = React.useCallback(() => {
-    routerStore.replace('/index');
-  }, [routerStore]);
+    routerStore.location.pathname !== 'index' && routerStore.replace('/index');
+  }, [routerStore.location]);
 
   return (
     <Fragment>

@@ -29,7 +29,6 @@ export default class Dialog {
     // let WIDTH = display.bounds.width;
     // let HEIGHT = display.bounds.height;
 
-    /** 在当前版本中new BrowserWindow添加model:true时 macOS上项目会crash windows正常 原因不明 */
     const winInstance = this.winInstance = new ChildWindow({
       width: DIALOG.width,
       height: DIALOG.height,
@@ -51,7 +50,7 @@ export default class Dialog {
     });
 
     winInstance.bind({ readyToShow: winInstance.show });
-    winInstance.loadFile(options);
+    winInstance.loadFile('setting', options);
 
     return winInstance;
   }
