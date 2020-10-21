@@ -1,6 +1,7 @@
-import { BrowserWindow, Event, WebContents } from 'electron';
+import { BrowserWindow, WebContents, IpcMainEvent } from 'electron';
 import Dialog from './Dialog';
 import { send } from '../common';
+import { DIALOG } from '../../config';
 
 const listener = require('../../constants/listener.json');
 
@@ -22,14 +23,17 @@ export default {
   /** 显示对话框 默认type为alert */
   [listener.DIALOG_SHOW]() {
     return (
-      event: Event,
+      event: IpcMainEvent,
       args: IDialog.state = { type: 'alert', title: '', message: '', data: {} }
     ) => {
-      const webContents: WebContents = (event as any).sender;
+      const webContents: WebContents = event.sender;
       const parent: any = BrowserWindow.fromWebContents(webContents);
       const { type, title, message, data } = args;
 
-      if (dialogStack[webContents.id]) return;
+      if (dialogStack[event.sender.id]) return;
+
+      console.log(parent.getBounds());
+      const { x, y, width, height } = parent.getBounds();
 
       dialogStack[webContents.id] = new Dialog({
         type,
@@ -37,6 +41,8 @@ export default {
         message,
         parent,
         data,
+        x: x + width / 2 - DIALOG.width / 2,
+        y: y + height / 2 - DIALOG.height / 2,
       });
 
       isAlwaysOnTop = parent.isAlwaysOnTop();
@@ -45,7 +51,7 @@ export default {
   },
   /** 对话框确认按钮 */
   [listener.DIALOG_CONFIRM]() {
-    return (event: Event) => {
+    return (event: IpcMainEvent) => {
       const webContents: WebContents = (event as any).sender;
       const dialogWindow: any = BrowserWindow.fromWebContents(webContents);
       const parent = dialogWindow.getParentWindow();
@@ -62,7 +68,7 @@ export default {
   },
   /** 对话框取消按钮 */
   [listener.DIALOG_CANCEL]() {
-    return (event: Event) => {
+    return (event: IpcMainEvent) => {
       const webContents: WebContents = (event as any).sender;
       const dialogWindow: any = BrowserWindow.fromWebContents(webContents);
       const parent = dialogWindow.getParentWindow();

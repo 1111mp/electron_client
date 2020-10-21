@@ -16,6 +16,7 @@ export default class Header extends BasicComponent<IAnyObject> {
         console.log('取消')
       }
     );
+    // this.$openBrowser('https://www.baidu.com');
   };
 
   $render() {

@@ -26,6 +26,7 @@ module.exports = (api) => {
       [require('@babel/preset-react'), { development }],
     ],
     plugins: [
+      require('@babel/plugin-transform-runtime'),
       // Stage 0
       require('@babel/plugin-proposal-function-bind'),
 
@@ -57,7 +58,7 @@ module.exports = (api) => {
       require('@babel/plugin-proposal-json-strings'),
 
       ...(development ? developmentPlugins : productionPlugins),
-      ['import', { libraryName: 'antd', libraryDirectory: 'es', style: 'css' }]
+      ['import', { libraryName: 'antd', libraryDirectory: 'es', style: 'css' }],
     ],
   };
 };

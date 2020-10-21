@@ -1,5 +1,6 @@
 import ChildWindow from '../win/childWin';
 import { BROWSER } from '../../config';
+import { getOptions } from '../../utils/dialog';
 
 const path = require('path');
 
@@ -43,9 +44,11 @@ export default class Browser {
       closed: this.onClosed,
     });
 
-    winInstance.loadURL(
-      `file://${path.resolve(__dirname, '../../../templates/browser.html')}?url=${url}`
-    );
+    const options = getOptions(BROWSER.url, {
+      url,
+    });
+
+    winInstance.loadFile(options, 'browser');
 
     return winInstance;
   }

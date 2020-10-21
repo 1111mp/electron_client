@@ -12,6 +12,8 @@ class Store implements Property {
   // [key: string]: any;
   name: string = ''; // 模块名
 
+  private loaded: boolean = false;
+
   constructor(name: string) {
     this.name = name;
   }
@@ -68,9 +70,13 @@ class Store implements Property {
   }
 
   _observe = () => {
-    const { name } = { ...this };
-    this.changeHandler &&
-      this.changeHandler({ keys: [name as string], target: this });
+    if (!this.loaded) this.loaded = true;
+    else {
+      console.log(this);
+      const { name } = { ...this };
+      this.changeHandler &&
+        this.changeHandler({ keys: [name as string], target: this });
+    }
   };
 }
 

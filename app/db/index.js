@@ -14,7 +14,7 @@ const userDataPath = app.getPath('userData');
 
 let sequelize;
 
-function initDatabase() {
+async function initDatabase() {
   try {
     sequelize = new Sequelize('database', '', userInfo().username, {
       dialect: 'sqlite',
@@ -37,6 +37,6 @@ function initDatabase() {
   }
 }
 
-module.exports = {
-  initDatabase,
+module.exports = async function () {
+  await initDatabase();
 };

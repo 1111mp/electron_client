@@ -30,7 +30,9 @@ export default merge(baseConfig, {
   module: require('./webpack.config.renderer.dev.babel').default.module,
 
   entry: {
-    renderer: Object.keys(dependencies || {}),
+    renderer: Object.keys(dependencies || {}).filter(
+      (key) => key !== '@babel/runtime'
+    ),
   },
 
   output: {

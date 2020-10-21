@@ -1,7 +1,7 @@
 try {
-  const { remote } = require('electron');
+  const { remote, ipcRenderer } = require('electron');
   const { nativeTheme } = remote.require('electron');
-  const { initDatabase, getThemeFromDatabase } = require('./app/db/index');
+  const initDatabase = require('./db');
 
   // nativeTheme.themeSource = 'dark'
 
@@ -21,6 +21,14 @@ try {
       fn();
     });
   };
+
+  ipcRenderer.on('add-dark-overlay', () => {
+    window.Events.addDarkOverlay();
+  });
+
+  ipcRenderer.on('remove-dark-overlay', () => {
+    window.Events.removeDarkOverlay();
+  });
 
   initDatabase();
 } catch (error) {

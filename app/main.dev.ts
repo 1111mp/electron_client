@@ -62,6 +62,14 @@ const installExtensions = async () => {
   ).catch(console.log);
 };
 
+const RESOURCES_PATH = app.isPackaged
+  ? path.join(process.resourcesPath, 'resources')
+  : path.join(__dirname, '../resources');
+
+const getAssetPath = (...paths: string[]): string => {
+  return path.join(RESOURCES_PATH, ...paths);
+};
+
 const createWindow = async () => {
   if (
     process.env.NODE_ENV === 'development' ||
@@ -84,17 +92,16 @@ const createWindow = async () => {
       process.env.ERB_SECURE !== 'true'
         ? {
             nodeIntegration: true,
-            preload: path.join(__dirname, '../preload.js'),
+            preload: path.join(__dirname, 'preload.js'),
           }
         : {
-            // scrollBounce: true,
-            preload: path.join(__dirname, 'dist/renderer.prod.js'),
+            nodeIntegration: true,
+            preload: path.join(__dirname, 'preload.js'),
           },
   });
 
-  mainWindow.loadURL(
-    `file://${path.resolve(__dirname, '../templates/index.html')}`
-  );
+  mainWindow.loadURL(`file://${__dirname}/templates/index.html`);
+
   //开发者工具 https://newsn.net/say/electron-devtools.html
   mainWindow.webContents.openDevTools({ mode: 'undocked' });
 
@@ -157,7 +164,7 @@ const createWindow = async () => {
 };
 
 function createTray() {
-  const icon = path.join(__dirname, '../resources/icon.png');
+  const icon = getAssetPath('icon.png');
   const image = nativeImage.createFromPath(icon);
   tray = new TrayCreator({
     icon: image.resize({ width: 16, height: 16 }),

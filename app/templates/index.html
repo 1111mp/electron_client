@@ -20,7 +20,7 @@
       ) {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = './dist/style.css';
+        link.href = '../dist/appMain.css';
         // HACK: Writing the script path should be done with webpack
         document.getElementsByTagName('head')[0].appendChild(link);
       }
@@ -37,14 +37,14 @@
       if (process.env.NODE_ENV === 'development') {
         // Dynamically insert the DLL script in development env in the
         // renderer process
-        scripts.push('../dll/renderer.dev.dll.js');
+        scripts.push('../../dll/renderer.dev.dll.js');
       }
       if (process.env.START_HOT) {
         // Dynamically insert the bundled app script in the renderer process
         const port = process.env.PORT || 1212;
         scripts.push(`http://localhost:${port}/dist/renderer.appMain.js`);
       } else {
-        scripts.push('./dist/renderer.prod.appMain.js');
+        scripts.push('../dist/renderer.prod.appMain.js');
       }
 
       if (scripts.length) {

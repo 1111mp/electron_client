@@ -57,10 +57,12 @@
     "files": [
       "dist/",
       "node_modules/",
-      "app.html",
+      "db/",
       "main.prod.js",
       "main.prod.js.map",
-      "package.json"
+      "package.json",
+      "templates/**",
+      "preload.js"
     ],
     "dmg": {
       "contents": [
@@ -81,6 +83,11 @@
         "nsis",
         "msi"
       ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "deleteAppDataOnUninstall": true,
+      "allowToChangeInstallationDirectory": true
     },
     "linux": {
       "target": [
@@ -186,6 +193,7 @@
     "@babel/plugin-syntax-import-meta": "^7.10.4",
     "@babel/plugin-transform-react-constant-elements": "^7.10.4",
     "@babel/plugin-transform-react-inline-elements": "^7.10.4",
+    "@babel/plugin-transform-runtime": "^7.12.1",
     "@babel/preset-env": "^7.10.4",
     "@babel/preset-react": "^7.10.4",
     "@babel/preset-typescript": "^7.10.4",
@@ -287,6 +295,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.2.2",
+    "@babel/runtime": "^7.12.1",
     "@fortawesome/fontawesome-free": "^5.14.0",
     "@hot-loader/react-dom": "^16.13.0",
     "@loadable/component": "^5.13.1",
@@ -321,7 +330,6 @@
     "react-router-dom": "^5.2.0",
     "react-virtualized": "^9.22.2",
     "regenerator-runtime": "^0.13.5",
-    "sequelize": "^6.3.5",
     "source-map-support": "^0.5.19"
   },
   "devEngines": {

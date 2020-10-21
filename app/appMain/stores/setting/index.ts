@@ -14,7 +14,7 @@ export default class SettingStore extends Store {
     super.ready();
     reaction(
       () => this.theme,
-      (theme) => {
+      (theme: string) => {
         this.theme && applyTheme(theme);
       }
     );

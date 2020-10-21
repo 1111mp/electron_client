@@ -21,7 +21,10 @@ export default merge(baseConfig, {
 
   mode: 'production',
 
-  target: process.env.E2E_BUILD ? 'electron-renderer' : 'electron-preload',
+  target:
+    process.env.E2E_BUILD || process.env.ERB_SECURE !== 'true'
+      ? 'electron-renderer'
+      : 'electron-preload',
 
   entry: {
     appMain: [
@@ -34,10 +37,10 @@ export default merge(baseConfig, {
       'regenerator-runtime/runtime',
       path.join(__dirname, '..', 'app/appBrowser/index.tsx'),
     ],
-    appSetting: [
+    appDialog: [
       'core-js',
       'regenerator-runtime/runtime',
-      path.join(__dirname, '..', 'app/appSetting/index.tsx'),
+      path.join(__dirname, '..', 'app/appDialog/index.tsx'),
     ],
   },
 
@@ -87,19 +90,26 @@ export default merge(baseConfig, {
       },
       // Add SASS support  - compile all .global.scss files and pipe it to style.css
       {
-        test: /\.s[ac]ss$/i,
+        test: /\.(scss|sass)$/i,
         use: [
           {
-            loader: 'style-loader',
+            loader: MiniCssExtractPlugin.loader,
           },
           {
             loader: 'css-loader',
             options: {
+              modules: {
+                localIdentName: '[name]__[local]__[hash:base64:5]',
+              },
+              importLoaders: 1,
               sourceMap: true,
             },
           },
           {
             loader: 'sass-loader',
+            options: {
+              sourceMap: true,
+            },
           },
           {
             loader: 'sass-resources-loader',
@@ -109,9 +119,8 @@ export default merge(baseConfig, {
           },
         ],
       },
-      // Add SASS support  - compile all other .scss files and pipe it to style.css
       // {
-      //   test: /^((?!\.global).)*\.(scss|sass)$/,
+      //   test: /\.styl(us)?$/,
       //   use: [
       //     {
       //       loader: MiniCssExtractPlugin.loader,
@@ -119,53 +128,23 @@ export default merge(baseConfig, {
       //     {
       //       loader: 'css-loader',
       //       options: {
-      //         modules: {
-      //           localIdentName: '[name]__[local]__[hash:base64:5]',
-      //         },
+      //         // modules: {
+      //         //   localIdentName: '[name]__[local]__[hash:base64:5]',
+      //         // },
+      //         sourceMap: true,
       //         importLoaders: 1,
-      //         sourceMap: true,
       //       },
       //     },
       //     {
-      //       loader: 'sass-loader',
+      //       loader: 'stylus-loader',
       //       options: {
       //         sourceMap: true,
-      //       },
-      //     },
-      //     {
-      //       loader: 'sass-resources-loader',
-      //       options: {
-      //         resources: [path.join(__dirname, '../app/styles/mixin.scss')],
+      //         import: [path.join(__dirname, '../app/styles/mixin.styl')], //你公共样式存放的位置
+      //         // paths: [] //公共样式文件位置
       //       },
       //     },
       //   ],
       // },
-      {
-        test: /\.styl(us)?$/,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              // modules: {
-              //   localIdentName: '[name]__[local]__[hash:base64:5]',
-              // },
-              sourceMap: true,
-              importLoaders: 1,
-            },
-          },
-          {
-            loader: 'stylus-loader',
-            options: {
-              sourceMap: true,
-              import: [path.join(__dirname, '../app/styles/mixin.styl')], //你公共样式存放的位置
-              // paths: [] //公共样式文件位置
-            },
-          },
-        ],
-      },
       // WOFF Font
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
@@ -244,6 +223,12 @@ export default merge(baseConfig, {
     splitChunks: {
       chunks: 'all',
       cacheGroups: {
+        styles: {
+          name: 'styles',
+          test: /\.css$/,
+          chunks: 'all',
+          enforce: true,
+        },
         vender: {
           test: /[\\/]node_modules[\\/]/,
           priority: -10,
@@ -277,7 +262,7 @@ export default merge(baseConfig, {
     }),
 
     new MiniCssExtractPlugin({
-      filename: 'style.css',
+      filename: '[name].css',
     }),
 
     new BundleAnalyzerPlugin({

@@ -29,22 +29,7 @@ const allRoutes = [
         exact: true,
       },
     ],
-  },
-  // {
-  //   path: '/dialog',
-  //   component: loadable(() => import('components/dialog')),
-  //   exact: true,
-  // },
-  {
-    path: '/browser',
-    component: loadable(() => import('components/browser')),
-    exact: true,
-  },
-  {
-    path: '/userCenter',
-    component: loadable(() => import('appMain/pages/userCenter')),
-    exact: true,
-  },
+  }
 ] as RouterConfig[];
 
 export default allRoutes;
