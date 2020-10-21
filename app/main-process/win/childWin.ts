@@ -28,7 +28,7 @@ export default class ChildWindow {
       merge(
         {
           center: true,
-          frame: false,
+          // frame: false,
           show: false,
           resizable: false,
           transparent: false,
@@ -74,7 +74,7 @@ export default class ChildWindow {
   };
 
   loadFile = (options: LoadFileOption, temp: string = 'index') => {
-    this.win.loadFile(path.resolve(__dirname, `../../templates/${temp}.html`), {
+    this.win.loadFile(path.resolve(__dirname, `../../pages/${temp}.html`), {
       ...options,
     });
   };

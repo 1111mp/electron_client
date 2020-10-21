@@ -100,7 +100,7 @@ const createWindow = async () => {
           },
   });
 
-  mainWindow.loadURL(`file://${__dirname}/templates/index.html`);
+  mainWindow.loadURL(`file://${__dirname}/pages/index.html`);
 
   //开发者工具 https://newsn.net/say/electron-devtools.html
   mainWindow.webContents.openDevTools({ mode: 'undocked' });

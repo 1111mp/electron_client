@@ -5,6 +5,8 @@
 import path from 'path';
 import webpack from 'webpack';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import HtmlWebpackHarddiskPlugin from 'html-webpack-harddisk-plugin';
 import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import { merge } from 'webpack-merge';
@@ -263,7 +265,31 @@ export default merge(baseConfig, {
 
     new MiniCssExtractPlugin({
       filename: '[name].css',
+      chunkFilename: '[id].css',
     }),
+
+    new HtmlWebpackPlugin({
+      filename: '../pages/index.html',
+      template: path.resolve(__dirname, '../templates/index.html'),
+      chunks: ['appMain'],
+      alwaysWriteToDisk: true, // 配合html-webpack-harddisk-plugin插件始终将生成的文件输出到指定目录
+    }),
+
+    new HtmlWebpackPlugin({
+      filename: '../pages/browser.html',
+      template: path.resolve(__dirname, '../templates/browser.html'),
+      chunks: ['appBrowser'],
+      alwaysWriteToDisk: true, // 配合html-webpack-harddisk-plugin插件始终将生成的文件输出到指定目录
+    }),
+
+    new HtmlWebpackPlugin({
+      filename: '../pages/dialog.html',
+      template: path.resolve(__dirname, '../templates/dialog.html'),
+      chunks: ['appDialog'],
+      alwaysWriteToDisk: true, // 配合html-webpack-harddisk-plugin插件始终将生成的文件输出到指定目录
+    }),
+
+    new HtmlWebpackHarddiskPlugin(),
 
     new BundleAnalyzerPlugin({
       analyzerMode:

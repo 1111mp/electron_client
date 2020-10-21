@@ -29,6 +29,7 @@ export default class Dialog {
     // let WIDTH = display.bounds.width;
     // let HEIGHT = display.bounds.height;
 
+    /** mac下 设置模态框时  同时设置modal:true parent 和frame时 程序会崩溃 */
     const winInstance = (this.winInstance = new ChildWindow({
       width: DIALOG.width,
       height: DIALOG.height,

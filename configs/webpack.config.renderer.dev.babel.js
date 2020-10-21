@@ -11,6 +11,8 @@ import webpack from 'webpack';
 import chalk from 'chalk';
 import { merge } from 'webpack-merge';
 import { spawn, execSync } from 'child_process';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import HtmlWebpackHarddiskPlugin from 'html-webpack-harddisk-plugin';
 import baseConfig from './webpack.config.base';
 import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
 
@@ -78,7 +80,7 @@ export default merge(baseConfig, {
       `webpack-dev-server/client?http://localhost:${port}/`,
       'webpack/hot/only-dev-server',
       require.resolve('../app/appDialog/index.tsx'),
-    ]
+    ],
   },
 
   output: {
@@ -297,6 +299,29 @@ export default merge(baseConfig, {
     new webpack.HotModuleReplacementPlugin({
       multiStep: true,
     }),
+
+    new HtmlWebpackPlugin({
+      filename: 'pages/index.html',
+      template: path.resolve(__dirname, '../templates/index.html'),
+      chunks: ['appMain'],
+      alwaysWriteToDisk: true, // 配合html-webpack-harddisk-plugin插件始终将生成的文件输出到指定目录
+    }),
+
+    new HtmlWebpackPlugin({
+      filename: 'pages/browser.html',
+      template: path.resolve(__dirname, '../templates/browser.html'),
+      chunks: ['appBrowser'],
+      alwaysWriteToDisk: true, // 配合html-webpack-harddisk-plugin插件始终将生成的文件输出到指定目录
+    }),
+
+    new HtmlWebpackPlugin({
+      filename: 'pages/dialog.html',
+      template: path.resolve(__dirname, '../templates/dialog.html'),
+      chunks: ['appDialog'],
+      alwaysWriteToDisk: true, // 配合html-webpack-harddisk-plugin插件始终将生成的文件输出到指定目录
+    }),
+
+    new HtmlWebpackHarddiskPlugin(),
 
     // new CompressionWebpackPlugin({
     //   filename: '[path][base].gz',

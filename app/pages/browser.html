@@ -20,7 +20,7 @@
       ) {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = '../dist/appMain.css';
+        link.href = './dist/style.css';
         // HACK: Writing the script path should be done with webpack
         document.getElementsByTagName('head')[0].appendChild(link);
       }
@@ -42,9 +42,9 @@
       if (process.env.START_HOT) {
         // Dynamically insert the bundled app script in the renderer process
         const port = process.env.PORT || 1212;
-        scripts.push(`http://localhost:${port}/dist/renderer.appMain.js`);
+        scripts.push(`http://localhost:${port}/dist/renderer.appBrowser.js`);
       } else {
-        scripts.push('../dist/renderer.prod.appMain.js');
+        scripts.push('../dist/renderer.prod.appBrowser.js');
       }
 
       if (scripts.length) {
@@ -56,6 +56,6 @@
       }
     }
   </script>
-</body>
+<script src="http://localhost:1212/dist/renderer.appBrowser.js"></script></body>
 
 </html>

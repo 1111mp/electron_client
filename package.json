@@ -61,7 +61,7 @@
       "main.prod.js",
       "main.prod.js.map",
       "package.json",
-      "templates/**",
+      "pages/**",
       "preload.js"
     ],
     "dmg": {
@@ -258,6 +258,8 @@
     "eslint-plugin-react-hooks": "^4.0.8",
     "eslint-plugin-testcafe": "^0.2.1",
     "file-loader": "^6.0.0",
+    "html-webpack-harddisk-plugin": "^1.0.2",
+    "html-webpack-plugin": "^4.5.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^26.1.0",
     "lint-staged": "^10.2.11",

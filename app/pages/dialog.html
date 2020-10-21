@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>we_chat</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport"
+    content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+  <meta name="renderer" content="webkit" />
+  <!-- Electron对页面的安全策略提出了很多要求，尤其是加载远程链接时。项目加载本地页面也会有CSP方面的警告⚠️ 需要在Html的meta标签里添加CSP规则
+      详情：How to prevent Electron Security Warning (Insecure Content-Security-Policy)
+    -->
+  <!-- <meta http-equiv="Content-Security-Policy" content="script-src 'self';"> -->
+  <script>
+    (() => {
+      if (
+        typeof process !== 'object' ||
+        (typeof process === 'object' && !process.env.START_HOT)
+      ) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = './dist/style.css';
+        // HACK: Writing the script path should be done with webpack
+        document.getElementsByTagName('head')[0].appendChild(link);
+      }
+    })();
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script>
+    if (typeof process === 'object') {
+      const scripts = [];
+
+      if (process.env.NODE_ENV === 'development') {
+        // Dynamically insert the DLL script in development env in the
+        // renderer process
+        scripts.push('../../dll/renderer.dev.dll.js');
+      }
+      if (process.env.START_HOT) {
+        // Dynamically insert the bundled app script in the renderer process
+        const port = process.env.PORT || 1212;
+        scripts.push(`http://localhost:${port}/dist/renderer.appDialog.js`);
+      } else {
+        scripts.push('../dist/renderer.prod.appDialog.js');
+      }
+
+      if (scripts.length) {
+        document.write(
+          scripts
+            .map(script => `<script defer src="${script}"><\/script>`)
+            .join('')
+        );
+      }
+    }
+  </script>
+<script src="http://localhost:1212/dist/renderer.appDialog.js"></script></body>
+
+</html>
