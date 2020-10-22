@@ -18,16 +18,17 @@ import MenuBuilder from './menu';
 import Config, { Mainwin } from './config';
 import listener from './main-process';
 import TrayCreator from './main-process/tray';
-import debug from 'electron-debug';
 
 /** 设置日志级别 */
 log.transports.console.level = 'silly';
 
 /** 开发者工具 */
-debug({
-  isEnabled: Config.isDev,
-  showDevTools: Config.isDev,
-});
+if (
+  process.env.NODE_ENV === 'development' ||
+  process.env.DEBUG_PROD === 'true'
+) {
+  require('electron-debug')();
+}
 
 export default class AppUpdater {
   constructor() {
@@ -102,8 +103,13 @@ const createWindow = async () => {
 
   mainWindow.loadURL(`file://${__dirname}/pages/index.html`);
 
-  //开发者工具 https://newsn.net/say/electron-devtools.html
-  mainWindow.webContents.openDevTools({ mode: 'undocked' });
+  if (
+    process.env.NODE_ENV === 'development' ||
+    process.env.DEBUG_PROD === 'true'
+  ) {
+    //开发者工具 https://newsn.net/say/electron-devtools.html
+    mainWindow.webContents.openDevTools({ mode: 'undocked' });
+  }
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -156,23 +162,26 @@ const createWindow = async () => {
   // eslint-disable-next-line
   new AppUpdater();
 
-  /** 创建系统托盘菜单 */
-  createTray();
-
   /** 添加主进程监听事件 */
   listener();
+
+  /** 创建系统托盘菜单 */
+  createTray();
 };
 
 function createTray() {
-  const icon = getAssetPath('icon.png');
+  const icon =
+    process.platform === 'win32'
+      ? getAssetPath('icon.ico')
+      : getAssetPath('icon.png');
   const image = nativeImage.createFromPath(icon);
   tray = new TrayCreator({
-    icon: image.resize({ width: 16, height: 16 }),
+    icon: image,
   });
 
   tray.initTray();
 
-  tray.setToolTip('测试');
+  tray.setToolTip('WeChat');
 
   tray.on('click', () => {
     // @ts-ignore

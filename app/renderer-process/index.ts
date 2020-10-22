@@ -96,9 +96,8 @@ export default class RendererProcess {
    * @param {any} args  参数
    * @return: void
    */
-  send(channel: string, args: any): void {
+  send(channel: string, args: any = {}): void {
     if (!this._electron) return;
-
     this._electron.ipcRenderer.send(channel, args);
   }
 

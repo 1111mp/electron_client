@@ -201,31 +201,31 @@ export default merge(baseConfig, {
       //     }
       //   ],
       // },
-      {
-        test: /\.styl(us)?$/,
-        use: [
-          {
-            loader: 'style-loader',
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              // modules: {
-              //   localIdentName: '[name]__[local]__[hash:base64:5]',
-              // },
-              sourceMap: true,
-              importLoaders: 1,
-            },
-          },
-          {
-            loader: 'stylus-loader',
-            options: {
-              import: [path.join(__dirname, '../app/styles/mixin.styl')], //你公共样式存放的位置
-              // paths: [] //公共样式文件位置
-            },
-          },
-        ],
-      },
+      // {
+      //   test: /\.styl(us)?$/,
+      //   use: [
+      //     {
+      //       loader: 'style-loader',
+      //     },
+      //     {
+      //       loader: 'css-loader',
+      //       options: {
+      //         // modules: {
+      //         //   localIdentName: '[name]__[local]__[hash:base64:5]',
+      //         // },
+      //         sourceMap: true,
+      //         importLoaders: 1,
+      //       },
+      //     },
+      //     {
+      //       loader: 'stylus-loader',
+      //       options: {
+      //         import: [path.join(__dirname, '../app/styles/mixin.styl')], //你公共样式存放的位置
+      //         // paths: [] //公共样式文件位置
+      //       },
+      //     },
+      //   ],
+      // },
       // WOFF Font
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,

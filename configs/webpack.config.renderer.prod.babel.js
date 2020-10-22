@@ -4,6 +4,7 @@
 
 import path from 'path';
 import webpack from 'webpack';
+import { CleanWebpackPlugin } from 'clean-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import HtmlWebpackHarddiskPlugin from 'html-webpack-harddisk-plugin';
@@ -48,7 +49,7 @@ export default merge(baseConfig, {
 
   output: {
     path: path.join(__dirname, '..', 'app/dist'),
-    publicPath: './dist/',
+    publicPath: '../dist/',
     filename: 'renderer.prod.[name].js',
   },
 
@@ -84,34 +85,23 @@ export default merge(baseConfig, {
             options: {
               modules: {
                 localIdentName: '[name]__[local]__[hash:base64:5]',
-              },
-              sourceMap: true,
+              }
             },
           },
         ],
       },
       // Add SASS support  - compile all .global.scss files and pipe it to style.css
       {
-        test: /\.(scss|sass)$/i,
+        test: /\.s[ac]ss$/i,
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
           },
           {
             loader: 'css-loader',
-            options: {
-              modules: {
-                localIdentName: '[name]__[local]__[hash:base64:5]',
-              },
-              importLoaders: 1,
-              sourceMap: true,
-            },
           },
           {
             loader: 'sass-loader',
-            options: {
-              sourceMap: true,
-            },
           },
           {
             loader: 'sass-resources-loader',
@@ -248,6 +238,7 @@ export default merge(baseConfig, {
   },
 
   plugins: [
+    new CleanWebpackPlugin(),
     /**
      * Create global constants which can be configured at compile time.
      *
@@ -264,8 +255,8 @@ export default merge(baseConfig, {
     }),
 
     new MiniCssExtractPlugin({
-      filename: '[name].css',
-      chunkFilename: '[id].css',
+      filename: '[name].[contenthash].css',
+      chunkFilename: '[id].[contenthash].css',
     }),
 
     new HtmlWebpackPlugin({

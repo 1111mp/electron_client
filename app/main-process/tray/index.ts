@@ -1,7 +1,7 @@
 /*
  * @Author: 张逸凡
  * @Date: 2019-12-16 11:17:34
- * @LastEditTime: 2020-08-05 14:02:38
+ * @LastEditTime: 2020-10-22 17:24:56
  * @LastEditors: Please set LastEditors
  * @Description: electron系统托盘Tray
  * @FilePath: \electron_client\app\main-process\tray\index.ts

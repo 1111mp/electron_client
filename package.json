@@ -1,8 +1,8 @@
 {
-  "name": "electron-react-boilerplate",
-  "productName": "ElectronReact",
+  "name": "we_chat",
+  "productName": "WeChat",
   "version": "1.3.0",
-  "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
+  "description": "WeChat application based on React, React Router, Webpack, React Hot Loader for rapid application development",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
     "build-dll": "cross-env NODE_ENV=development webpack --config ./configs/webpack.config.renderer.dev.dll.babel.js --colors",
@@ -52,16 +52,21 @@
     ]
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.develar.ElectronReact",
+    "productName": "WeChat",
+    "appId": "org.develar.WeChat",
+    "asar": true,
+    "compression": "maximum",
     "files": [
       "dist/",
       "node_modules/",
+      "!node_modules/emoji-datasource-apple/emoji_pretty.json",
+      "!node_modules/emoji-datasource-apple/img/apple/sheets*",
       "db/",
+      "styles/",
+      "pages/**",
       "main.prod.js",
       "main.prod.js.map",
       "package.json",
-      "pages/**",
       "preload.js"
     ],
     "dmg": {
@@ -85,9 +90,12 @@
       ]
     },
     "nsis": {
+      "include": "./installer.nsi",
       "oneClick": false,
       "deleteAppDataOnUninstall": true,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "menuCategory": false
     },
     "linux": {
       "target": [
@@ -101,42 +109,28 @@
       "buildResources": "resources",
       "output": "release"
     },
+    "extraResources": [
+      "./resources/**"
+    ],
     "publish": {
       "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate",
+      "owner": "1111mp",
+      "repo": "electron_client",
       "private": false
     }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/electron-react-boilerplate/electron-react-boilerplate.git"
+    "url": "git+https://github.com/1111mp/electron_client.git"
   },
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://electron-react-boilerplate.js.org"
+    "name": "say_1mp@163.com",
+    "email": "say_1mp@163.com",
+    "url": "https://github.com/1111mp/electron_client"
   },
-  "contributors": [
-    {
-      "name": "Vikram Rangaraj",
-      "email": "vikr01@icloud.com",
-      "url": "https://github.com/vikr01"
-    },
-    {
-      "name": "Amila Welihinda",
-      "email": "amilajack@gmail.com",
-      "url": "https://github.com/amilajack"
-    },
-    {
-      "name": "John Tran",
-      "email": "jptran318@gmail.com",
-      "url": "https://github.com/jooohhn"
-    }
-  ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues"
+    "url": "https://github.com/1111mp/electron_client/issues"
   },
   "keywords": [
     "electron",
@@ -150,7 +144,7 @@
     "hot",
     "reload"
   ],
-  "homepage": "https://github.com/electron-react-boilerplate/electron-react-boilerplate#readme",
+  "homepage": "https://github.com/1111mp/electron_client#readme",
   "jest": {
     "testURL": "http://localhost/",
     "moduleNameMapper": {
@@ -228,6 +222,7 @@
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "browserslist-config-erb": "^0.0.1",
     "chalk": "^4.1.0",
+    "clean-webpack-plugin": "^3.0.0",
     "compression-webpack-plugin": "^6.0.2",
     "concurrently": "^5.2.0",
     "core-js": "^3.6.5",
@@ -312,7 +307,6 @@
     "electron-tabs": "^0.15.0",
     "electron-updater": "^4.3.1",
     "emoji-datasource": "^5.0.1",
-    "emoji-datasource-apple": "^5.0.1",
     "emoji-regex": "^9.0.0",
     "fuse.js": "3.4.4",
     "history": "^4.7.2",

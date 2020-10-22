@@ -94,11 +94,14 @@ export function getMessage(
 
 /** 从数据库获取theme */
 export async function getThemeFromDatabase() {
-  let setting = await (window as any).sequelize.models.Setting.findOne({
-    attributes: { exclude: ['id', 'updatedAt', 'createdAt'] },
-  });
-
-  return setting.toJSON();
+  try {
+    let setting = await (window as any).sequelize.models.Setting.findOne({
+      attributes: { exclude: ['id', 'updatedAt', 'createdAt'] },
+    });
+    return setting.toJSON();
+  } catch (error) {
+    return { theme: (window as any).systemTheme || 'light' };
+  }
 }
 
 /** 设置主题 */

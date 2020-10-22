@@ -1,4 +1,4 @@
-import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
+import { BrowserWindow, BrowserWindowConstructorOptions, app } from 'electron';
 import { LoadFileOption } from 'app/utils/dialog';
 
 const merge = require('lodash/merge');
@@ -74,9 +74,14 @@ export default class ChildWindow {
   };
 
   loadFile = (options: LoadFileOption, temp: string = 'index') => {
-    this.win.loadFile(path.resolve(__dirname, `../../pages/${temp}.html`), {
-      ...options,
-    });
+    this.win.loadFile(
+      app.isPackaged
+        ? path.resolve(__dirname, `pages/${temp}.html`)
+        : path.resolve(__dirname, `../../pages/${temp}.html`),
+      {
+        ...options,
+      }
+    );
   };
 
   getWebContents = () => {

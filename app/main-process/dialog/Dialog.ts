@@ -1,4 +1,4 @@
-import { BrowserWindow, screen } from 'electron';
+// import { BrowserWindow, screen } from 'electron';
 import ChildWindow from '../win/childWin';
 import { DIALOG } from '../../config';
 import { getOptions } from '../../utils/dialog';
@@ -40,6 +40,7 @@ export default class Dialog {
       parent: args.parent,
       center: true,
       modal: true,
+      frame: process.platform === 'darwin' ? true : false,
       resizable: false,
       minimizable: false,
       // alwaysOnTop: true,
@@ -54,6 +55,8 @@ export default class Dialog {
 
     winInstance.bind({ readyToShow: winInstance.show });
     winInstance.loadFile(options, 'dialog');
+
+    // winInstance.win.webContents.openDevTools({ mode: 'undocked' });
 
     return winInstance;
   }

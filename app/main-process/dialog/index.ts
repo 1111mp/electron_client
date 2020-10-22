@@ -7,7 +7,6 @@ const listener = require('../../constants/listener.json');
 
 /** 用于防止dialog被垃圾回收 */
 const dialogStack: IDialog.stack = {};
-let isAlwaysOnTop: boolean = false;
 
 /**
  * 清除dialog
@@ -32,7 +31,6 @@ export default {
 
       if (dialogStack[event.sender.id]) return;
 
-      console.log(parent.getBounds());
       const { x, y, width, height } = parent.getBounds();
 
       dialogStack[webContents.id] = new Dialog({
@@ -45,8 +43,7 @@ export default {
         y: y + height / 2 - DIALOG.height / 2,
       });
 
-      isAlwaysOnTop = parent.isAlwaysOnTop();
-      !isAlwaysOnTop && parent.setAlwaysOnTop(true);
+      !parent.isAlwaysOnTop() && parent.setAlwaysOnTop(true);
     };
   },
   /** 对话框确认按钮 */
@@ -62,7 +59,7 @@ export default {
       });
 
       dialogWindow.close();
-      !isAlwaysOnTop && parent.setAlwaysOnTop(false);
+      parent.setAlwaysOnTop(false);
       clearDialog(parent.webContents.id);
     };
   },
@@ -79,7 +76,7 @@ export default {
       });
 
       !dialogWindow.isDestroyed() && dialogWindow.close();
-      !isAlwaysOnTop && !parent.isDestroyed() && parent.setAlwaysOnTop(false);
+      !parent.isDestroyed() && parent.setAlwaysOnTop(false);
       clearDialog(parent.webContents.id);
     };
   },
