@@ -17,14 +17,19 @@ const RoomList: React.FC = observer(() => {
     [routerStore.location]
   );
 
-  const emptyAreaHandler = React.useCallback(() => {
-    routerStore.location.pathname !== 'index' && routerStore.replace('/index');
-  }, [routerStore.location]);
+  // const emptyAreaHandler = React.useCallback(
+  //   (event: React.MouseEvent) => {
+  //     event.stopPropagation();
+  //     routerStore.location.pathname !== 'index' &&
+  //       routerStore.replace('/index');
+  //   },
+  //   [routerStore.location]
+  // );
 
   return (
     <Fragment>
       <Header />
-      <ul className="room_list" onClick={emptyAreaHandler}>
+      <ul className="room_list" /** onClick={emptyAreaHandler} */>
         <RoomItem clickHandler={checkRoom} />
       </ul>
     </Fragment>

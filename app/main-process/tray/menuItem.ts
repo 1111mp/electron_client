@@ -1,13 +1,13 @@
 /*
  * @Author: 张逸凡
  * @Date: 2019-12-16 12:23:00
- * @LastEditTime: 2020-09-25 15:09:25
+ * @LastEditTime: 2020-10-23 10:54:14
  * @LastEditors: Please set LastEditors
  * @Description: 系统托盘的菜单选项
  * @FilePath: \electron_client\process\main-process\tray\menuItem.ts
  */
 import { MenuItemConstructorOptions } from 'electron';
-import { createCusWin } from '../customWin';
+import { createCusWin } from '../webWin';
 import { CUSTOMWIN } from '../../config';
 
 export type RendererMenuClick = (...args: any[]) => void | boolean;

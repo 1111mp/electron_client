@@ -1,5 +1,5 @@
 import { Event, WebContents } from 'electron';
-import CustomWindow, { CustomWindowArgs } from './customWin';
+import CustomWindow, { CustomWindowArgs } from './webWin';
 import { send } from '../common';
 
 const listener = require('../../constants/listener.json');

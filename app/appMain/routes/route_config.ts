@@ -29,7 +29,7 @@ const allRoutes = [
         exact: true,
       },
     ],
-  }
+  },
 ] as RouterConfig[];
 
 export default allRoutes;

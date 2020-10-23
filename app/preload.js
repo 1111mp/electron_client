@@ -31,6 +31,10 @@ try {
     window.Events.removeDarkOverlay();
   });
 
+  ipcRenderer.on('theme-setting', (event, data) => {
+    window.Events.setThemeSetting(data);
+  });
+
   initDatabase();
 } catch (error) {
   console.log(error);

@@ -299,7 +299,7 @@ export default class BasicComponent<
   };
 
   /** 打开新窗口 */
-  $open = ({ url, width, height, id }: OpenArgs) => {
+  $openWeb = ({ url, width, height, id }: OpenArgs) => {
     if (typeof window === 'undefined') return;
 
     this.$send(listener.CUSTOM_WIN_SHOW, {

@@ -68,7 +68,7 @@ function appInit() {
     getThemeFromDatabase(),
   ]).then((res) => {
     return {
-      store: res[0],
+      stores: res[0],
       messages: res[1],
       setting: res[2],
     };
@@ -77,7 +77,7 @@ function appInit() {
 
 document.addEventListener('DOMContentLoaded', async () => {
   const loadAsyncComponents = preloadComponent();
-  let { store, messages, setting } = await appInit();
+  let { stores, messages, setting } = await appInit();
 
   /** 初始化设置主题 */
   const { theme = 'system' } = setting;
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const Root = require('./root').default;
   render(
     <AppContainer>
-      <Root store={store} statusCode={statusCode} messages={messages} />
+      <Root stores={stores} statusCode={statusCode} messages={messages} />
     </AppContainer>,
     document.getElementById('root')
   );

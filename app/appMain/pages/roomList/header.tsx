@@ -2,21 +2,19 @@ import './header.scss';
 
 import React from 'react';
 import BasicComponent from 'components/BasicComponent';
+// import { inject, observer } from 'mobx-react';
 
 import { Avatar, Input } from 'antd';
 import { UserOutlined, SearchOutlined } from '@ant-design/icons';
+import { CUSTOMWIN } from 'app/config';
 
+// @inject((stores: IAnyObject) => ({
+//   theme: stores.Setting.theme,
+// }))
+// @observer
 export default class Header extends BasicComponent<IAnyObject> {
   handleClick = () => {
-    this.$confirm('sdasasdasdas').then(
-      () => {
-        console.log('确认');
-      },
-      () => {
-        console.log('取消')
-      }
-    );
-    // this.$openBrowser('https://www.baidu.com');
+    this.$openWeb({ ...CUSTOMWIN, url: `/settings?title=设置` });
   };
 
   $render() {

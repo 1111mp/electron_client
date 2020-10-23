@@ -163,7 +163,7 @@ const createWindow = async () => {
   new AppUpdater();
 
   /** 添加主进程监听事件 */
-  listener();
+  listener(mainWindow);
 
   /** 创建系统托盘菜单 */
   createTray();

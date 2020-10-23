@@ -16,20 +16,20 @@ const History = Config.isBorwserHistory
   : createHashHistory();
 
 type Props = {
-  store: any;
+  stores: any;
   statusCode: number;
   messages: any;
 };
 
-const Root = ({ store, statusCode, messages }: Props) => {
+const Root = ({ stores, statusCode, messages }: Props) => {
   return (
     <IntlProvider
       locale={navigator.language}
       defaultLocale={navigator.language}
       messages={messages}
     >
-      <Provider {...store}>
-        <Router history={syncHistoryWithStore(History, store.routerStore)}>
+      <Provider {...stores}>
+        <Router history={syncHistoryWithStore(History, stores.routerStore)}>
           {/* <Routes /> */}
           {renderRoutes(allRoutes)}
           {window.location.hash === '#/' ? <Redirect to="index" /> : null}

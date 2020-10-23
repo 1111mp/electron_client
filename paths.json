@@ -4,6 +4,7 @@
     "paths": {
       "app/*": ["app/*"],
       "appMain/*": ["app/appMain/*"],
+      "appWin/*": ["app/appWin/*"],
       "appBrowser/*": ["app/appBrowser/*"],
       "components/*": ["app/components/*"],
       "containers/*": ["app/containers/*"],

@@ -15,7 +15,15 @@ export default class SettingStore extends Store {
     reaction(
       () => this.theme,
       (theme: string) => {
+        /** 暴露给window 方便其他BrowserWindow获取数据 */
+        (window as any).settings = {
+          ...(window as any).settings,
+          theme: this.theme,
+        };
         this.theme && applyTheme(theme);
+      },
+      {
+        fireImmediately: true,
       }
     );
     return Promise.resolve();

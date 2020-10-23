@@ -1,0 +1,47 @@
+@import '../app.global.scss';
+
+.dialog-btn {
+  @include flex($justify:center, $align:center);
+  width: 160px;
+  height: 36px;
+  line-height: 36px;
+  font-size: 14px;
+  border: none;
+  outline: none;
+  border-radius: 18px;
+  color: #ffffff;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.dialog-btn-sure {
+  @extend .dialog-btn;
+  background: linear-gradient(-90deg, rgba(117, 29, 255, 1) 0%, rgba(255, 84, 0, 1) 100%);
+
+  &:hover {
+    background: linear-gradient(-90deg, rgba(157, 57, 255, 1) 0%, rgba(255, 102, 19, 1) 100%);
+    box-shadow: 0px 2px 6px 0px rgba(95, 8, 255, 0.69);
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: .3;
+    background: linear-gradient(-90deg, rgba(117, 29, 255, 1) 0%, rgba(255, 84, 0, 1) 100%);
+  }
+}
+
+.dialog-btn-cancel {
+  @extend .dialog-btn;
+  background: rgba(103, 103, 106, 1);
+
+  &:hover {
+    background: rgba(124, 124, 127, 1);
+    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.39);
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: .3;
+    background: rgba(103, 103, 106, 1);
+  }
+}

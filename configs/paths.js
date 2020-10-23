@@ -12,6 +12,7 @@ module.exports = {
   alias: {
     app: resolveApp('app/'),
     appMain: resolveApp('app/appMain'),
+    appWin: resolveApp('app/appWin'),
     appBrowser: resolveApp('app/appBrowser'),
     components: resolveApp('app/components'),
     containers: resolveApp('app/containers'),

@@ -11,7 +11,7 @@ const config: Config = {
   isDev: NODE_ENV === 'development',
   /** 默认不使用history模式 */
   isBorwserHistory: false,
-}
+};
 
 /** 主界面 */
 export const Mainwin = {
@@ -41,8 +41,8 @@ export const DIALOG = {
 export const CUSTOMWIN = {
   width: 680,
   height: 600,
-  id: 'userCenter',
-  url: '/userCenter',
+  id: 'settings',
+  url: '/settings',
 };
 
 export const BROWSER = {

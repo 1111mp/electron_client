@@ -35,6 +35,7 @@ export const EmojiButton = React.memo(({ onPickEmoji }: Props) => {
       setPopperRoot(root);
       document.body.appendChild(root);
       const handleOutsideClick = ({ target }: MouseEvent) => {
+
         if (!root.contains(target as Node)) {
           setOpen(false);
         }

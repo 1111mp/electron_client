@@ -69,6 +69,12 @@ export default merge(baseConfig, {
       'webpack/hot/only-dev-server',
       require.resolve('../app/appMain/index.tsx'),
     ],
+    appWin: [
+      ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
+      `webpack-dev-server/client?http://localhost:${port}/`,
+      'webpack/hot/only-dev-server',
+      require.resolve('../app/appWin/index.tsx'),
+    ],
     appBrowser: [
       ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
       `webpack-dev-server/client?http://localhost:${port}/`,
@@ -304,6 +310,13 @@ export default merge(baseConfig, {
       filename: 'pages/index.html',
       template: path.resolve(__dirname, '../templates/index.html'),
       chunks: ['appMain'],
+      alwaysWriteToDisk: true, // 配合html-webpack-harddisk-plugin插件始终将生成的文件输出到指定目录
+    }),
+
+    new HtmlWebpackPlugin({
+      filename: 'pages/window.html',
+      template: path.resolve(__dirname, '../templates/window.html'),
+      chunks: ['appWin'],
       alwaysWriteToDisk: true, // 配合html-webpack-harddisk-plugin插件始终将生成的文件输出到指定目录
     }),
 
