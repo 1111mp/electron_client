@@ -141,6 +141,14 @@ export class MainProcess {
     }
   }
 
+  invokeMainWindowFunc({ funcname, args }: { funcname: string; args: any }) {
+    if (this._mainWindow && this._mainWindow.webContents) {
+      this._mainWindow.webContents.executeJavaScript(
+        `window.${funcname}(${JSON.stringify(args)})`
+      );
+    }
+  }
+
   deleteData(keys: string[]) {
     keys &&
       keys.forEach((key) => {
@@ -255,6 +263,23 @@ function getEvents(mainProcess: MainProcess): { [key: string]: Function } {
     [listener.DELETE_DATA]() {
       return (event: IpcMainEvent, keys: string[]) => {
         mainProcess.deleteData(keys);
+      };
+    },
+    /** 同步向mainWindow的webContent获取挂载在全局window的数据 支持同时获取多个key的数据 例如 window.setting的数据 */
+    [listener.GET_DATA_FROM_MAIN_WINDOW]() {
+      return async (event: IpcMainEvent, keys: string[]) => {
+        try {
+          const data = await mainProcess.getDataFromMainWindow(keys);
+          event.returnValue = data;
+        } catch (error) {
+          event.returnValue = {};
+        }
+      };
+    },
+    /** 调用mainWindow的webContent挂载在全局window上的方法 可以做成支持传递多个方法名去调用 但是没必要 */
+    [listener.INVOKE_MAIN_WINDOW_FUNC]() {
+      return (event: IpcMainEvent, data: { funcname: string; args: any }) => {
+        mainProcess.invokeMainWindowFunc(data);
       };
     },
     ...dialog,

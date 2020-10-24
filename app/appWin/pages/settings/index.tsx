@@ -23,17 +23,27 @@ export default class Settings extends BasicComponent<IAnyObject> {
     };
   }
 
+  didMount() {
+    this.$invoke(listener.GET_DATA_FROM_MAIN_WINDOW_ASYNC, ['settings']).then(
+      (data) => {
+        console.log(data);
+        this.setState({
+          theme: data.settings.theme,
+        });
+      }
+    );
+  }
+
   handleChange = (event: RadioChangeEvent) => {
+    const theme = event.target.value;
     this.setState(
       {
-        theme: event.target.value,
+        theme,
       },
       () => {
-        console.log(listener.GET_DATA_FROM_MAIN_WINDOW_ASYNC);
-        this.$invoke(listener.GET_DATA_FROM_MAIN_WINDOW_ASYNC, [
-          'settings',
-        ]).then((data) => {
-          console.log(data);
+        this.$send(listener.INVOKE_MAIN_WINDOW_FUNC, {
+          funcname: 'setAppTheme',
+          args: theme,
         });
       }
     );

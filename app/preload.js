@@ -19,7 +19,7 @@ try {
   window.subscribeToSystemThemeChange = (fn) => {
     nativeTheme.on('updated', () => {
       setSystemTheme();
-      fn();
+      fn(window.systemTheme);
     });
   };
 

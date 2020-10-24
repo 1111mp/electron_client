@@ -170,10 +170,8 @@ const createWindow = async () => {
 };
 
 function createTray() {
-  const icon =
-    process.platform === 'win32'
-      ? getAssetPath('icon.ico')
-      : getAssetPath('icon.png');
+  const iconSize = process.platform === 'darwin' ? '16' : '256';
+  const icon = getAssetPath(`icons/${iconSize}x${iconSize}.png`)
   const image = nativeImage.createFromPath(icon);
   tray = new TrayCreator({
     icon: image,

@@ -70,10 +70,9 @@ class Store implements Property {
   }
 
   _observe = () => {
+    const { name } = { ...this };
     if (!this.loaded) this.loaded = true;
     else {
-      console.log(this);
-      const { name } = { ...this };
       this.changeHandler &&
         this.changeHandler({ keys: [name as string], target: this });
     }

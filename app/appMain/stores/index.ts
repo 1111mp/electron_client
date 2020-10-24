@@ -1,4 +1,5 @@
 import { RouterStore } from 'mobx-react-router';
+import { configure } from 'mobx';
 import Config from 'app/config';
 import manager from './StoreManager';
 import ClientStore from './client';
@@ -15,6 +16,10 @@ Config.isDev &&
       compute: true,
     });
   });
+
+// configure({
+//   enforceActions: 'never',
+// });
 
 const storageMap: any = {
   routerStore: RouterStore,

@@ -13,6 +13,8 @@
   "GET_DATA_FROM_MAIN_WINDOW": "get-data-from-main-window",
   "GET_DATA_FROM_MAIN_WINDOW_ASYNC": "get-data-from-main-window-async",
 
+  "INVOKE_MAIN_WINDOW_FUNC": "invoke-main-window-func",
+
   "DIALOG_SHOW": "dialog-show",
   "DIALOG_CONFIRM": "dialog-confirm",
   "DIALOG_CANCEL": "dialog-cancel",

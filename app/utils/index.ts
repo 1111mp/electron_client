@@ -105,7 +105,7 @@ export async function getThemeFromDatabase() {
 }
 
 /** 设置主题 */
-export function applyTheme(theme: string) {
+function applyTheme(theme: string) {
   theme = theme !== 'system' ? theme : (window as any).systemTheme;
 
   if (window.document.body.classList.contains(`${theme}-theme`)) return;
@@ -114,3 +114,5 @@ export function applyTheme(theme: string) {
   window.document.body.classList.remove('light-theme');
   window.document.body.classList.add(`${theme}-theme`);
 }
+
+export { applyTheme };
