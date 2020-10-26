@@ -15,6 +15,7 @@ import { CUSTOMWIN } from 'app/config';
 export default class Header extends BasicComponent<IAnyObject> {
   handleClick = () => {
     this.$openWeb({ ...CUSTOMWIN, url: `/settings?title=设置` });
+    // this.$send('pop-up-notification', { title: '通知' });
   };
 
   $render() {

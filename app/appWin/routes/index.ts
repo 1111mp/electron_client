@@ -11,4 +11,9 @@ export default [
     component: loadable(() => import('appWin/pages/settings')),
     exact: true,
   },
+  {
+    path: '/notifier',
+    component: loadable(() => import('appWin/pages/notifier')),
+    exact: true,
+  },
 ];

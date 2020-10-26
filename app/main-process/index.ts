@@ -141,6 +141,7 @@ export class MainProcess {
     }
   }
 
+  /** 调用mainWindow的webContent全局的方法 */
   invokeMainWindowFunc({ funcname, args }: { funcname: string; args: any }) {
     if (this._mainWindow && this._mainWindow.webContents) {
       this._mainWindow.webContents.executeJavaScript(

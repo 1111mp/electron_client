@@ -51,4 +51,10 @@ export const BROWSER = {
   url: '/browser',
 };
 
+export const NOTIFIER = {
+  width: 290,
+  height: 200,
+  url: '/notifier',
+};
+
 export default config;

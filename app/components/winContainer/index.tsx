@@ -30,8 +30,9 @@ export default class WinContainer extends BasicComponent<Props> {
   };
 
   $render() {
-    const { title } = queryParse(location.search);
+    const { title, min = 'true' } = queryParse(location.search);
     const { enableDrag, contentStyle } = this.props;
+    console.log(min);
     return (
       <Fragment>
         <Helmet>
@@ -44,19 +45,19 @@ export default class WinContainer extends BasicComponent<Props> {
               (enableDrag ? ' enable-drag ' : '')
             }
           >
-            {title && (
-              <p className="module-win_container-layout-header--title">
-                {title}
-              </p>
-            )}
+            <p className="module-win_container-layout-header--title">
+              {title || ''}
+            </p>
             <ul className="module-win_container-layout-header--container">
-              <li
-                className="module-win_container-layout-header--container-iconItem"
-                style={{ marginRight: '8px' }}
-                onClick={() => this.$minimize()}
-              >
-                <i className="iconfont icontop-minimum"></i>
-              </li>
+              {min === 'true' ? (
+                <li
+                  className="module-win_container-layout-header--container-iconItem"
+                  style={{ marginRight: '8px' }}
+                  onClick={() => this.$minimize()}
+                >
+                  <i className="iconfont icontop-minimum"></i>
+                </li>
+              ) : null}
               <li
                 className="module-win_container-layout-header--container-iconItem"
                 onClick={this.close}

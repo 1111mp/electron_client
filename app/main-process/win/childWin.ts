@@ -10,6 +10,8 @@ export interface WindowListener {
   shown?: () => void;
   finish?: () => void;
   closed?: () => void;
+  focus?: () => void;
+  blur?: () => void;
 }
 
 export default class ChildWindow {
@@ -51,21 +53,37 @@ export default class ChildWindow {
   };
 
   bind = (cb?: WindowListener) => {
-    this.win.once('ready-to-show', () => {
-      cb && cb.readyToShow && cb.readyToShow();
-    });
+    if (!cb) return;
 
-    this.win.once('show', () => {
-      cb && cb.shown && cb.shown();
-    });
+    cb.readyToShow &&
+      this.win.once('ready-to-show', () => {
+        cb.readyToShow!();
+      });
 
-    this.win.once('closed', () => {
-      cb && cb.closed && cb.closed();
-    });
+    cb.shown &&
+      this.win.once('show', () => {
+        cb.shown!();
+      });
 
-    this.win.webContents.once('did-finish-load', () => {
-      cb && cb.finish && cb.finish();
-    });
+    cb.focus &&
+      this.win.on('focus', () => {
+        cb.focus!();
+      });
+
+    cb.blur &&
+      this.win.on('blur', () => {
+        cb.blur!();
+      });
+
+    cb.closed &&
+      this.win.once('closed', () => {
+        cb.closed!();
+      });
+
+    cb.finish &&
+      this.win.webContents.once('did-finish-load', () => {
+        cb.finish!();
+      });
   };
 
   loadURL = (url: string) => {

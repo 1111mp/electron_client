@@ -1,4 +1,6 @@
+import { IpcMainEvent } from 'electron';
 import notifier from 'node-notifier';
+import Notifier from './notifyer';
 import listener from '../../constants/listener.json';
 
 interface NotifyOptions {
@@ -9,6 +11,11 @@ interface NotifyOptions {
   wait?: boolean;
   actions?: string[];
 }
+
+export type PopupNotify = {
+  title: string;
+  content: string;
+};
 
 export default {
   [listener.NOTIFY]() {
@@ -45,6 +52,12 @@ export default {
       notifier.on('cancel', () => {
         console.log('"Cancel" was pressed');
       });
+    };
+  },
+  /** 自定义右下角上滑通知 */
+  [listener.POP_UP_NOTIFICATION]() {
+    return (event: IpcMainEvent, data: PopupNotify) => {
+      new Notifier(data);
     };
   },
 };

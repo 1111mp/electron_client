@@ -31,5 +31,7 @@
   "NOTIFY_ACTIVATE": "notify_activate",
   "NOTIFY_DISMISSED": "notify_dismissed",
   "NOTIFY_TIMEOUT": "notify_timeout",
-  "NOTIFY_REPLIED": "notify_replied"
+  "NOTIFY_REPLIED": "notify_replied",
+
+  "POP_UP_NOTIFICATION": "pop-up-notification"
 }
