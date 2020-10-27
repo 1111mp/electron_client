@@ -57,4 +57,10 @@ export const NOTIFIER = {
   url: '/notifier',
 };
 
+export const EXPANSION = {
+  width: 250,
+  // height: 200,
+  url: '/notifier',
+};
+
 export default config;

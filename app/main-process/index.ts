@@ -11,6 +11,7 @@ import dialog from './dialog';
 import webWin from './webWin';
 import browser from './browser';
 import notifier from './notifier';
+import expansion from './expansion';
 import _ from 'lodash';
 
 const { webContents } = require('electron');
@@ -49,7 +50,7 @@ export class MainProcess {
     return this._instance;
   }
 
-  private _mainWindow: BrowserWindow | null;
+  _mainWindow: BrowserWindow | null;
   private _allEvents: IAnyObject;
   private _rendererEvents: CbEvents;
   private _datas: MainDatas;
@@ -283,10 +284,16 @@ function getEvents(mainProcess: MainProcess): { [key: string]: Function } {
         mainProcess.invokeMainWindowFunc(data);
       };
     },
+    [listener.INTERFACE_EXPANSION]() {
+      return (event: IpcMainEvent) => {
+        mainProcess._mainWindow?.setBounds({ width: 1024 + 200 });
+      };
+    },
     ...dialog,
     ...webWin,
     ...browser,
     ...notifier,
+    ...expansion(mainProcess._mainWindow),
   };
 }
 

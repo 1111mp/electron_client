@@ -15,10 +15,6 @@ export default class Notifier {
 
   constructor(args: PopupNotify) {
     this.isShown = false;
-    // this.url = args && args.url;
-    // this.onShown = args && args.shown;
-    // this.onFinish = args && args.finish;
-    // this.onClosed = args && args.closed;
 
     this.createNotifier(args);
   }
@@ -32,7 +28,7 @@ export default class Notifier {
     const winInstance = (this.winInstance = new ChildWindow({
       width: NOTIFIER.width,
       height: NOTIFIER.height,
-      x: WIDTH - NOTIFIER.width - 8,
+      x: WIDTH - NOTIFIER.width - offset,
       y: HEIGHT,
       frame: false,
       resizable: false,
@@ -40,7 +36,7 @@ export default class Notifier {
       alwaysOnTop: true,
       opacity: 0,
       webPreferences: {
-        // devTools: false,
+        devTools: false,
       },
     }));
 
@@ -85,14 +81,14 @@ export default class Notifier {
               ? easeOutQuad(
                   currentTime,
                   this.screenHeight,
-                  NOTIFIER.height + 8,
+                  NOTIFIER.height + offset,
                   200,
                   !open
                 )
               : easeInQuad(
                   currentTime,
-                  this.screenHeight - NOTIFIER.height - 8,
-                  NOTIFIER.height + 8,
+                  this.screenHeight - NOTIFIER.height - offset,
+                  NOTIFIER.height + offset,
                   200
                 )
           )

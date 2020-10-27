@@ -7,6 +7,7 @@ import { IntlProvider } from 'react-intl';
 import WinContainer from 'components/winContainer';
 import Config from 'app/config';
 import routes from './routes';
+import { queryParse } from 'app/utils';
 
 const history = Config.isBorwserHistory
   ? createBrowserHistory({
@@ -20,15 +21,20 @@ type Props = {
 };
 
 const Root = ({ messages }: Props) => {
+  const { header } = queryParse(location.search);
   return (
     <IntlProvider
       locale={navigator.language}
       defaultLocale={navigator.language}
       messages={messages}
     >
-      <WinContainer>
+      {header === 'false' ? (
         <Router history={history}>{renderRoutes(routes)}</Router>
-      </WinContainer>
+      ) : (
+        <WinContainer>
+          <Router history={history}>{renderRoutes(routes)}</Router>
+        </WinContainer>
+      )}
     </IntlProvider>
   );
 };

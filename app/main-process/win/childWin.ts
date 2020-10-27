@@ -7,7 +7,7 @@ const os = require('os');
 
 export interface WindowListener {
   readyToShow?: () => void;
-  shown?: () => void;
+  show?: () => void;
   finish?: () => void;
   closed?: () => void;
   focus?: () => void;
@@ -60,9 +60,9 @@ export default class ChildWindow {
         cb.readyToShow!();
       });
 
-    cb.shown &&
+    cb.show &&
       this.win.once('show', () => {
-        cb.shown!();
+        cb.show!();
       });
 
     cb.focus &&

@@ -5,7 +5,6 @@ import BasicComponent from 'components/BasicComponent';
 
 import { List, Typography, Divider, Radio } from 'antd';
 import { RadioChangeEvent } from 'antd/lib/radio';
-import { queryParse } from 'app/utils';
 import listener from 'constants/listener.json';
 
 type State = {
@@ -17,9 +16,8 @@ export default class Settings extends BasicComponent<IAnyObject> {
 
   constructor(props: IAnyObject) {
     super(props);
-    const { theme } = queryParse(location.search);
     this.state = {
-      theme,
+      theme: '',
     };
   }
 
