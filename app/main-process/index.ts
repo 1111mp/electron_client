@@ -11,7 +11,6 @@ import dialog from './dialog';
 import webWin from './webWin';
 import browser from './browser';
 import notifier from './notifier';
-import expansion from './expansion';
 import _ from 'lodash';
 
 const { webContents } = require('electron');
@@ -293,7 +292,6 @@ function getEvents(mainProcess: MainProcess): { [key: string]: Function } {
     ...webWin,
     ...browser,
     ...notifier,
-    ...expansion(mainProcess._mainWindow),
   };
 }
 
