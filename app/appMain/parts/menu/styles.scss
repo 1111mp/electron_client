@@ -1,0 +1,13 @@
+.module-app-menu {
+  width: 61px;
+  height: 100%;
+  border-right: 1px solid;
+  z-index: 1;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+
+  @include light-theme() {
+    background-color: $color-menu-bkg;
+    border-color: $color-menu-border;
+  }
+}

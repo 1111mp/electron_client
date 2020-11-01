@@ -1,14 +1,18 @@
 .module-home {
-  width: 100%;
+  flex: 1;
   height: 100%;
   @include flex();
 
-  .module-home-sider {
-    width: 250px;
+  &-sider {
+    @include flex($direction: column);
+    width: 320px;
     height: 100%;
+    border-right: 1px solid;
 
     @include light-theme() {
-      background-color: $color-gray-02;
+      background-color: $color-white;
+      border-color: $color-sider-border;
+      box-shadow: 1px 0 2px $color-sider-border;
     }
 
     @include dark-theme() {
@@ -16,7 +20,7 @@
     }
   }
 
-  .module-home-content {
+  &-content {
     flex: 1;
     height: 100%;
 

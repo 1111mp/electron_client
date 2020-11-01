@@ -21,9 +21,9 @@ export default class Header extends BasicComponent<IAnyObject> {
   $render() {
     return (
       <div className="module-roomlist-header">
-        <span className="avatar" onClick={this.handleClick}>
+        {/* <span className="avatar" onClick={this.handleClick}>
           <Avatar size={30} icon={<UserOutlined />} />
-        </span>
+        </span> */}
         <Input
           className="search_input"
           placeholder="搜索"

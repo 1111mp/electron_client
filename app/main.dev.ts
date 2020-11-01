@@ -86,7 +86,7 @@ const createWindow = async () => {
     minWidth: Mainwin.minWidth,
     minHeight: Mainwin.minHeight,
     center: true,
-    // frame: false,
+    frame: false,
     webPreferences:
       (process.env.NODE_ENV === 'development' ||
         process.env.E2E_BUILD === 'true') &&

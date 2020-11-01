@@ -2,5 +2,20 @@
   @include flex($justify:center,$align:center);
 	margin: 16px 0;
 	font-weight: 400;
-	color: #72727F;
+  color: #293146;
+
+  &::before, &::after {
+    content: '';
+    width: 30%;
+    height: 1px;
+    background-color: #F5F5F5;
+  }
+
+  &::before {
+    margin-right: 8px;
+  }
+
+  &::after {
+    margin-left: 8px;
+  }
 }

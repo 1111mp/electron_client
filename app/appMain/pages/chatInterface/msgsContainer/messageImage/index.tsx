@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 
 export default class MessageImage extends Component<IAnyObject> {
-  _onDoubleClick = (e: any) => {
-    e.preventDefault();
-    const { currentMessage } = this.props;
-  };
+  // _onDoubleClick = (e: any) => {
+  //   e.preventDefault();
+  //   const { currentMessage } = this.props;
+  // };
 
   render() {
     const { currentMessage } = this.props;

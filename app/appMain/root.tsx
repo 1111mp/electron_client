@@ -6,6 +6,7 @@ import { renderRoutes } from 'react-router-config';
 import { createBrowserHistory, createHashHistory } from 'history';
 import { syncHistoryWithStore } from 'mobx-react-router';
 import { IntlProvider } from 'react-intl';
+import Menu from 'appMain/parts/menu';
 import Config from 'app/config';
 import allRoutes from './routes/route_config';
 
@@ -29,6 +30,7 @@ const Root = ({ stores, statusCode, messages }: Props) => {
       messages={messages}
     >
       <Provider {...stores}>
+        <Menu />
         <Router history={syncHistoryWithStore(History, stores.routerStore)}>
           {/* <Routes /> */}
           {renderRoutes(allRoutes)}

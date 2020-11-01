@@ -18,9 +18,7 @@ function getData(): any[] {
       res.push({
         msgId: i,
         msgType: 0,
-        system:
-          '我是系统消息' +
-          i,
+        system: '我是系统消息' + i,
         time: 1598493522375,
         user: {
           avatar: 'https://img2-npl.bao.163.com/avatar/default/054/200',
@@ -28,13 +26,26 @@ function getData(): any[] {
           userId: 1811763,
         },
       });
-    }else if (i === 1) {
+    } else if (i === 1) {
       res.push({
         msgId: i,
         msgType: 0,
         content:
           '在每一个需要使用变量的component组件中都需要单独引入index.styl文件，不仅进行了多次重复性的操作，而且文件名称一旦发生改变，维护更新非常麻烦，非常的不人性化。' +
           i,
+        time: 1598493522375,
+        user: {
+          avatar: 'https://img2-npl.bao.163.com/avatar/default/054/200',
+          name: '玩家954792',
+          userId: 1,
+        },
+      });
+    } else if (i === 5) {
+      res.push({
+        msgId: i,
+        msgType: 1,
+        content: '需要使用变量的component组件中都需要单独引入',
+        image: 'http://touxiangkong.com/uploads/allimg/20203301301/2020/3/Vzuiy2.jpg',
         time: 1598493522375,
         user: {
           avatar: 'https://img2-npl.bao.163.com/avatar/default/054/200',
@@ -74,10 +85,10 @@ export default class ChatInterface extends BasicComponent<IAnyObject> {
 
   didMount() {
     setTimeout(() => {
-      let messages = getData()
+      let messages = getData();
       this.setState(
         {
-          messages
+          messages,
         },
         () => {
           this.scrollToBottom();

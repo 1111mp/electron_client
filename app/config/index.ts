@@ -15,8 +15,8 @@ const config: Config = {
 
 /** 主界面 */
 export const Mainwin = {
-  width: 1024,
-  height: 728,
+  width: 1260,
+  height: 875,
   minWidth: 1024,
   minHeight: 728,
 };

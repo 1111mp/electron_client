@@ -1,6 +1,7 @@
 .module-roomlist-header {
   @include flex($align: center);
-  padding: 8px 16px;
+  width: 100%;
+  padding: 70px 16px 16px;
 
   .avatar {
     margin-right: 8px;
@@ -9,19 +10,24 @@
 
   .search_input {
     flex: 1;
+    height: 32px;
     border-radius: 6px;
 
     @include light-theme() {
       border-color: $color-gray-02;
-      background-color: $color-gray-05;
+      background-color: $color-input-bkg;
 
       .ant-input-prefix {
-        color: $color-gray-75;
+        color: $color-input-placeholder;
       }
 
       input {
         color: $color-gray-90;
-        background-color: $color-gray-05;
+        background-color: $color-input-bkg;
+
+        &::placeholder {
+          color: $color-input-placeholder!important;
+        }
       }
     }
 
