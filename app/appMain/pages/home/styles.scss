@@ -5,7 +5,7 @@
 
   &-sider {
     @include flex($direction: column);
-    width: 320px;
+    width: 250px;
     height: 100%;
     border-right: 1px solid;
 
@@ -17,6 +17,8 @@
 
     @include dark-theme() {
       background-color: $color-gray-80;
+      border-color: $color-gray-60;
+      box-shadow: 1px 0 2px $color-gray-65;
     }
   }
 

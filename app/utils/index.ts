@@ -116,3 +116,16 @@ function applyTheme(theme: string) {
 }
 
 export { applyTheme };
+
+export function loadImg(url: string, cb?: () => void) {
+  if (!url) return;
+
+  let img: any = new Image();
+
+  img.onload = () => {
+    img = null;
+    cb && cb();
+  };
+
+  img.src = url;
+}

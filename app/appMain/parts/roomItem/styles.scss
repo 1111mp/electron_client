@@ -1,14 +1,14 @@
 .module-roomitem {
   @include flex($align: center);
-  height: 108px;
+  height: 64px;
   padding: 0 12px;
   font-size: 12px;
   cursor: pointer;
   overflow: hidden;
-  border-bottom: 1px solid;
+  // border-bottom: 1px solid;
 
   @include light-theme() {
-    border-color: $color-roomitem-border;
+    // border-color: $color-roomitem-border;
     background-color: $color-white;
 
     &:hover {
@@ -17,8 +17,11 @@
   }
 
   @include dark-theme() {
+    // border-color: $color-gray-60;
+    background-color: $color-gray-80;
+
     &:hover {
-      background-color: $color-gray-75;
+      background: linear-gradient(to right, $color-gray-65, $color-gray-80);
     }
   }
 
@@ -52,10 +55,10 @@
     &--detail {
       max-width: 86%;
       @include ellipse;
-      white-space: normal;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
+      white-space: nowrap;
+      // display: -webkit-box;
+      // -webkit-box-orient: vertical;
+      // -webkit-line-clamp: 2;
       word-break: keep-all;
 
       @include light-theme() {
@@ -66,18 +69,27 @@
         color: $color-gray-25;
       }
     }
+  }
+
+  .module-roomitem-right_content {
+    @include flex($direction: column, $justify: center);
+    margin: 0;
 
     &--timer {
-      position: absolute;
-      top: 0;
-      right: 0;
-      color: #B8BBBE;
+      line-height: 18px;
+
+      @include light-theme() {
+        color: #B8BBBE;
+      }
+
+      @include dark-theme() {
+        color: $color-gray-25;
+      }
     }
 
     &--count {
-      position: absolute;
-      top: 26px;
-      right: 0;
+      align-self: flex-end;
+      margin-top: 4px;
 
       .ant-badge-count {
         min-width: 18px;
@@ -86,28 +98,14 @@
         border-radius: 4px;
 
         @include light-theme() {
-          background-color: #58ACEC;
+          background-color: $themeColor;
           // box-shadow: 0 0 0 1px $ultramarine-ui-light;
         }
 
         @include dark-theme() {
-          // background-color: $ultramarine-ui-dark;
+          background-color: $themeColor;
           // box-shadow: 0 0 0 1px $ultramarine-ui-dark;
         }
-      }
-    }
-  }
-
-  .module-roomitem-right_content {
-
-    &-timer {
-
-      @include dark-theme() {
-        color: $color-gray-60;
-      }
-
-      @include dark-theme() {
-        color: $color-gray-25;
       }
     }
   }

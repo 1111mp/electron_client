@@ -4,15 +4,9 @@ import { Component, Fragment } from 'react';
 import RendererProcess, { CallBack } from 'app/renderer-process';
 import { getLocationSearch, queryMergeToStr } from 'app/utils';
 import _ from 'lodash';
+import { OpenArgs } from 'app/utils/rendererapi';
 
 const listener = require('constants/listener.json');
-
-interface OpenArgs {
-  url: string;
-  width?: number;
-  height?: number;
-  id?: string;
-}
 
 /**
  * @description: 检测组件是否已经销毁，防止setState内存溢出 https://segmentfault.com/a/1190000017186299

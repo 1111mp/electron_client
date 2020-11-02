@@ -13,18 +13,31 @@
   margin: 0;
   padding: 0 16px;
   @include flex($align: center);
-  color: #9199A3;
   font-size: 12px;
   border-top: 1px solid;
   border-bottom: 1px solid;
 
   @include light-theme() {
+    color: #9199A3;
     background-color: $color-sider-bkg;
     border-color: #F8F8FA;
   }
 
+  @include dark-theme() {
+    color: $color-gray-15;
+    background-color: $color-gray-65;
+    border-color: $color-gray-60;
+  }
+
   &-count {
     margin-left: 8px;
-    color: #BDC2C8;
+
+    @include light-theme() {
+      color: #BDC2C8;
+    }
+
+    @include dark-theme() {
+      color: $color-gray-15;
+    }
   }
 }

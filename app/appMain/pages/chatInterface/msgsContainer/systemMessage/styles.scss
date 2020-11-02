@@ -7,18 +7,17 @@
 	&>span {
     padding: 8px 10px;
     border-radius: 4px;
-    color: #B8BBBE;
     text-align: left;
     word-break: break-all;
 
-    // @include light-theme() {
-    //   color: $color-black-alpha-40;
-    //   background-color: $color-gray-15;
-    // }
+    @include light-theme() {
+      color: $color-black-alpha-40;
+      background-color: $color-gray-15;
+    }
 
-    // @include dark-theme() {
-    //   color: $color-white-alpha-60;
-    //   background-color: rgba(60,60,66,.4);
-    // }
+    @include dark-theme() {
+      color: $color-white-alpha-60;
+      background-color: rgba(60,60,66,.4);
+    }
   }
 }

@@ -2,13 +2,27 @@
   @include flex($justify:center,$align:center);
 	margin: 16px 0;
 	font-weight: 400;
-  color: #293146;
+
+  @include light-theme() {
+    color: #293146;
+  }
+
+  @include dark-theme() {
+    color: $color-gray-05;
+  }
 
   &::before, &::after {
     content: '';
-    width: 30%;
+    width: 20%;
     height: 1px;
-    background-color: #F5F5F5;
+
+    @include light-theme() {
+      background-color: #F5F5F5;
+    }
+
+    @include dark-theme() {
+      background-color: $color-gray-45;
+    }
   }
 
   &::before {

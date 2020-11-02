@@ -1,23 +1,16 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-export default class MessageImage extends Component<IAnyObject> {
-  // _onDoubleClick = (e: any) => {
-  //   e.preventDefault();
-  //   const { currentMessage } = this.props;
-  // };
+const MessageImage: React.FC<IAnyObject> = ({ currentMessage }) => {
+  return currentMessage && currentMessage.image ? (
+    <div className="message-image-content">
+      <img
+        src={currentMessage.image.url}
+        width={currentMessage.image.width}
+        height={currentMessage.image.height}
+        alt="" /** onDoubleClick={this._onDoubleClick} */
+      />
+    </div>
+  ) : null;
+};
 
-  render() {
-    const { currentMessage } = this.props;
-    if (!!currentMessage) {
-      return (
-        <div className="message-content message-image-content">
-          <img
-            src={currentMessage.image}
-            alt="" /** onDoubleClick={this._onDoubleClick} */
-          />
-        </div>
-      );
-    }
-    return null;
-  }
-}
+export default MessageImage;

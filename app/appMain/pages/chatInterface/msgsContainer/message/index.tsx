@@ -105,7 +105,7 @@ export default class Message extends Component<Props> {
               {/* {chatType === 'group' ? (
                 <p className="user_name">{user.name}</p>
               ) : null} */}
-              {position === 'right' ? (
+              {/* {position === 'right' ? (
                 <p className="message-info">
                   <span className="message-info-timer">6:26 am ·</span>
                   <span className="message-info-user_name">You</span>
@@ -115,7 +115,7 @@ export default class Message extends Component<Props> {
                   <span className="message-info-user_name">{user.name}</span>
                   <span className="message-info-timer">· 6:26 am</span>
                 </p>
-              )}
+              )} */}
               {this.renderBubble()}
             </div>
             {/* <p className="message-content">{currentMessage.text}</p> */}
