@@ -30,21 +30,45 @@ class StoreManager {
     for (let i = 0; i < PersistMethods.length; i++) {
       const source = PersistMethods[i]; // local
       /** 从本地缓存中获取所有已经持久化的数据state的值 */
-      const data = await this.persistManager.getItems(source, keys);
-      /** 依次赋值给state */
-      keys.forEach((key: string) => {
-        if (data[key]) {
+      if (source === PERSIST_SQLITE) {
+        const data = await this.persistManager.getItems(
+          source,
+          keys.reduce((pre: string[], cur: string) => {
+            return [...pre, ...stores[cur].persistKeys(source)];
+          }, [])
+        );
+        /** 依次赋值给state */
+        keys.forEach((key: string) => {
           // 如果缓存中有值 就赋值给state
           let state = states[key] || {};
+          stores[key].persistKeys(source).forEach((persistKey) => {
+            if (data[persistKey]) {
+              state = {
+                ...state,
+                [persistKey]: { ...data[persistKey] },
+              };
 
-          state = {
-            ...state,
-            ...data[key],
-          };
+              states[key] = state;
+            }
+          });
+        });
+      } else {
+        const data = await this.persistManager.getItems(source, keys);
+        /** 依次赋值给state */
+        keys.forEach((key: string) => {
+          if (data[key]) {
+            // 如果缓存中有值 就赋值给state
+            let state = states[key] || {};
 
-          states[key] = state;
-        }
-      });
+            state = {
+              ...state,
+              ...data[key],
+            };
+
+            states[key] = state;
+          }
+        });
+      }
     }
 
     /** 开始同步缓存的数据到store */
@@ -93,22 +117,35 @@ class StoreManager {
 
       const states: any = {}; // 用来保存 最新的state
 
-      stores.forEach((store) => {
+      stores.forEach((store: any) => {
         // debugger
         const keys = store.persistKeys(source); // ['username','userId']
 
         keys &&
           keys.forEach((key: string) => {
-            const v = store[key]; // state的值
+            if (source === PERSIST_SQLITE) {
+              const v = { ...store[key] };
 
-            let state = states[store.name] || []; // 比如user store下所有的state
+              let state = states[key] || {}; // 比如user store下所有的state
 
-            state = {
-              ...state,
-              [key]: v,
-            };
+              state = {
+                ...state,
+                [key]: v,
+              };
 
-            states[store.name] = state;
+              states[key] = state;
+            } else {
+              const v = store[key]; // state的值
+
+              let state = states[store.name] || {}; // 比如user store下所有的state
+
+              state = {
+                ...state,
+                [key]: v,
+              };
+
+              states[store.name] = state;
+            }
           });
       });
 
