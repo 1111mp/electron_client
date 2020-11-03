@@ -16,4 +16,14 @@ export default [
     component: loadable(() => import('appWin/pages/notifier')),
     exact: true,
   },
+  {
+    path: '/dialog',
+    component: loadable(() => import('components/dialog')),
+    exact: true,
+  },
+  {
+    path: '/browser',
+    component: loadable(() => import('components/browser')),
+    exact: true,
+  },
 ];

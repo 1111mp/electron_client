@@ -35,15 +35,15 @@ export default merge(baseConfig, {
       'regenerator-runtime/runtime',
       path.join(__dirname, '..', 'app/appMain/index.tsx'),
     ],
-    appBrowser: [
+    appWin: [
       'core-js',
       'regenerator-runtime/runtime',
-      path.join(__dirname, '..', 'app/appBrowser/index.tsx'),
+      path.join(__dirname, '..', 'app/appWin/index.tsx'),
     ],
-    appDialog: [
+    appLogin: [
       'core-js',
       'regenerator-runtime/runtime',
-      path.join(__dirname, '..', 'app/appDialog/index.tsx'),
+      path.join(__dirname, '..', 'app/appLogin/index.tsx'),
     ],
   },
 
@@ -85,7 +85,7 @@ export default merge(baseConfig, {
             options: {
               modules: {
                 localIdentName: '[name]__[local]__[hash:base64:5]',
-              }
+              },
             },
           },
         ],
@@ -267,16 +267,16 @@ export default merge(baseConfig, {
     }),
 
     new HtmlWebpackPlugin({
-      filename: '../pages/browser.html',
-      template: path.resolve(__dirname, '../templates/browser.html'),
-      chunks: ['appBrowser'],
+      filename: '../pages/window.html',
+      template: path.resolve(__dirname, '../templates/window.html'),
+      chunks: ['appWin'],
       alwaysWriteToDisk: true, // 配合html-webpack-harddisk-plugin插件始终将生成的文件输出到指定目录
     }),
 
     new HtmlWebpackPlugin({
-      filename: '../pages/dialog.html',
-      template: path.resolve(__dirname, '../templates/dialog.html'),
-      chunks: ['appDialog'],
+      filename: '../pages/login.html',
+      template: path.resolve(__dirname, '../templates/login.html'),
+      chunks: ['appLogin'],
       alwaysWriteToDisk: true, // 配合html-webpack-harddisk-plugin插件始终将生成的文件输出到指定目录
     }),
 

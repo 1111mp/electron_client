@@ -1,6 +1,8 @@
 {
   "MAIN_DEVTOOLS": "devtools",
 
+  "LOGIN_SUCCESSFUL": "login-successful",
+
   "REGIST_EVENT": "regist-event",
   "REVOKE_EVENT": "revoke-event",
   "INVOKE_EVENT": "invoke-event",

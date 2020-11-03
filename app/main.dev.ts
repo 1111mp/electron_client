@@ -11,13 +11,21 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow, dialog, nativeImage } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  dialog,
+  nativeImage,
+  IpcMainEvent,
+} from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import Config, { Mainwin } from './config';
-import listener from './main-process';
+import Config, { Mainwin, LoginWin } from './config';
+import setListeners from './main-process';
 import TrayCreator from './main-process/tray';
+import listeners from './constants/listener.json';
 
 /** 设置日志级别 */
 log.transports.console.level = 'silly';
@@ -39,6 +47,7 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+let loginWindow: BrowserWindow | null = null;
 let tray = null; // 创建全局的变量 防止系统托盘被垃圾回收
 
 if (process.env.NODE_ENV === 'production') {
@@ -71,14 +80,7 @@ const getAssetPath = (...paths: string[]): string => {
   return path.join(RESOURCES_PATH, ...paths);
 };
 
-const createWindow = async () => {
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
-    await installExtensions();
-  }
-
+const createWindow = async (userInfo: string, callback: Function) => {
   mainWindow = new BrowserWindow({
     show: false,
     width: Mainwin.width,
@@ -117,9 +119,11 @@ const createWindow = async () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
+    callback();
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
+      mainWindow.webContents.executeJavaScript(`window.UserInfo = ${userInfo}`);
       mainWindow.show();
       mainWindow.focus();
     }
@@ -160,18 +164,110 @@ const createWindow = async () => {
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
-  new AppUpdater();
+  // new AppUpdater();
 
   /** 添加主进程监听事件 */
-  listener(mainWindow);
+  setListeners(mainWindow);
 
   /** 创建系统托盘菜单 */
   createTray();
 };
 
+/** 登录窗口 */
+const createLogin = async () => {
+  if (
+    process.env.NODE_ENV === 'development' ||
+    process.env.DEBUG_PROD === 'true'
+  ) {
+    await installExtensions();
+  }
+
+  loginWindow = new BrowserWindow({
+    show: false,
+    width: LoginWin.width,
+    height: LoginWin.height,
+    center: true,
+    frame: false,
+    resizable: false,
+    minimizable: false,
+    maximizable: false,
+    webPreferences: {
+      nodeIntegration: true,
+    },
+  });
+
+  loginWindow.loadURL(`file://${__dirname}/pages/login.html`);
+
+  if (
+    process.env.NODE_ENV === 'development' ||
+    process.env.DEBUG_PROD === 'true'
+  ) {
+    //开发者工具 https://newsn.net/say/electron-devtools.html
+    loginWindow.webContents.openDevTools({ mode: 'undocked' });
+  }
+
+  // @TODO: Use 'ready-to-show' event
+  //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
+  loginWindow.webContents.on('did-finish-load', () => {
+    if (!loginWindow) {
+      throw new Error('"loginWindow" is not defined');
+    }
+    if (process.env.START_MINIMIZED) {
+      loginWindow.minimize();
+    } else {
+      loginWindow.show();
+      loginWindow.focus();
+    }
+  });
+
+  /** 崩溃容错 */
+  loginWindow.webContents.on('crashed', () => {
+    // @ts-ignore
+    const choice = dialog.showMessageBox(loginWindow, {
+      type: 'info',
+      title: '崩溃啦',
+      message: '好像出了点小问题...',
+      buttons: ['重新打开', '关闭'],
+    });
+
+    // @ts-ignore
+    if (choice['response'] === 0) loginWindow.reload();
+    // @ts-ignore
+    else loginWindow.close();
+  });
+
+  app.on('gpu-process-crashed', () => {
+    debugger;
+    app.exit();
+  });
+
+  app.on('renderer-process-crashed', () => {
+    debugger;
+    app.exit();
+  });
+
+  loginWindow.on('closed', () => {
+    loginWindow = null;
+  });
+
+  // Remove this if your app does not use auto updates
+  // eslint-disable-next-line
+  new AppUpdater();
+
+  /** 登录成功 */
+  ipcMain.once(
+    listeners.LOGIN_SUCCESSFUL,
+    async (event: IpcMainEvent, userInfo: string) => {
+      createWindow(userInfo, () => {
+        loginWindow && loginWindow.close();
+      });
+    }
+  );
+};
+
 function createTray() {
   const iconSize = process.platform === 'darwin' ? '16' : '256';
-  const icon = getAssetPath(`icons/${iconSize}x${iconSize}.png`)
+  const icon = getAssetPath(`icons/${iconSize}x${iconSize}.png`);
   const image = nativeImage.createFromPath(icon);
   tray = new TrayCreator({
     icon: image,
@@ -201,13 +297,13 @@ app.on('window-all-closed', () => {
 
 if (process.env.E2E_BUILD === 'true') {
   // eslint-disable-next-line promise/catch-or-return
-  app.whenReady().then(createWindow);
+  app.whenReady().then(createLogin);
 } else {
-  app.on('ready', createWindow);
+  app.on('ready', createLogin);
 }
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) createWindow();
+  if (mainWindow === null) createLogin();
 });

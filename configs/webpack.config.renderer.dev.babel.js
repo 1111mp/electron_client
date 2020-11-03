@@ -75,17 +75,11 @@ export default merge(baseConfig, {
       'webpack/hot/only-dev-server',
       require.resolve('../app/appWin/index.tsx'),
     ],
-    appBrowser: [
+    appLogin: [
       ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
       `webpack-dev-server/client?http://localhost:${port}/`,
       'webpack/hot/only-dev-server',
-      require.resolve('../app/appBrowser/index.tsx'),
-    ],
-    appDialog: [
-      ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
-      `webpack-dev-server/client?http://localhost:${port}/`,
-      'webpack/hot/only-dev-server',
-      require.resolve('../app/appDialog/index.tsx'),
+      require.resolve('../app/appLogin/index.tsx'),
     ],
   },
 
@@ -321,16 +315,9 @@ export default merge(baseConfig, {
     }),
 
     new HtmlWebpackPlugin({
-      filename: 'pages/browser.html',
-      template: path.resolve(__dirname, '../templates/browser.html'),
-      chunks: ['appBrowser'],
-      alwaysWriteToDisk: true, // 配合html-webpack-harddisk-plugin插件始终将生成的文件输出到指定目录
-    }),
-
-    new HtmlWebpackPlugin({
-      filename: 'pages/dialog.html',
-      template: path.resolve(__dirname, '../templates/dialog.html'),
-      chunks: ['appDialog'],
+      filename: 'pages/login.html',
+      template: path.resolve(__dirname, '../templates/login.html'),
+      chunks: ['appLogin'],
       alwaysWriteToDisk: true, // 配合html-webpack-harddisk-plugin插件始终将生成的文件输出到指定目录
     }),
 

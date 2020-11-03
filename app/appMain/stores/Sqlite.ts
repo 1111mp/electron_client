@@ -19,19 +19,6 @@ export function setItem(key: string, value: string, custom: boolean = false) {
 }
 
 export default class Sqlite extends Persister {
-  /** 存储时 key拼一个前缀 */
-  private prefix = '$___localstorage___';
-
-  /** 为key拼上前缀 */
-  private toLocalKey(key: string) {
-    return this.prefix + key;
-  }
-
-  /** 获取真正的key */
-  private toRealKey(key: string) {
-    return key.replace(this.prefix, '');
-  }
-
   /** 存
    * 自定义storage事件 实现同一页面监听storage的变化
    */
@@ -39,15 +26,18 @@ export default class Sqlite extends Persister {
     for (let model in models) {
       try {
         let value = models[model];
-        (window as any).sequelize.models[model].update({ ...value }, {
-          where: {
-            id: {
-              [Op.eq]: 1
-            }
+        (window as any).sequelize.models[model].update(
+          { ...value },
+          {
+            where: {
+              id: {
+                [Op.eq]: 1,
+              },
+            },
           }
-        });
+        );
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     }
   }
@@ -58,7 +48,7 @@ export default class Sqlite extends Persister {
       models.map(async (model) => {
         try {
           let res = await (window as any).sequelize.models[model].findOne({
-            attributes: { exclude: ['id', 'updatedAt', 'createdAt'] },
+            attributes: { exclude: ['id'] },
           });
 
           return res.toJSON();
@@ -106,7 +96,7 @@ export default class Sqlite extends Persister {
 
     this._changeHandler &&
       this._changeHandler({
-        keys: [key as string].map((key) => this.toRealKey(key)),
+        keys: [key as string].map((key) => key),
         target: this,
       });
   };

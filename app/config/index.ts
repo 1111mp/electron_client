@@ -15,10 +15,16 @@ const config: Config = {
 
 /** 主界面 */
 export const Mainwin = {
-  width: 1260,
-  height: 875,
-  minWidth: 1024,
-  minHeight: 728,
+  width: 1040,
+  height: 730,
+  minWidth: 1040,
+  minHeight: 730,
+};
+
+/** 登录界面 */
+export const LoginWin = {
+  width: 280,
+  height: 400,
 };
 
 /** 对话框 */

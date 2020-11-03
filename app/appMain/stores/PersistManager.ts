@@ -77,7 +77,7 @@ export class PersistManager {
         );
       }
 
-      reject({ message: `no source ${source}` });
+      return reject({ message: `no source ${source}` });
     });
   }
 
