@@ -11,6 +11,7 @@ export default class UserStore extends Store {
 
   ready(): Promise<void> {
     super.ready();
+    this.user = { ...(window as any).UserInfo };
     return Promise.resolve();
   }
 }
