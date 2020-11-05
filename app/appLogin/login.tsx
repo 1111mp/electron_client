@@ -44,6 +44,20 @@ const Login: React.FC = React.memo(() => {
       });
   }, [username, pwd]);
 
+  React.useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      if (event.key === 'Enter') {
+        submit();
+      }
+    };
+
+    document.addEventListener('keydown', handler);
+
+    return () => {
+      document.removeEventListener('keydown', handler);
+    };
+  }, [submit]);
+
   return (
     <div className="module-login">
       <p className="module-login-header">

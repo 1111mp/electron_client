@@ -39,7 +39,7 @@ export default async function createStore() {
   try {
     manager.stores = {
       user: new UserStore('user'),
-      Setting: new SettingStore('Setting'),
+      // Setting: new SettingStore('Setting'),
     };
   } catch (e) {
     console.log(e);

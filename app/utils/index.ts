@@ -95,10 +95,10 @@ export function getMessage(
 /** 从数据库获取theme */
 export async function getThemeFromDatabase() {
   try {
-    let setting = await (window as any).sequelize.models.Setting.findOne({
-      attributes: { exclude: ['id', 'updatedAt', 'createdAt'] },
+    let user = await (window as any).sequelize.models.User.findOne({
+      attributes: { exclude: ['id'] },
     });
-    return setting.toJSON();
+    return user.toJSON();
   } catch (error) {
     return { theme: (window as any).systemTheme || 'light' };
   }

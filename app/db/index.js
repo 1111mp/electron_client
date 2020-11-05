@@ -1,6 +1,5 @@
 'use strict';
 
-// import Sequelize from '';
 const { remote } = require('electron');
 const Sequelize = require('sequelize/lib/sequelize');
 const { userInfo } = require('os');
@@ -14,7 +13,7 @@ const userDataPath = app.getPath('userData');
 
 let sequelize;
 
-async function initDatabase() {
+function initDatabase() {
   try {
     sequelize = new Sequelize('database', '', userInfo().username, {
       dialect: 'sqlite',
@@ -28,15 +27,15 @@ async function initDatabase() {
     });
 
     User(sequelize);
-    Setting(sequelize);
+    // Setting(sequelize);
 
     // sequelize.sync({ alter: true });
-    window.sequelize = sequelize;
+    return sequelize;
   } catch (error) {
     console.log(error);
   }
 }
 
-module.exports = async function () {
-  await initDatabase();
+module.exports = function () {
+  return initDatabase();
 };

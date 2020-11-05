@@ -70,17 +70,17 @@ function appInit() {
     return {
       stores: res[0],
       messages: res[1],
-      setting: res[2],
+      user: res[2],
     };
   });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   const loadAsyncComponents = preloadComponent();
-  let { stores, messages, setting } = await appInit();
+  let { stores, messages, user } = await appInit();
 
   /** 初始化设置主题 */
-  const { theme = 'system' } = setting;
+  const { theme = 'system' } = user;
   applyTheme(theme);
 
   let statusCode = 200;

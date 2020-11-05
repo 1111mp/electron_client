@@ -1,6 +1,10 @@
 import { Persister, State } from './PersistManager';
 import { Op } from 'sequelize';
 
+export function firstUpperCase([first, ...rest]: any[]): string {
+  return first.toUpperCase() + rest.join('');
+}
+
 /**
  * 更新sqlite数据库的数据之后 触发sqliteEvent 通知store获取最新数据
  */
@@ -26,16 +30,34 @@ export default class Sqlite extends Persister {
     for (let model in models) {
       try {
         let value = models[model];
-        (window as any).sequelize.models[model].update(
-          { ...value },
-          {
-            where: {
-              id: {
-                [Op.eq]: 1,
-              },
+
+        const data = await (window as any).sequelize.models[
+          firstUpperCase(model.split(''))
+        ].findOrCreate({
+          where: {
+            userId: {
+              [Op.eq]: value.userId,
             },
-          }
-        );
+          },
+          defaults: {
+            ...value,
+          },
+        });
+
+        if (data) {
+          (window as any).sequelize.models[
+            firstUpperCase(model.split(''))
+          ].update(
+            { ...value },
+            {
+              where: {
+                userId: {
+                  [Op.eq]: value.userId,
+                },
+              },
+            }
+          );
+        }
       } catch (error) {
         console.log(error);
       }
@@ -47,12 +69,14 @@ export default class Sqlite extends Persister {
     let res = await Promise.all(
       models.map(async (model) => {
         try {
-          let res = await (window as any).sequelize.models[model].findOne({
+          let res = await (window as any).sequelize.models[
+            firstUpperCase(model.split(''))
+          ].findOne({
             attributes: { exclude: ['id'] },
           });
-
           return res.toJSON();
         } catch (error) {
+          console.log(error);
           return {};
         }
       })

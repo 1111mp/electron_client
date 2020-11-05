@@ -1,6 +1,7 @@
 'use strict';
 
 const { Sequelize, DataTypes } = require('sequelize');
+const moment = require('moment');
 
 /**
  * sequelize + ts 文档：https://www.gobeta.net/books/demopark-sequelize-docs-zh-cn/typescript/
@@ -47,11 +48,33 @@ module.exports = (sequelize) => {
         defaultValue: 'system',
         comment: '主题',
       },
-      createdAt: {
+      regisTime: {
         type: DataTypes.STRING,
+        field: 'regis_time',
+        comment: '用户注册时间',
+      },
+      updateTime: {
+        type: DataTypes.STRING,
+        field: 'update_time',
+        comment: '用户信息最近一次更新时间',
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+        get() {
+          return moment(new Date(this.getDataValue('createdAt'))).format(
+            'YYYY-MM-DD HH:mm'
+          );
+        },
       },
       updatedAt: {
-        type: DataTypes.STRING,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+        get() {
+          return moment(new Date(this.getDataValue('updatedAt'))).format(
+            'YYYY-MM-DD HH:mm'
+          );
+        },
       },
     },
     {

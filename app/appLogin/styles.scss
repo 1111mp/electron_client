@@ -3,6 +3,7 @@
 * {
   margin: 0;
   list-style: none;
+  transition: all .3s;
 }
 
 html,
@@ -10,6 +11,7 @@ body,
 #root {
   width: 100%;
   height: 100%;
+  overflow: hidden;
 }
 
 .module-login {
@@ -18,8 +20,15 @@ body,
   width: calc(100% - 32px);
   height: 100%;
   padding: 0 16px;
-  background-color: #F4F4F4;
   overflow: hidden;
+
+  @include light-theme() {
+    background-color: #F4F4F4;
+  }
+
+  @include dark-theme() {
+    background-color: $color-gray-80;
+  }
 
   &-header {
     @include flex($align: center);
@@ -47,8 +56,15 @@ body,
   }
 
   &-welcome {
-    color: #070707;
     // font-weight: bold;
+
+    @include light-theme() {
+      color: #070707;
+    }
+
+    @include dark-theme() {
+      color: $color-gray-05;
+    }
 
     &-highlight {
       color: $themeColor;
@@ -57,8 +73,15 @@ body,
 
   &-tip {
     font-size: 12px;
-    color: #474444;
     font-weight: 500;
+
+    @include light-theme() {
+      color: #474444;
+    }
+
+    @include dark-theme() {
+      color: $color-gray-15;
+    }
   }
 
   &-form {
@@ -71,8 +94,16 @@ body,
       margin-top: 12px;
       padding: 6px 8px;
       border-radius: 4px;
-      box-shadow: 0 6px 4px #D9D9D9;
-      background-color: $color-white;
+
+      @include light-theme() {
+        box-shadow: 0 6px 4px #D9D9D9;
+        background-color: $color-white;
+      }
+
+      @include dark-theme() {
+        box-shadow: 0 4px 6px $color-gray-60;
+        background-color: $color-gray-25;
+      }
 
       &>label {
         font-size: 12px;
@@ -85,10 +116,26 @@ body,
         margin-top: 4px;
         border: none;
         outline: none;
-        color: #a8a4a4;
+
+        @include light-theme() {
+          color: #a8a4a4;
+          background-color: $color-white;
+        }
+
+        @include dark-theme() {
+          color: $color-gray-65;
+          background-color: $color-gray-25;
+        }
 
         &::placeholder {
-          color: #dfdbdb;
+
+          @include light-theme() {
+            color: #dfdbdb;
+          }
+
+          @include dark-theme() {
+            color: $color-gray-45;
+          }
         }
       }
     }
@@ -105,10 +152,19 @@ body,
     outline: none;
     border-radius: 4px;
     cursor: pointer;
-    color: $color-white;
-    box-shadow: 0 2px 4px #9e9c9c;
-    background-color: $themeColor;
     overflow: hidden;
+
+    @include light-theme() {
+      color: $color-white;
+      box-shadow: 0 2px 4px #9e9c9c;
+      background-color: $themeColor;
+    }
+
+    @include dark-theme() {
+      color: $color-white;
+      box-shadow: 0 2px 4px $color-gray-45;
+      background-color: $themeColor;
+    }
 
     &:hover {
       background-color: #4ba1e2;

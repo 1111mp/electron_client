@@ -116,7 +116,6 @@ class StoreManager {
       const source = PersistMethods[i]; // local
 
       const states: any = {}; // 用来保存 最新的state
-
       stores.forEach((store: any) => {
         // debugger
         const keys = store.persistKeys(source); // ['username','userId']
@@ -130,7 +129,7 @@ class StoreManager {
 
               state = {
                 ...state,
-                [key]: v,
+                ...v,
               };
 
               states[key] = state;

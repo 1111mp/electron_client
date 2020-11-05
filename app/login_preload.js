@@ -6,7 +6,7 @@ try {
 
   // nativeTheme.themeSource = 'dark'
 
-  window.ROOT_PATH = window.location.href.startsWith('file') ? '../' : '/';
+  // window.ROOT_PATH = window.location.href.startsWith('file') ? '../' : '/';
   window.platform = process.platform;
 
   function setSystemTheme() {
@@ -22,18 +22,6 @@ try {
       fn(window.systemTheme);
     });
   };
-
-  ipcRenderer.on('add-dark-overlay', (event, data) => {
-    window.Events.addDarkOverlay(data);
-  });
-
-  ipcRenderer.on('remove-dark-overlay', () => {
-    window.Events.removeDarkOverlay();
-  });
-
-  ipcRenderer.on('theme-setting', (event, data) => {
-    window.Events.setThemeSetting(data);
-  });
 
   window.sequelize = initDatabase();
 } catch (error) {

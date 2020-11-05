@@ -22,11 +22,11 @@ export default class Settings extends BasicComponent<IAnyObject> {
   }
 
   didMount() {
-    this.$invoke(listener.GET_DATA_FROM_MAIN_WINDOW_ASYNC, ['settings']).then(
+    this.$invoke(listener.GET_DATA_FROM_MAIN_WINDOW_ASYNC, ['UserInfo']).then(
       (data) => {
         console.log(data);
         this.setState({
-          theme: data.settings.theme,
+          theme: data.UserInfo.theme,
         });
       }
     );

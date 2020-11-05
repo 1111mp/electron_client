@@ -193,6 +193,7 @@ const createLogin = async () => {
     maximizable: false,
     webPreferences: {
       nodeIntegration: true,
+      preload: path.join(__dirname, 'login_preload.js'),
     },
   });
 
