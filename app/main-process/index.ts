@@ -323,6 +323,9 @@ function getHandleEvents(
         }
       };
     },
+    [listener.GET_ENCRYPTED_MESSAGE](event: IpcMainEvent, message: any) {
+
+    },
   };
 }
 
