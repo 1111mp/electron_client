@@ -17,6 +17,7 @@
   "dependencies": {
     "@journeyapps/sqlcipher": "^4.1.0",
     "emoji-datasource-apple": "^6.0.0",
-    "sequelize": "^6.3.5"
+    "sequelize": "^6.3.5",
+    "socket.io-client": "^3.0.1"
   }
 }
