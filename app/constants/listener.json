@@ -37,6 +37,5 @@
 
   "POP_UP_NOTIFICATION": "pop-up-notification",
 
-  "GET_ENCRYPTED_MESSAGE": "get-encrypted-message",
-  "GET_DECRYPTED_MESSAGE": "get-decrypted-message"
+  "SEND_MESSAGE": "send-message"
 }

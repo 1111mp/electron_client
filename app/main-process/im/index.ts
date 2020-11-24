@@ -1,70 +1,48 @@
-import { Socket } from 'socket.io-client';
-import Operates from './im.json';
+import { IpcMainEvent } from 'electron';
+import protobuf, { Root, Type } from 'protobufjs';
 
-const socketUrl = 'http://192.168.80.208:3000';
+const path = require('path');
 
-class IM {
-  static _instance: IM;
-  private socket: Socket;
-  private user: IAnyObject;
+const listeners = require('../../constants/listener.json');
 
-  static getInstance(user: IAnyObject): IM {
-    if (!this._instance) {
-      this._instance = new IM(user);
-    }
-    return this._instance;
-  }
+export default {
+  [listeners.SEND_MESSAGE]() {
+    return async (event: IpcMainEvent, msg: MessageInstance.Message) => {
+      try {
+        protobuf.load(path.resolve(__dirname, './message.proto'), function (
+          err: Error | null,
+          root?: Root
+        ) {
+          if (err) throw err;
 
-  constructor(user: IAnyObject) {
-    this.user = user;
+          const Message: Type | undefined = root?.lookupType(
+            'messagepackage.Message'
+          );
 
-    this.socket = require('socket.io-client')(socketUrl, {
-      transports: ['websocket'],
-      query: { token: 'a8589367-dbc2-42f3-9f68-2dcbdd907f75' },
-    });
+          // const payload = { text };
 
-    this.socket.on('connect', () => {
-      console.log('connect successed');
-      this.init();
-    });
+          const errMsg = Message!.verify(msg);
+          if (errMsg) throw Error(errMsg);
 
-    this.socket.on('error', (error: any) => {
-      console.log(error);
-    });
-  }
+          const message = Message!.create(msg);
 
-  init = () => {
-    this.login();
-    // this.regist();
-  };
+          const buffer = Message!.encode(message).finish();
+          console.log(buffer);
 
-  send = (operate: string, args: IAnyObject): IAnyObject => {
-    return new Promise((resolve, reject) => {
-      this.socket.emit(
-        operate,
-        {
-          ...args,
-        },
-        (res: IAnyObject) => {
-          resolve(res);
-        }
-      );
-    });
-  };
+          const decodedMessage = Message!.decode(buffer);
+          console.log(decodedMessage);
 
-  regist = (operate: string) => {};
+          const object = Message!.toObject(decodedMessage, {
+            longs: String,
+            enums: String,
+            bytes: String,
+          });
 
-  /** IM 登录 */
-  login = () => {
-    this.send(Operates.LOGIN, {
-      socketId: this.socket.id,
-      userId: this.user.userId,
-    }).then((res: IAnyObject) => {
-      if (res.code === 200) {
-        /** IM 服务登录成功 */
-      } else {
-        /** 失败 */
+          console.log(object);
+        });
+      } catch (error) {
+        console.log(error);
       }
-    });
-  };
-}
+    };
+  },
+};

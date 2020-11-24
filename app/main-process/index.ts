@@ -11,6 +11,7 @@ import dialog from './dialog';
 import webWin from './webWin';
 import browser from './browser';
 import notifier from './notifier';
+import im from './im';
 import _ from 'lodash';
 
 const { webContents } = require('electron');
@@ -300,6 +301,7 @@ function getHandleEvents(
   mainProcess: MainProcess
 ): { [key: string]: Function } {
   return {
+    ...im,
     [listener.GET_DATA_ASYNC]() {
       return async (event: IpcMainEvent, keys: any[]) => {
         // const res = mainProcess.getData(keys);
@@ -323,9 +325,6 @@ function getHandleEvents(
         }
       };
     },
-    [listener.GET_ENCRYPTED_MESSAGE](event: IpcMainEvent, message: any) {
-
-    },
   };
 }
 
@@ -338,6 +337,7 @@ export default function (mainWindow: BrowserWindow | null) {
   });
 
   const handleEvents = getHandleEvents(mainProcess);
+  console.log(handleEvents)
   Object.keys(handleEvents).forEach((handle) => {
     mainProcess.handle(handle, handleEvents[handle]());
   });

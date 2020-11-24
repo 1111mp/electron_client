@@ -1,6 +1,7 @@
 import './styles.scss';
 
 import React from 'react';
+import { ipcRenderer } from 'electron';
 import { Avatar } from 'antd';
 import { CUSTOMWIN } from 'app/config';
 import { openWeb } from 'app/utils/rendererapi';
@@ -10,13 +11,20 @@ const Menu: React.FC = () => {
     openWeb({ ...CUSTOMWIN, url: `/settings?title=设置` });
   };
 
+  const sendMessage = React.useCallback(() => {
+    ipcRenderer.invoke('send-message', 'hello world');
+  }, []);
+
   return (
     <div className="module-app-menu">
       <p className="module-app-menu-avatar">
         <Avatar size={36} />
       </p>
       <ul className="module-app-menu-container">
-        <li className="module-app-menu-container-item active">
+        <li
+          className="module-app-menu-container-item active"
+          onClick={sendMessage}
+        >
           <span className="iconfont iconchat1"></span>
         </li>
         <li className="module-app-menu-container-item">
