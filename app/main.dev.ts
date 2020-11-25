@@ -259,6 +259,10 @@ const createLogin = async () => {
   ipcMain.once(
     listeners.LOGIN_SUCCESSFUL,
     async (event: IpcMainEvent, userInfo: string) => {
+      (global as any).UserInfo = {
+        ...(global as any).UserInfo,
+        ...JSON.parse(userInfo),
+      };
       createWindow(userInfo, () => {
         loginWindow && loginWindow.close();
       });

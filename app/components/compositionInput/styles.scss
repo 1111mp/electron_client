@@ -1,88 +1,14 @@
+// Module: CompositionInput
 .module-composition-input {
-  flex: 1;
-  width: 100%;
-  padding: 0 20px;
-  overflow: hidden;
+  &__input {
+    flex: 1;
+    width: 100%;
+    word-break: break-word;
+    overflow: hidden;
 
-  .DraftEditor-root {
-    height: 100%;
-    overflow: auto;
-
-    @include light-theme() {
-      color: $color-gray-90;
+    &__scroller {
+      height: 100%;
+      overflow: auto;
     }
-
-    @include dark-theme() {
-      color: $color-gray-05;
-    }
-
-    .public-DraftEditorPlaceholder-root {
-      color: $color-gray-45;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      @include light-theme {
-        border: 1px solid $color-gray-25;
-      }
-      @include dark-theme {
-        border: 1px solid $color-gray-45;
-      }
-    }
-  }
-
-  &__emoji-suggestions {
-    padding: 12px 0;
-    border-radius: 8px;
-    z-index: 2;
-
-    @include popper-shadow();
-
-    @include light-theme() {
-      background: $color-white;
-    }
-
-    @include dark-theme() {
-      background: $color-gray-75;
-    }
-
-    &__row {
-      height: 30px;
-      padding: 0 12px;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: flex-start;
-      background: none;
-      border: none;
-      width: 100%;
-
-      @include font-body-2;
-
-      @include light-theme() {
-        color: $color-gray-60;
-      }
-
-      @include dark-theme() {
-        color: $color-gray-25;
-      }
-
-      &__short-name {
-        margin-left: 4px;
-      }
-
-      &--selected,
-      &:hover {
-        @include light-theme() {
-          background: $color-gray-05;
-          color: $color-gray-90;
-        }
-
-        @include dark-theme() {
-          background: $color-gray-60;
-          color: $color-gray-05;
-        }
-      }
-    }
-    stroke: $color-white;
   }
 }

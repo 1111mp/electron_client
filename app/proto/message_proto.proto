@@ -13,3 +13,8 @@ message Message {
   int64 time = 8;
   string ext = 9;
 }
+
+message AckResponse {
+  required int32 code = 1;
+	required string msg = 2;
+}

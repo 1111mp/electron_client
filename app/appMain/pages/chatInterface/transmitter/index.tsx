@@ -4,7 +4,7 @@ import * as React from 'react';
 
 // import DropEmitter from 'components/dropEmitter';
 import { EmojiButton } from 'components/emoji/EmojiButton';
-import { CompositionInput, InputApi } from 'app/components/compositionInput';
+import { CompositionInput } from 'app/components/compositionInput';
 import { EmojiPickDataType } from 'app/components/emoji/EmojiPicker';
 import { Editor } from 'draft-js';
 
@@ -13,16 +13,16 @@ type Props = {};
 /** https://juejin.im/post/6844904112882974728#heading-10 */
 export const Transmitter = React.memo(() => {
   const editorRef = React.useRef<Editor>(null);
-  const inputApiRef = React.useRef<InputApi | undefined>();
+  // const inputApiRef = React.useRef<InputApi | undefined>();
 
   const insertEmoji = React.useCallback(
     (e: EmojiPickDataType) => {
-      if (inputApiRef.current) {
-        inputApiRef.current.insertEmoji(e);
-        // onPickEmoji(e);
-      }
+      // if (inputApiRef.current) {
+      //   inputApiRef.current.insertEmoji(e);
+      //   // onPickEmoji(e);
+      // }
     },
-    [inputApiRef]
+    []
   );
 
   return (
@@ -35,9 +35,9 @@ export const Transmitter = React.memo(() => {
       </ul>
       <div className="module-transmitter-textarea">
         <CompositionInput
-          editorRef={editorRef}
-          inputApi={inputApiRef}
-          startingText={''}
+          // editorRef={editorRef}
+          // inputApi={inputApiRef}
+          // startingText={''}
           // onPickEmoji={onPickEmoji}
         />
       </div>

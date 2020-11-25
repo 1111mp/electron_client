@@ -6,12 +6,13 @@ import {
   BrowserWindow,
 } from 'electron';
 import log from 'electron-log';
+import initIM from './im';
 import { openDevTools } from './devTools';
 import dialog from './dialog';
 import webWin from './webWin';
 import browser from './browser';
 import notifier from './notifier';
-import im from './im';
+import IMListeners from './im/listeners';
 import _ from 'lodash';
 
 const { webContents } = require('electron');
@@ -301,7 +302,6 @@ function getHandleEvents(
   mainProcess: MainProcess
 ): { [key: string]: Function } {
   return {
-    ...im,
     [listener.GET_DATA_ASYNC]() {
       return async (event: IpcMainEvent, keys: any[]) => {
         // const res = mainProcess.getData(keys);
@@ -331,13 +331,23 @@ function getHandleEvents(
 export default function (mainWindow: BrowserWindow | null) {
   let mainProcess = MainProcess.getInstance(mainWindow);
 
+  /** IM init */
+  const IMInstance = initIM();
+
+  Object.keys(IMListeners).forEach((listener) => {
+    mainProcess.handle(
+      listener,
+      (IMListeners as { [key: string]: Function })[listener](IMListeners)
+    );
+  });
+
   const events = getEvents(mainProcess);
   Object.keys(events).forEach((event) => {
     mainProcess.on(event, events[event]());
   });
 
   const handleEvents = getHandleEvents(mainProcess);
-  console.log(handleEvents)
+  console.log(handleEvents);
   Object.keys(handleEvents).forEach((handle) => {
     mainProcess.handle(handle, handleEvents[handle]());
   });

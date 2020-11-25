@@ -1,48 +1,79 @@
-import { IpcMainEvent } from 'electron';
-import protobuf, { Root, Type } from 'protobufjs';
+import { Socket } from 'socket.io-client';
+import IMListeners from './listeners';
+import { getAckResfromProto } from './utils';
 
-const path = require('path');
+const socketUrl = 'ws://192.168.80.208:3000';
 
-const listeners = require('../../constants/listener.json');
+export class IM {
+  static _instance: IM;
 
-export default {
-  [listeners.SEND_MESSAGE]() {
-    return async (event: IpcMainEvent, msg: MessageInstance.Message) => {
-      try {
-        protobuf.load(path.resolve(__dirname, './message.proto'), function (
-          err: Error | null,
-          root?: Root
-        ) {
-          if (err) throw err;
+  static getInstance(): IM {
+    if (!this._instance) {
+      this._instance = new IM();
+    }
+    return this._instance;
+  }
 
-          const Message: Type | undefined = root?.lookupType(
-            'messagepackage.Message'
-          );
+  // @ts-ignore
+  private socket: Socket;
 
-          // const payload = { text };
+  constructor() {
+    console.log('UserInfo ========>>>>>>>>', (global as any).UserInfo);
+    const { token } = (global as any).UserInfo;
+    try {
+      this.socket = require('socket.io-client')(socketUrl, {
+        transports: ['websocket'],
+        query: { token },
+        reconnectionAttempts: 20,
+      });
 
-          const errMsg = Message!.verify(msg);
-          if (errMsg) throw Error(errMsg);
+      this.socket.on('connect', () => {
+        console.log('connect successed');
+        // this.init();
+      });
 
-          const message = Message!.create(msg);
+      /** 获取所有未读消息数量 然后根据这个数量 并发从服务器获取所有离线消息 */
+      this.socket.on(
+        'offline-msg-counts',
+        (data: number, callback: (...args: any[]) => void) => {
+          // counts = data;
+          console.log(data);
+          callback({ code: 200 });
+        }
+      );
 
-          const buffer = Message!.encode(message).finish();
-          console.log(buffer);
-
-          const decodedMessage = Message!.decode(buffer);
-          console.log(decodedMessage);
-
-          const object = Message!.toObject(decodedMessage, {
-            longs: String,
-            enums: String,
-            bytes: String,
-          });
-
-          console.log(object);
-        });
-      } catch (error) {
+      this.socket.on('error', (error: any) => {
         console.log(error);
-      }
-    };
-  },
+      });
+    } catch (error) {
+      console.log(4444444444444);
+      console.log(error);
+    }
+  }
+
+  init = () => {
+    // this.login();
+    // this.regist();
+  };
+
+  invoke = (type: string, args: Buffer): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      this.socket.emit(
+        'invoke',
+        {
+          type,
+          args,
+        },
+        (res: Buffer) => {
+          resolve(getAckResfromProto(res));
+        }
+      );
+    });
+  };
+
+  regist = (operate: string) => {};
+}
+
+export default () => {
+  return IM.getInstance();
 };
