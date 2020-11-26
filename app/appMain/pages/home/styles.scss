@@ -35,3 +35,11 @@
     }
   }
 }
+
+
+.module-app-li {
+  margin-top: 4px;
+  &--active {
+    background: red;
+  }
+}

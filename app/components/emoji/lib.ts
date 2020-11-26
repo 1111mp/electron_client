@@ -1,4 +1,5 @@
 import untypedData from 'emoji-datasource';
+import emojiRegex from 'emoji-regex';
 import {
   compact,
   flatMap,
@@ -13,10 +14,12 @@ import {
 } from 'lodash';
 import Fuse from 'fuse.js';
 import is from '@sindresorhus/is';
+import { getOwn } from 'components/quill/getOwn';
 
 export const skinTones = ['1F3FB', '1F3FC', '1F3FD', '1F3FE', '1F3FF'];
 
 export type SkinToneKey = '1F3FB' | '1F3FC' | '1F3FD' | '1F3FE' | '1F3FF';
+export type SizeClassType = '' | 'small' | 'medium' | 'large' | 'jumbo';
 
 export type EmojiSkinVariation = {
   unified: string;
@@ -91,6 +94,8 @@ const makeImagePath = (src: string) => {
   return `${ROOT_PATH}node_modules/emoji-datasource-apple/img/apple/64/${src}`;
 };
 
+const dataByEmoji: { [key: string]: EmojiData } = {};
+
 export function getEmojiData(
   shortName: keyof typeof dataByShortName,
   skinTone?: SkinToneKey | number
@@ -143,21 +148,30 @@ export function search(query: string, count = 0): Array<EmojiData> {
   return results;
 }
 
+const shortNames = new Set([
+  ...map(data, 'short_name'),
+  ...compact<string>(flatMap(data, 'short_names')),
+]);
+
+export function isShortName(name: string): boolean {
+  return shortNames.has(name);
+}
+
 export function unifiedToEmoji(unified: string): string {
   return unified
     .split('-')
-    .map(c => String.fromCodePoint(parseInt(c, 16)))
+    .map((c) => String.fromCodePoint(parseInt(c, 16)))
     .join('');
 }
 
-export function convertShortName(
+export function convertShortNameToData(
   shortName: string,
   skinTone: number | SkinToneKey = 0
-): string {
+): EmojiData | undefined {
   const base = dataByShortName[shortName];
 
   if (!base) {
-    return '';
+    return undefined;
   }
 
   const toneKey = is.number(skinTone) ? skinTones[skinTone - 1] : skinTone;
@@ -165,15 +179,35 @@ export function convertShortName(
   if (skinTone && base.skin_variations) {
     const variation = base.skin_variations[toneKey];
     if (variation) {
-      return unifiedToEmoji(variation.unified);
+      return {
+        ...base,
+        ...variation,
+      };
     }
   }
 
-  return unifiedToEmoji(base.unified);
+  return base;
+}
+
+export function convertShortName(
+  shortName: string,
+  skinTone: number | SkinToneKey = 0
+): string {
+  const emojiData = convertShortNameToData(shortName, skinTone);
+
+  if (!emojiData) {
+    return '';
+  }
+
+  return unifiedToEmoji(emojiData.unified);
 }
 
 export function emojiToImage(emoji: string): string | undefined {
-  return imageByEmoji[emoji];
+  return getOwn(imageByEmoji, emoji);
+}
+
+export function emojiToData(emoji: string): EmojiData | undefined {
+  return getOwn(dataByEmoji, emoji);
 }
 
 export const dataByCategory = mapValues(
@@ -218,3 +252,64 @@ export const dataByCategory = mapValues(
   }),
   (arr) => sortBy(arr, 'sort_order')
 );
+
+function getCountOfAllMatches(str: string, regex: RegExp) {
+  let match = regex.exec(str);
+  let count = 0;
+
+  if (!regex.global) {
+    return match ? 1 : 0;
+  }
+
+  while (match) {
+    count += 1;
+    match = regex.exec(str);
+  }
+
+  return count;
+}
+
+export function getSizeClass(str: string): SizeClassType {
+  // Do we have non-emoji characters?
+  if (str.replace(emojiRegex(), '').trim().length > 0) {
+    return '';
+  }
+
+  const emojiCount = getCountOfAllMatches(str, emojiRegex());
+
+  if (emojiCount > 8) {
+    return '';
+  }
+  if (emojiCount > 6) {
+    return 'small';
+  }
+  if (emojiCount > 4) {
+    return 'medium';
+  }
+  if (emojiCount > 2) {
+    return 'large';
+  }
+  return 'jumbo';
+}
+
+data.forEach((emoji) => {
+  const { short_name, short_names, skin_variations, image } = emoji;
+
+  if (short_names) {
+    short_names.forEach((name) => {
+      dataByShortName[name] = emoji;
+    });
+  }
+
+  imageByEmoji[convertShortName(short_name)] = makeImagePath(image);
+  dataByEmoji[convertShortName(short_name)] = emoji;
+
+  if (skin_variations) {
+    Object.entries(skin_variations).forEach(([tone, variation]) => {
+      imageByEmoji[
+        convertShortName(short_name, tone as SkinToneKey)
+      ] = makeImagePath(variation.image);
+      dataByEmoji[convertShortName(short_name, tone as SkinToneKey)] = emoji;
+    });
+  }
+});

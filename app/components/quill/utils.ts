@@ -1,5 +1,9 @@
 import emojiRegex from 'emoji-regex';
+import Delta from 'quill-delta';
 import Op from 'quill-delta/dist/Op';
+import { LeafBlot, DeltaOperation } from 'quill';
+
+import { MentionBlot } from './mentions/blot';
 
 export interface BodyRangeType {
   start: number;
@@ -13,6 +17,9 @@ export interface MentionBlotValue {
   uuid: string;
   title: string;
 }
+
+export const isMentionBlot = (blot: LeafBlot): blot is MentionBlot =>
+  blot.value() && blot.value().mention;
 
 export type InsertOp<K extends string, T> = Op & { insert: { [V in K]: T } };
 
@@ -129,3 +136,98 @@ export const insertEmojiOps = (incomingOps: Array<Op>): Array<Op> => {
     return ops;
   }, [] as Array<Op>);
 };
+
+export const getBlotTextPartitions = (
+  blot: LeafBlot,
+  index: number
+): [string, string] => {
+  if (blot !== undefined && blot.text !== undefined) {
+    const leftLeafText = blot.text.substr(0, index);
+    const rightLeafText = blot.text.substr(index);
+
+    return [leftLeafText, rightLeafText];
+  }
+
+  return ['', ''];
+};
+
+export const matchBlotTextPartitions = (
+  blot: LeafBlot,
+  index: number,
+  leftRegExp: RegExp,
+  rightRegExp?: RegExp
+): Array<RegExpMatchArray | null> => {
+  const [leftText, rightText] = getBlotTextPartitions(blot, index);
+
+  const leftMatch = leftRegExp.exec(leftText);
+  let rightMatch = null;
+
+  if (rightRegExp) {
+    rightMatch = rightRegExp.exec(rightText);
+  }
+
+  return [leftMatch, rightMatch];
+};
+
+export const getDeltaToRestartMention = (ops: Array<Op>): Delta => {
+  const changes = ops.reduce((acc, op): Array<Op> => {
+    if (op.insert && typeof op.insert === 'string') {
+      acc.push({ retain: op.insert.length });
+    } else {
+      acc.push({ retain: 1 });
+    }
+    return acc;
+  }, Array<Op>());
+  changes.push({ delete: 1 });
+  changes.push({ insert: '@' });
+  return new Delta(changes);
+};
+
+export const getDeltaToRemoveStaleMentions = (
+  ops: Array<Op>,
+  memberUuids: Array<string>
+): Delta => {
+  const newOps = ops.reduce((memo, op) => {
+    if (op.insert) {
+      if (
+        isInsertMentionOp(op) &&
+        !memberUuids.includes(op.insert.mention.uuid)
+      ) {
+        const deleteOp = { delete: 1 };
+        const textOp = { insert: `@${op.insert.mention.title}` };
+        return [...memo, deleteOp, textOp];
+      }
+
+      if (typeof op.insert === 'string') {
+        const retainStringOp = { retain: op.insert.length };
+        return [...memo, retainStringOp];
+      }
+
+      const retainEmbedOp = { retain: 1 };
+      return [...memo, retainEmbedOp];
+    }
+
+    return [...memo, op];
+  }, Array<Op>());
+
+  return new Delta(newOps);
+};
+
+export const getTextFromOps = (ops: Array<DeltaOperation>): string =>
+  ops
+    .reduce((acc, op) => {
+      if (typeof op.insert === 'string') {
+        return acc + op.insert;
+      }
+
+      if (isInsertEmojiOp(op)) {
+        return acc + op.insert.emoji;
+      }
+
+      if (isInsertMentionOp(op)) {
+        return `${acc}@${op.insert.mention.title}`;
+      }
+
+      return acc;
+    }, '')
+    .trim();

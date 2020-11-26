@@ -7,7 +7,7 @@ import { Manager, Popper, Reference } from 'react-popper';
 import { EmojiPicker, Props as EmojiPickerProps } from './EmojiPicker';
 import { get, noop } from 'lodash';
 
-type Props = Pick<
+export type Props = Pick<
   EmojiPickerProps,
   'doSend' | 'onPickEmoji' | 'onSetSkinTone' | 'recentEmojis' | 'skinTone'
 >;
@@ -35,7 +35,6 @@ export const EmojiButton = React.memo(({ onPickEmoji }: Props) => {
       setPopperRoot(root);
       document.body.appendChild(root);
       const handleOutsideClick = ({ target }: MouseEvent) => {
-
         if (!root.contains(target as Node)) {
           setOpen(false);
         }
@@ -57,7 +56,6 @@ export const EmojiButton = React.memo(({ onPickEmoji }: Props) => {
   React.useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
       const { ctrlKey, key, metaKey, shiftKey } = event;
-      console.log(get(window, 'platform'));
       const commandKey = get(window, 'platform') === 'darwin' && metaKey;
       const controlKey = get(window, 'platform') !== 'darwin' && ctrlKey;
       const commandOrCtrl = commandKey || controlKey;
@@ -97,6 +95,7 @@ export const EmojiButton = React.memo(({ onPickEmoji }: Props) => {
                 <EmojiPicker
                   ref={ref}
                   style={{ ...style, bottom: '12px' }}
+                  onClose={handleClose}
                   onPickEmoji={onPickEmoji}
                 />
               )}

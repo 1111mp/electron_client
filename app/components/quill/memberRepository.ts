@@ -3,7 +3,10 @@
 
 import Fuse from 'fuse.js';
 
-import { ConversationType } from '../state/ducks/conversations';
+// import { ConversationType } from '../state/ducks/conversations';
+export type ConversationType = {
+  [key: string]: any;
+};
 
 const FUSE_OPTIONS = {
   location: 0,
@@ -31,6 +34,7 @@ export class MemberRepository {
   }
 
   getMembers(omit?: ConversationType): Array<ConversationType> {
+    console.log(this.members)
     if (omit) {
       return this.members.filter(({ id }) => id !== omit.id);
     }
