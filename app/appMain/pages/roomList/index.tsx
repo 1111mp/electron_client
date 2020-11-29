@@ -2,7 +2,7 @@ import './styles.scss';
 
 import React, { Fragment } from 'react';
 import { observer } from 'mobx-react';
-import { useTargetStore } from 'appMain/stores/hooks';
+import { useTargetStore } from 'appMain/stores';
 import Header from './header';
 import RoomItem from 'appMain/parts/roomItem';
 

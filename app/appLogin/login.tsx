@@ -2,6 +2,7 @@ import React from 'react';
 import request from 'app/requests';
 import { ipcRenderer } from 'electron';
 import listener from 'app/constants/listener.json';
+import { Op } from 'sequelize';
 
 const Login: React.FC = React.memo(() => {
   const [username, setUsername] = React.useState('');
@@ -21,15 +22,34 @@ const Login: React.FC = React.memo(() => {
     [setPwd]
   );
 
-  const submit = React.useCallback(() => {
+  const submit = React.useCallback(async () => {
     if (!username || !pwd) return;
     request('/login', {
       method: 'POST',
       data: { username, pwd },
     })
-      .then((res: any) => {
+      .then(async (res: any) => {
         console.log(res);
         if (res.code === 200) {
+          /** login 成功之后 更新数据库 user信息 */
+          try {
+            await (window as any).sequelize.models.User.upsert(
+              {
+                token: res.token,
+                ...res.data,
+              },
+              {
+                where: {
+                  userId: {
+                    [Op.eq]: res.data.userId,
+                  },
+                },
+              }
+            );
+          } catch (error) {
+            console.log(error);
+          }
+          
           ipcRenderer.send(
             listener.LOGIN_SUCCESSFUL,
             JSON.stringify({

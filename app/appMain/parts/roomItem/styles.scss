@@ -24,6 +24,10 @@
       background: linear-gradient(to right, $color-gray-65, $color-gray-80);
     }
   }
+  
+  &-active {
+    background: linear-gradient(to right, $color-gray-05, $color-white);
+  }
 
   .module-roomitem-content {
     @include flex($direction: column, $justify: center);

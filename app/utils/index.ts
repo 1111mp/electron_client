@@ -100,7 +100,7 @@ export async function getThemeFromDatabase() {
     });
     return user.toJSON();
   } catch (error) {
-    return { theme: (window as any).systemTheme || 'light' };
+    return { theme: (window as any).systemTheme || 'system' };
   }
 }
 

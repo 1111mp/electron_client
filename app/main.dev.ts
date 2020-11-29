@@ -115,7 +115,7 @@ const createWindow = async (userInfo: string, callback: Function) => {
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-  mainWindow.webContents.on('did-finish-load', () => {
+  mainWindow.webContents.on('did-finish-load', async () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
@@ -123,7 +123,9 @@ const createWindow = async (userInfo: string, callback: Function) => {
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
-      mainWindow.webContents.executeJavaScript(`window.UserInfo = ${userInfo}`);
+      await mainWindow.webContents.executeJavaScript(
+        `window.UserInfo = ${userInfo}`
+      );
       mainWindow.show();
       mainWindow.focus();
     }

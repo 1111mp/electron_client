@@ -30,6 +30,11 @@ const allRoutes = [
       },
     ],
   },
+  {
+    path: '/addressbook',
+    component: loadable(() => import('appMain/pages/addressBook')),
+    exact: true,
+  },
 ] as RouterConfig[];
 
 export default allRoutes;

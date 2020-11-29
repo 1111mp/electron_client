@@ -1,10 +1,11 @@
-import { RouterStore } from 'mobx-react-router';
+import { createContext, useContext } from 'react';
+import { RouterStore } from '@superwf/mobx-react-router';
 import { configure } from 'mobx';
 import Config from 'app/config';
 import manager from './StoreManager';
 import ClientStore from './client';
 import UserStore from './user';
-import SettingStore from './setting';
+// import SettingStore from './setting';
 
 Config.isDev &&
   import('mobx-logger').then((logger) => {
@@ -17,16 +18,16 @@ Config.isDev &&
     });
   });
 
-// configure({
-//   enforceActions: 'never',
-// });
+configure({
+  enforceActions: 'never',
+});
 
 const storageMap: any = {
   routerStore: RouterStore,
   clientStore: ClientStore,
 };
 
-export default async function createStore() {
+function createStore() {
   const keys = Object.keys(storageMap);
   let store: IAnyObject;
 
@@ -52,3 +53,17 @@ export default async function createStore() {
     ...manager.stores,
   };
 }
+
+const stores = createStore();
+
+export const StoreContext = createContext(stores);
+
+export const useStores = () => useContext(StoreContext);
+
+export function useTargetStore(target: string) {
+  const stores = useStores();
+
+  return target ? stores[target] : stores;
+}
+
+export default stores;

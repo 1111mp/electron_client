@@ -3,16 +3,17 @@ import * as React from 'react';
 // Restore focus on teardown
 export const useRestoreFocus = (
   // The ref for the element to receive initial focus
-  focusRef: React.RefObject<any>,
+  focusRef: React.RefObject<HTMLElement>,
   // Allow for an optional root element that must exist
   root: boolean | HTMLElement | null = true
-) => {
+): void => {
   React.useEffect(() => {
     if (!root) {
-      return;
+      return undefined;
     }
 
-    const lastFocused = document.activeElement as any;
+    const lastFocused = document.activeElement as HTMLElement;
+
     if (focusRef.current) {
       focusRef.current.focus();
     }

@@ -4,8 +4,9 @@ import { hot } from 'react-hot-loader/root';
 import { Router, Redirect } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
 import { createBrowserHistory, createHashHistory } from 'history';
-import { syncHistoryWithStore } from 'mobx-react-router';
+import { syncHistoryWithStore } from '@superwf/mobx-react-router';
 import { IntlProvider } from 'react-intl';
+import { StoreContext } from './stores';
 import Menu from 'appMain/parts/menu';
 import Config from 'app/config';
 import allRoutes from './routes/route_config';
@@ -30,12 +31,14 @@ const Root = ({ stores, statusCode, messages }: Props) => {
       messages={messages}
     >
       <Provider {...stores}>
-        <Menu />
-        <Router history={syncHistoryWithStore(History, stores.routerStore)}>
-          {/* <Routes /> */}
-          {renderRoutes(allRoutes)}
-          {window.location.hash === '#/' ? <Redirect to="index" /> : null}
-        </Router>
+        <StoreContext.Provider value={stores}>
+          <Menu />
+          <Router history={syncHistoryWithStore(History, stores.routerStore)}>
+            {/* <Routes /> */}
+            {renderRoutes(allRoutes)}
+            {window.location.hash === '#/' ? <Redirect to="index" /> : null}
+          </Router>
+        </StoreContext.Provider>
       </Provider>
     </IntlProvider>
   );

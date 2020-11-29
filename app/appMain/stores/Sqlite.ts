@@ -30,6 +30,7 @@ export default class Sqlite extends Persister {
     for (let model in models) {
       try {
         let value = models[model];
+        console.log(value)
 
         const data = await (window as any).sequelize.models[
           firstUpperCase(model.split(''))
@@ -74,6 +75,7 @@ export default class Sqlite extends Persister {
           ].findOne({
             attributes: { exclude: ['id'] },
           });
+          console.log(res)
           return res.toJSON();
         } catch (error) {
           console.log(error);

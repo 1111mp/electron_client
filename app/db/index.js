@@ -30,6 +30,7 @@ function initDatabase() {
     // Setting(sequelize);
 
     // sequelize.sync({ alter: true });
+    // sequelize.sync({ force: true });
     return sequelize;
   } catch (error) {
     console.log(error);

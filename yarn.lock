@@ -1732,6 +1732,13 @@
     remark "^12.0.0"
     unist-util-find-all-after "^3.0.1"
 
+"@superwf/mobx-react-router@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.npm.taobao.org/@superwf/mobx-react-router/download/@superwf/mobx-react-router-6.0.0.tgz#5652fe3ddf9e782fcbfbf14236a823ef87107e61"
+  integrity sha1-VlL+Pd+eeC/L+/FCNqgj74cQfmE=
+  dependencies:
+    mobx-react-lite "^3.0.1"
+
 "@szmarczak/http-timer@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@szmarczak/http-timer/-/http-timer-1.1.2.tgz#b1665e2c461a2cd92f4c1bbf50d5454de0d4b421"
@@ -10433,10 +10440,10 @@ mobx-react-lite@^3.0.0:
   resolved "https://registry.yarnpkg.com/mobx-react-lite/-/mobx-react-lite-3.0.1.tgz#417f54a819d1e3e00c073077f29373399c95b005"
   integrity sha512-Ue8uGgT5iOjMyNf5ptoFW7BTvyLIwggzIkoFpwORrqf73TPqu47iLpz/DNvaba3v40kSsEpp050qYroMNuA1xw==
 
-mobx-react-router@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/mobx-react-router/-/mobx-react-router-4.1.0.tgz#de014848207d8aa32f6a4e67ed861bd2cb6516e5"
-  integrity sha512-2knsbDqVorWLngZWbdO8tr7xcZXaLpVFsFlCaGaoyZ+EP9erVGRxnlWGqKyFObs3EH1JPLyTDOJ2LPTxb/lB6Q==
+mobx-react-lite@^3.0.1:
+  version "3.1.6"
+  resolved "https://registry.npm.taobao.org/mobx-react-lite/download/mobx-react-lite-3.1.6.tgz#e7f4809ab66edd1acca5adb00c6b88c600ae1952"
+  integrity sha1-5/SAmrZu3RrMpa2wDGuIxgCuGVI=
 
 mobx-react@^7.0.0:
   version "7.0.0"

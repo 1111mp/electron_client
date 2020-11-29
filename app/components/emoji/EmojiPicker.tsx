@@ -1,4 +1,4 @@
-import './picker.global.scss';
+import './picker.scss';
 
 import * as React from 'react';
 
@@ -393,7 +393,6 @@ export const EmojiPicker = React.memo(
               <Emoji
                 shortName="slightly_frowning_face"
                 size={16}
-                inline
                 style={{ marginLeft: '4px' }}
               />
             </div>

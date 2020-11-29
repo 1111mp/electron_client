@@ -14,20 +14,24 @@ const App = () => {
 
 const Root = hot(App);
 
-function appInit() {
-  return Promise.all([getThemeFromDatabase()]).then((res) => {
-    return {
-      userInfo: res[0],
-    };
-  });
-}
+// function appInit() {
+//   return Promise.all([getThemeFromDatabase()]).then((res) => {
+//     return {
+//       userInfo: res[0],
+//     };
+//   });
+// }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const { userInfo } = await appInit();
+  // const { userInfo } = await appInit();
 
   /** 初始化设置主题 */
-  const { theme = 'system' } = userInfo;
-  applyTheme(theme);
+  // const { theme = 'system' } = userInfo;
+  // applyTheme(theme);
+
+  (window as any).subscribeToSystemThemeChange((theme: string) => {
+    applyTheme(theme);
+  });
 
   render(
     <AppContainer>

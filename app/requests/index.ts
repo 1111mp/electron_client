@@ -13,7 +13,7 @@ const DEFAULT_API_CONFIG: RequestConfig = {
   timeout: 30000,
 };
 
-axios.defaults.baseURL = 'http://localhost:3000';
+axios.defaults.baseURL = 'http://192.168.0.7:3000';
 
 axios.interceptors.request.use(
   (config: AxiosRequestConfig) => {

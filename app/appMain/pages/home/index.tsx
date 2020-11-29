@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Fragment } from 'react';
 import { observer } from 'mobx-react';
 import { renderRoutes } from 'react-router-config';
-import { useTargetStore } from 'appMain/stores/hooks';
+import { useTargetStore } from 'appMain/stores';
 
 import RoomList from '../roomList';
 import Empty from 'components/empty';
@@ -16,7 +16,7 @@ const themes = [
 ];
 
 const Home: React.FC<IAnyObject> = observer(({ route }) => {
-  const { location } = useTargetStore('routerStore');
+  const routerStore = useTargetStore('routerStore');
 
   return (
     <Fragment>
@@ -25,7 +25,7 @@ const Home: React.FC<IAnyObject> = observer(({ route }) => {
           <RoomList />
         </div>
         <div className="module-home-content">
-          {location.pathname === '/index' ? <Empty /> : null}
+          {routerStore.location.pathname === '/index' ? <Empty /> : null}
           {renderRoutes(route.routes)}
         </div>
       </div>

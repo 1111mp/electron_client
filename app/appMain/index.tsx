@@ -14,12 +14,13 @@ import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
 import { matchRoutes } from 'react-router-config';
 // import Root from './root';
 import Config from 'app/config';
-import createStore from './stores';
+import stores from './stores';
 import routerConfig from './routes/route_config';
 import './main.global.css';
 import 'app/app.global.css';
 import 'app/app.global.scss';
 import { applyTheme, getThemeFromDatabase } from 'app/utils';
+import initMode from 'app/utils/mode_check';
 
 function getPathname() {
   return Config.isBorwserHistory
@@ -63,21 +64,22 @@ function loadLocaleData(locale: string): Promise<Record<string, any>> {
 
 function appInit() {
   return Promise.all([
-    createStore(),
+    // createStore(),
     loadLocaleData(navigator.language),
     getThemeFromDatabase(),
+    initMode(),
   ]).then((res) => {
     return {
-      stores: res[0],
-      messages: res[1],
-      user: res[2],
+      // stores: res[0],
+      messages: res[0],
+      user: res[1],
     };
   });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   const loadAsyncComponents = preloadComponent();
-  let { stores, messages, user } = await appInit();
+  let { messages, user } = await appInit();
 
   /** 初始化设置主题 */
   const { theme = 'system' } = user;

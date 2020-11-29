@@ -38,15 +38,19 @@
         transition: none;
       }
 
+      &:hover {
+        .iconfont {
+          color: $color-gray-25;
+        }
+      }
+
       &.active {
         .iconfont {
           color: $themeColor;
         }
-      }
 
-      &:hover {
-        .iconfont {
-          color: $color-gray-25;
+        &:hover {
+          color: $themeColor;
         }
       }
     }
