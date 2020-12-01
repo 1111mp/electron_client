@@ -49,7 +49,7 @@ const Login: React.FC = React.memo(() => {
           } catch (error) {
             console.log(error);
           }
-          
+
           ipcRenderer.send(
             listener.LOGIN_SUCCESSFUL,
             JSON.stringify({

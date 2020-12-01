@@ -46,9 +46,10 @@ function getData(): any[] {
         msgType: 1,
         content: '需要使用变量的component组件中都需要单独引入',
         image: {
-          url: 'http://touxiangkong.com/uploads/allimg/20203301301/2020/3/Vzuiy2.jpg',
+          url:
+            'http://touxiangkong.com/uploads/allimg/20203301301/2020/3/Vzuiy2.jpg',
           width: 400,
-          height: 400
+          height: 400,
         },
         time: 1598493522375,
         user: {
@@ -135,6 +136,7 @@ export default class ChatInterface extends BasicComponent<IAnyObject> {
 
   scrollTo = (x: number = 0, y: number = 0, time: number = 500) => {
     const instance = this.getIScrollInstance();
+    console.log(instance)
 
     instance && instance.scrollTo(x, y, time);
   };
@@ -178,11 +180,16 @@ export default class ChatInterface extends BasicComponent<IAnyObject> {
           iScroll={iScroll}
           options={{
             probeType: 2,
+            // disablePointer: true,
             mouseWheel: true,
             scrollbars: 'custom',
             freeScroll: true,
             fadeScrollbars: true,
+            interactiveScrollbars: true,
             shrinkScrollbars: 'scale',
+            preventDefaultException: {
+              className: /message-content|message-wrapper|message-container/,
+            },
           }}
           onScrollEnd={this.onScrollHandler}
         >

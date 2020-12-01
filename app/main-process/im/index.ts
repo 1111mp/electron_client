@@ -1,8 +1,11 @@
 import { Socket } from 'socket.io-client';
 import IMListeners from './listeners';
 import { getAckResfromProto } from './utils';
+import Config from '../../config';
 
-const socketUrl = 'ws://192.168.0.7:3000';
+const socketUrl = Config.serverUrl
+  .replace('https://', 'wss://')
+  .replace('http://', 'ws://');
 
 export class IM {
   static _instance: IM;

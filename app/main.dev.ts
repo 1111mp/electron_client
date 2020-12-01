@@ -80,7 +80,7 @@ const getAssetPath = (...paths: string[]): string => {
   return path.join(RESOURCES_PATH, ...paths);
 };
 
-const createWindow = async (userInfo: string, callback: Function) => {
+const createWindow = (userInfo: string, callback: Function) => {
   mainWindow = new BrowserWindow({
     show: false,
     width: Mainwin.width,
@@ -126,6 +126,8 @@ const createWindow = async (userInfo: string, callback: Function) => {
       await mainWindow.webContents.executeJavaScript(
         `window.UserInfo = ${userInfo}`
       );
+      console.log(7777777);
+      console.log(Date.now());
       mainWindow.show();
       mainWindow.focus();
     }
@@ -169,7 +171,9 @@ const createWindow = async (userInfo: string, callback: Function) => {
   // new AppUpdater();
 
   /** 添加主进程监听事件 */
+  console.log(Date.now());
   setListeners(mainWindow);
+  console.log(Date.now());
 
   /** 创建系统托盘菜单 */
   createTray();

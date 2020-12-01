@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import Config from 'app/config';
 
 interface RequestConfig extends AxiosRequestConfig {
   responseEncoding?: string;
@@ -13,7 +14,7 @@ const DEFAULT_API_CONFIG: RequestConfig = {
   timeout: 30000,
 };
 
-axios.defaults.baseURL = 'http://192.168.0.7:3000';
+axios.defaults.baseURL = Config.serverUrl;
 
 axios.interceptors.request.use(
   (config: AxiosRequestConfig) => {

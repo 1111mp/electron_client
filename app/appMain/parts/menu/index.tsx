@@ -23,7 +23,7 @@ export const Menus: any[] = [
 
 const Menu: React.FC = observer(() => {
   const routerStore = useTargetStore('routerStore');
-  console.log(routerStore);
+  // console.log(111111)
 
   const openSetting = React.useCallback(() => {
     openWeb({ ...CUSTOMWIN, url: `/settings?title=设置` });
@@ -46,7 +46,7 @@ const Menu: React.FC = observer(() => {
           <li
             key={menu.path}
             className={classNames('module-app-menu-container-item', {
-              active: routerStore.location.pathname === menu.path,
+              active: routerStore.location.pathname.indexOf(menu.path) !== -1,
             })}
             onClick={() => menuHandler(menu.path)}
           >

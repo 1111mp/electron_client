@@ -1,26 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <style>
-    button:focus {
-      font-size: 18px;
-      /* outline-color: red; */
-      border-color: red;
-    }
-  </style>
-  <body>
-    <button onclick="clickHandler()">nihao</button>
-    <button>nihao</button>
-    <button>nihao</button>
-    <button>nihao</button>
-  </body>
-  <script>
-    function clickHandler() {
-      console.log(11111111);
-    }
-  </script>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+</head>
+<style>
+  button:focus {
+    font-size: 18px;
+    /* outline-color: red; */
+    border-color: red;
+  }
+</style>
+
+<body>
+  <button onclick="clickHandler()">nihao</button>
+  <button>nihao</button>
+  <button>nihao</button>
+  <button>nihao</button>
+</body>
+<script>
+  async function clickHandler() {
+    setTimeout(() => {
+      console.log(Date.now());
+      Promise.resolve()
+    }, 2000)
+  }
+
+  console.log(Date.now())
+  clickHandler()
+  console.log(Date.now())
+</script>
+
 </html>

@@ -12,6 +12,7 @@
     bottom: 2px;
     top: 2px;
     right: 1px;
+    opacity: 1;
 
     .iScrollIndicator {
       box-sizing: border-box;
@@ -90,6 +91,12 @@
       margin: 4px 0 6px;
       text-align: center;
       color: #999999;
+    }
+
+    &:hover {
+      .iScrollVerticalScrollbar {
+        opacity: 1!important;
+      }
     }
   }
 

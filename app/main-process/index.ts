@@ -329,28 +329,35 @@ function getHandleEvents(
 }
 
 export default function (mainWindow: BrowserWindow | null) {
-  let mainProcess = MainProcess.getInstance(mainWindow);
+  return new Promise((resolve, reject) => {
+    console.log(3333333);
+    console.log(Date.now());
 
-  /** IM init */
-  const IMInstance = initIM();
+    let mainProcess = MainProcess.getInstance(mainWindow);
 
-  Object.keys(IMListeners).forEach((listener) => {
-    mainProcess.handle(
-      listener,
-      (IMListeners as { [key: string]: Function })[listener](IMListeners)
-    );
+    /** IM init */
+    initIM();
+
+    Object.keys(IMListeners).forEach((listener) => {
+      mainProcess.handle(
+        listener,
+        (IMListeners as { [key: string]: Function })[listener](IMListeners)
+      );
+    });
+
+    const events = getEvents(mainProcess);
+    Object.keys(events).forEach((event) => {
+      mainProcess.on(event, events[event]());
+    });
+
+    const handleEvents = getHandleEvents(mainProcess);
+    console.log(handleEvents);
+    Object.keys(handleEvents).forEach((handle) => {
+      mainProcess.handle(handle, handleEvents[handle]());
+    });
+
+    console.log(4444444);
+    console.log(Date.now());
+    resolve();
   });
-
-  const events = getEvents(mainProcess);
-  Object.keys(events).forEach((event) => {
-    mainProcess.on(event, events[event]());
-  });
-
-  const handleEvents = getHandleEvents(mainProcess);
-  console.log(handleEvents);
-  Object.keys(handleEvents).forEach((handle) => {
-    mainProcess.handle(handle, handleEvents[handle]());
-  });
-
-  return mainProcess;
 }

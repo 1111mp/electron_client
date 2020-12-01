@@ -5,12 +5,15 @@ const { NODE_ENV } = process.env;
 interface Config {
   isDev: boolean;
   isBorwserHistory: boolean;
+  serverUrl: string;
 }
 
 const config: Config = {
   isDev: NODE_ENV === 'development',
   /** 默认不使用history模式 */
   isBorwserHistory: false,
+
+  serverUrl: 'http://192.168.80.208:3000',
 };
 
 /** 主界面 */

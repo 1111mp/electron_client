@@ -171,7 +171,7 @@ const compositeDecorator = new CompositeDecorator([
         <Emoji
           shortName={contentState.getEntity(entityKey).getData().shortName}
           skinTone={contentState.getEntity(entityKey).getData().skinTone}
-          inline={true}
+          // inline={true}
           size={20}
         >
           {children}
