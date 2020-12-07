@@ -4,18 +4,18 @@ const { remote } = require('electron');
 const Sequelize = require('sequelize/lib/sequelize');
 const { userInfo } = require('os');
 const User = require('./models/user');
-const Setting = require('./models/setting');
+// const Setting = require('./models/setting');
 const path = require('path');
 
 const { app } = remote;
 
 const userDataPath = app.getPath('userData');
 
-let sequelize;
+let sequelizeInstance;
 
 function initDatabase() {
   try {
-    sequelize = new Sequelize('database', '', userInfo().username, {
+    sequelizeInstance = new Sequelize('database', '', userInfo().username, {
       dialect: 'sqlite',
       dialectModule: require('@journeyapps/sqlcipher'),
       storage: path.resolve(userDataPath, 'db/db.sqlite'),
@@ -26,12 +26,12 @@ function initDatabase() {
       },
     });
 
-    User(sequelize);
-    // Setting(sequelize);
+    User(sequelizeInstance);
+    // Setting(sequelizeInstance);
 
-    // sequelize.sync({ alter: true });
-    // sequelize.sync({ force: true });
-    return sequelize;
+    // sequelizeInstance.sync({ alter: true });
+    // sequelizeInstance.sync({ force: true });
+    return sequelizeInstance;
   } catch (error) {
     console.log(error);
   }

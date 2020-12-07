@@ -16,8 +16,8 @@ body,
 
 .module-login {
   @include flex($direction: column);
+  flex: 1;
   position: relative;
-  width: calc(100% - 32px);
   height: 100%;
   padding: 0 16px;
   overflow: hidden;

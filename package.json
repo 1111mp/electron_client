@@ -67,7 +67,8 @@
       "main.prod.js",
       "main.prod.js.map",
       "package.json",
-      "preload.js"
+      "preload.js",
+      "login_preload.js"
     ],
     "dmg": {
       "contents": [

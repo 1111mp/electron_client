@@ -23,7 +23,8 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import Config, { Mainwin, LoginWin } from './config';
-import setListeners from './main-process';
+import { initialize as initSqlite } from './db';
+import initMainProcess from './main-process';
 import TrayCreator from './main-process/tray';
 import listeners from './constants/listener.json';
 
@@ -115,7 +116,7 @@ const createWindow = (userInfo: string, callback: Function) => {
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-  mainWindow.webContents.on('did-finish-load', async () => {
+  mainWindow.on('ready-to-show', async () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
@@ -126,8 +127,7 @@ const createWindow = (userInfo: string, callback: Function) => {
       await mainWindow.webContents.executeJavaScript(
         `window.UserInfo = ${userInfo}`
       );
-      console.log(7777777);
-      console.log(Date.now());
+
       mainWindow.show();
       mainWindow.focus();
     }
@@ -149,31 +149,12 @@ const createWindow = (userInfo: string, callback: Function) => {
     else mainWindow.close();
   });
 
-  app.on('gpu-process-crashed', () => {
-    debugger;
-    app.exit();
-  });
-
-  app.on('renderer-process-crashed', () => {
-    debugger;
-    app.exit();
-  });
-
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
-
-  // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  // new AppUpdater();
-
-  /** 添加主进程监听事件 */
-  console.log(Date.now());
-  setListeners(mainWindow);
-  console.log(Date.now());
 
   /** 创建系统托盘菜单 */
   createTray();
@@ -197,6 +178,7 @@ const createLogin = async () => {
     resizable: false,
     minimizable: false,
     maximizable: false,
+    backgroundColor: '#ffffff',
     webPreferences: {
       nodeIntegration: true,
       preload: path.join(__dirname, 'login_preload.js'),
@@ -205,17 +187,17 @@ const createLogin = async () => {
 
   loginWindow.loadURL(`file://${__dirname}/pages/login.html`);
 
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
-    //开发者工具 https://newsn.net/say/electron-devtools.html
-    loginWindow.webContents.openDevTools({ mode: 'undocked' });
-  }
+  // if (
+  //   process.env.NODE_ENV === 'development' ||
+  //   process.env.DEBUG_PROD === 'true'
+  // ) {
+  //开发者工具 https://newsn.net/say/electron-devtools.html
+  loginWindow.webContents.openDevTools({ mode: 'undocked' });
+  // }
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-  loginWindow.webContents.on('did-finish-load', () => {
+  loginWindow.on('ready-to-show', () => {
     if (!loginWindow) {
       throw new Error('"loginWindow" is not defined');
     }
@@ -241,16 +223,6 @@ const createLogin = async () => {
     if (choice['response'] === 0) loginWindow.reload();
     // @ts-ignore
     else loginWindow.close();
-  });
-
-  app.on('gpu-process-crashed', () => {
-    debugger;
-    app.exit();
-  });
-
-  app.on('renderer-process-crashed', () => {
-    debugger;
-    app.exit();
   });
 
   loginWindow.on('closed', () => {
@@ -297,6 +269,73 @@ function createTray() {
 /**
  * Add event listeners...
  */
+/** 解决启动时的短暂黑屏问题 */
+app.disableHardwareAcceleration();
+
+if (process.env.E2E_BUILD === 'true') {
+  // eslint-disable-next-line promise/catch-or-return
+  app.whenReady().then(createLogin);
+} else {
+  app.on('ready', async () => {
+    const sqlInitPromise = initSqlite();
+
+    const timeout = new Promise((resolve) =>
+      setTimeout(resolve, 3000, 'timeout')
+    );
+
+    Promise.race([sqlInitPromise, timeout]).then((maybeTimeout) => {
+      if (maybeTimeout !== 'timeout') return;
+
+      /** 这里可以加载 loading 过渡 */
+      console.log(
+        'sql.initialize is taking more than three seconds; showing loading dialog'
+      );
+
+      // loadingWindow = new BrowserWindow({
+      //   show: false,
+      //   width: 300,
+      //   height: 265,
+      //   resizable: false,
+      //   frame: false,
+      //   backgroundColor: '#3a76f0',
+      //   webPreferences: {
+      //     nodeIntegration: false,
+      //     preload: path.join(__dirname, 'loading_preload.js'),
+      //   },
+      //   icon: windowIcon,
+      // });
+
+      // loadingWindow.once('ready-to-show', async () => {
+      //   loadingWindow.show();
+      //   // Wait for sql initialization to complete
+      //   await sqlInitPromise;
+      //   loadingWindow.destroy();
+      //   loadingWindow = null;
+      // });
+
+      // loadingWindow.loadURL(prepareURL([__dirname, 'loading.html']));
+    });
+
+    const success = await sqlInitPromise;
+
+    if (!success) {
+      console.log('sql.initialize was unsuccessful; returning early');
+      return;
+    }
+
+    await createLogin();
+  });
+}
+
+app.on('gpu-process-crashed', () => {
+  debugger;
+  app.exit();
+});
+
+app.on('renderer-process-crashed', () => {
+  debugger;
+  app.exit();
+});
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
@@ -306,15 +345,15 @@ app.on('window-all-closed', () => {
   }
 });
 
-if (process.env.E2E_BUILD === 'true') {
-  // eslint-disable-next-line promise/catch-or-return
-  app.whenReady().then(createLogin);
-} else {
-  app.on('ready', createLogin);
-}
-
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) createLogin();
+  if (mainWindow) {
+    mainWindow.show();
+  } else {
+    createWindow((global as any).UserInfo, () => {});
+  }
 });
+
+/** 添加主进程监听事件 */
+initMainProcess();

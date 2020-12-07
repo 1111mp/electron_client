@@ -86,6 +86,7 @@ export default merge(baseConfig, {
               modules: {
                 localIdentName: '[name]__[local]__[hash:base64:5]',
               },
+              sourceMap: true,
             },
           },
         ],
@@ -99,9 +100,16 @@ export default merge(baseConfig, {
           },
           {
             loader: 'css-loader',
+            options: {
+              sourceMap: true,
+              importLoaders: 1,
+            },
           },
           {
             loader: 'sass-loader',
+            options: {
+              sourceMap: true,
+            },
           },
           {
             loader: 'sass-resources-loader',
@@ -215,12 +223,12 @@ export default merge(baseConfig, {
     splitChunks: {
       chunks: 'all',
       cacheGroups: {
-        styles: {
-          name: 'styles',
-          test: /\.css$/,
-          chunks: 'all',
-          enforce: true,
-        },
+        // styles: {
+        //   name: 'styles',
+        //   test: /\.css$/,
+        //   chunks: 'all',
+        //   enforce: true,
+        // },
         vender: {
           test: /[\\/]node_modules[\\/]/,
           priority: -10,

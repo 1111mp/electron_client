@@ -2,7 +2,7 @@ try {
   const path = require('path');
   const { remote, ipcRenderer } = require('electron');
   const { nativeTheme, app } = remote.require('electron');
-  const initDatabase = require('./db');
+  // const initDatabase = require('./db');
 
   // nativeTheme.themeSource = 'dark'
 
@@ -23,7 +23,7 @@ try {
     });
   };
 
-  window.sequelize = initDatabase();
+  // window.sequelize = initDatabase();
 } catch (error) {
   console.log(error);
 }

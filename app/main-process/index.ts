@@ -6,13 +6,11 @@ import {
   BrowserWindow,
 } from 'electron';
 import log from 'electron-log';
-import initIM from './im';
 import { openDevTools } from './devTools';
 import dialog from './dialog';
 import webWin from './webWin';
 import browser from './browser';
 import notifier from './notifier';
-import IMListeners from './im/listeners';
 import _ from 'lodash';
 
 const { webContents } = require('electron');
@@ -43,21 +41,21 @@ export class MainProcess {
   /** 单例模式（仅适用于单线程） */
   static _instance: MainProcess;
 
-  static getInstance(mainWindow: BrowserWindow | null): MainProcess {
+  static getInstance(): MainProcess {
     if (!this._instance) {
-      this._instance = new MainProcess(mainWindow);
+      this._instance = new MainProcess();
     }
 
     return this._instance;
   }
 
-  _mainWindow: BrowserWindow | null;
+  // _mainWindow: BrowserWindow | null;
   private _allEvents: IAnyObject;
   private _rendererEvents: CbEvents;
   private _datas: MainDatas;
 
-  constructor(mainWindow: BrowserWindow | null) {
-    this._mainWindow = mainWindow;
+  constructor() {
+    // this._mainWindow = mainWindow;
     this._allEvents = {};
     this._rendererEvents = {};
     this._datas = new Object() as MainDatas;
@@ -129,8 +127,10 @@ export class MainProcess {
       });
     }
 
-    if (this._mainWindow && this._mainWindow.webContents) {
-      return this._mainWindow.webContents
+    const mainWindow: BrowserWindow = (global as any)._mainWindow;
+
+    if (mainWindow && mainWindow.webContents) {
+      return mainWindow.webContents
         .executeJavaScript(`Promise.resolve(${script});`)
         .then((data) => {
           return data;
@@ -145,8 +145,9 @@ export class MainProcess {
 
   /** 调用mainWindow的webContent全局的方法 */
   invokeMainWindowFunc({ funcname, args }: { funcname: string; args: any }) {
-    if (this._mainWindow && this._mainWindow.webContents) {
-      this._mainWindow.webContents.executeJavaScript(
+    const mainWindow: BrowserWindow = (global as any)._mainWindow;
+    if (mainWindow && mainWindow.webContents) {
+      mainWindow.webContents.executeJavaScript(
         `window.${funcname}(${JSON.stringify(args)})`
       );
     }
@@ -287,7 +288,7 @@ function getEvents(mainProcess: MainProcess): { [key: string]: Function } {
     },
     [listener.INTERFACE_EXPANSION]() {
       return (event: IpcMainEvent) => {
-        mainProcess._mainWindow?.setBounds({ width: 1024 + 200 });
+        (global as any)._mainWindow?.setBounds({ width: 1024 + 200 });
       };
     },
     ...dialog,
@@ -328,36 +329,19 @@ function getHandleEvents(
   };
 }
 
-export default function (mainWindow: BrowserWindow | null) {
-  return new Promise((resolve, reject) => {
-    console.log(3333333);
-    console.log(Date.now());
+export default async function () {
+  let mainProcess = MainProcess.getInstance();
 
-    let mainProcess = MainProcess.getInstance(mainWindow);
-
-    /** IM init */
-    initIM();
-
-    Object.keys(IMListeners).forEach((listener) => {
-      mainProcess.handle(
-        listener,
-        (IMListeners as { [key: string]: Function })[listener](IMListeners)
-      );
-    });
-
-    const events = getEvents(mainProcess);
-    Object.keys(events).forEach((event) => {
-      mainProcess.on(event, events[event]());
-    });
-
-    const handleEvents = getHandleEvents(mainProcess);
-    console.log(handleEvents);
-    Object.keys(handleEvents).forEach((handle) => {
-      mainProcess.handle(handle, handleEvents[handle]());
-    });
-
-    console.log(4444444);
-    console.log(Date.now());
-    resolve();
+  const events = getEvents(mainProcess);
+  Object.keys(events).forEach((event) => {
+    mainProcess.on(event, events[event]());
   });
+
+  const handleEvents = getHandleEvents(mainProcess);
+  console.log(handleEvents);
+  Object.keys(handleEvents).forEach((handle) => {
+    mainProcess.handle(handle, handleEvents[handle]());
+  });
+
+  return Promise.resolve();
 }
