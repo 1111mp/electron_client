@@ -24,6 +24,7 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import Config, { Mainwin, LoginWin } from './config';
 import { initialize as initSqlite } from './db';
+import sqlChannels from './db/channel';
 import initMainProcess from './main-process';
 import TrayCreator from './main-process/tray';
 import listeners from './constants/listener.json';
@@ -323,7 +324,9 @@ if (process.env.E2E_BUILD === 'true') {
       return;
     }
 
-    await createLogin();
+    await sqlChannels.initialize();
+
+    await await createLogin();
   });
 }
 
@@ -352,6 +355,12 @@ app.on('activate', () => {
     mainWindow.show();
   } else {
     createWindow((global as any).UserInfo, () => {});
+  }
+});
+
+ipcMain.on('close-login', () => {
+  if (loginWindow) {
+    loginWindow.close();
   }
 });
 

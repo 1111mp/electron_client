@@ -8,6 +8,10 @@ const Login: React.FC = React.memo(() => {
   const [username, setUsername] = React.useState('');
   const [pwd, setPwd] = React.useState('');
 
+  const closeLogin = () => {
+    (window as any).closeLogin();
+  };
+
   const usernameChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setUsername(event.target.value);
@@ -32,31 +36,23 @@ const Login: React.FC = React.memo(() => {
         console.log(res);
         if (res.code === 200) {
           /** login 成功之后 更新数据库 user信息 */
-          try {
-            await (window as any).sequelize.models.User.upsert(
-              {
-                token: res.token,
-                ...res.data,
-              },
-              {
-                where: {
-                  userId: {
-                    [Op.eq]: res.data.userId,
-                  },
-                },
-              }
-            );
-          } catch (error) {
-            console.log(error);
-          }
-
-          ipcRenderer.send(
-            listener.LOGIN_SUCCESSFUL,
-            JSON.stringify({
+          ipcRenderer
+            .invoke('sql-channel', 'upsertUser', {
               token: res.token,
               ...res.data,
             })
-          );
+            .then(() => {
+              ipcRenderer.send(
+                listener.LOGIN_SUCCESSFUL,
+                JSON.stringify({
+                  token: res.token,
+                  ...res.data,
+                })
+              );
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         }
       })
       .catch((err) => {
@@ -82,7 +78,7 @@ const Login: React.FC = React.memo(() => {
     <div className="module-login">
       <p className="module-login-header">
         <span className="module-login-header-title"></span>
-        <span className="iconfont icontop-close"></span>
+        <span className="iconfont icontop-close" onClick={closeLogin}></span>
       </p>
       <h3 className="module-login-welcome">
         Hi, <span className="module-login-welcome-highlight">Good Day!</span>

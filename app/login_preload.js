@@ -2,7 +2,6 @@ try {
   const path = require('path');
   const { remote, ipcRenderer } = require('electron');
   const { nativeTheme, app } = remote.require('electron');
-  // const initDatabase = require('./db');
 
   // nativeTheme.themeSource = 'dark'
 
@@ -23,7 +22,7 @@ try {
     });
   };
 
-  // window.sequelize = initDatabase();
+  window.closeLogin = () => ipcRenderer.send('close-login');
 } catch (error) {
   console.log(error);
 }

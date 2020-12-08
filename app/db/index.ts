@@ -1,15 +1,36 @@
 import { resolve } from 'path';
 import { userInfo } from 'os';
 import { app } from 'electron';
-import { Sequelize } from 'sequelize';
+import { Sequelize, Op, UpsertOptions } from 'sequelize';
 import UserDefiner from './models/user';
 
-export default {
+declare global {
+  interface Function {
+    needsSerial?: boolean;
+  }
+}
+
+export type SqlInterface = {
+  close: () => Promise<void>;
+  initialize: () => Promise<boolean>;
+
+  upsertUser: (data: UserType) => Promise<boolean>;
+};
+
+export type UserType = {
+  userId: number;
+  [key: string]: unknown;
+};
+
+const sql: SqlInterface = {
   close,
-  getInstance,
+
+  upsertUser,
 
   initialize,
 };
+
+export default sql;
 
 let sqlInstance: Sequelize | null = null;
 
@@ -54,3 +75,19 @@ function getInstance(): Sequelize {
 
   return sqlInstance;
 }
+
+async function upsertUser(data: UserType) {
+  const sequelize: Sequelize = getInstance();
+
+  try {
+    await sequelize.models.User.upsert({
+      ...data,
+    });
+
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+upsertUser.needsSerial = true;

@@ -2,6 +2,7 @@ import {
   Event,
   ipcMain,
   IpcMainEvent,
+  IpcMainInvokeEvent,
   WebContents,
   BrowserWindow,
 } from 'electron';
@@ -304,7 +305,7 @@ function getHandleEvents(
 ): { [key: string]: Function } {
   return {
     [listener.GET_DATA_ASYNC]() {
-      return async (event: IpcMainEvent, keys: any[]) => {
+      return async (event: IpcMainInvokeEvent, keys: any[]) => {
         // const res = mainProcess.getData(keys);
         // return res;
         try {
@@ -317,7 +318,7 @@ function getHandleEvents(
     },
     /** 异步向mainWindow的webContent获取挂载在全局window的数据 支持同时获取多个key的数据 例如 window.setting的数据 */
     [listener.GET_DATA_FROM_MAIN_WINDOW_ASYNC]() {
-      return async (event: IpcMainEvent, keys: string[]) => {
+      return async (event: IpcMainInvokeEvent, keys: string[]) => {
         try {
           const data = await mainProcess.getDataFromMainWindow(keys);
           return Promise.resolve(data);
@@ -338,7 +339,7 @@ export default async function () {
   });
 
   const handleEvents = getHandleEvents(mainProcess);
-  console.log(handleEvents);
+
   Object.keys(handleEvents).forEach((handle) => {
     mainProcess.handle(handle, handleEvents[handle]());
   });
