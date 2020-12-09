@@ -1,10 +1,7 @@
 try {
   const path = require('path');
   const { remote, ipcRenderer } = require('electron');
-  const { nativeTheme, app } = remote.require('electron');
-  // const initDatabase = require('./db');
-
-  // nativeTheme.themeSource = 'dark'
+  const { nativeTheme } = remote.require('electron');
 
   window.ROOT_PATH = window.location.href.startsWith('file') ? '../' : '/';
   window.platform = process.platform;
@@ -35,7 +32,11 @@ try {
     window.Events.setThemeSetting(data);
   });
 
-  // window.sequelize = initDatabase();
+  const sqlClient = require('./db/client');
+
+  window.Signal = {
+    sqlClient,
+  };
 } catch (error) {
   console.log(error);
 }

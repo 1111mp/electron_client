@@ -94,14 +94,11 @@ export function getMessage(
 
 /** 从数据库获取theme */
 export async function getThemeFromDatabase() {
-  try {
-    let user = await (window as any).sequelize.models.User.findOne({
-      attributes: { exclude: ['id'] },
-    });
-    return user.toJSON();
-  } catch (error) {
-    return { theme: (window as any).systemTheme || 'system' };
-  }
+  const user = await (window as any).Signal.sqlClient.getUserInfo();
+
+  if (!user) return { theme: (window as any).systemTheme || 'system' };
+
+  return user;
 }
 
 /** 设置主题 */

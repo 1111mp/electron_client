@@ -1,8 +1,10 @@
 import { resolve } from 'path';
 import { userInfo } from 'os';
 import { app } from 'electron';
-import { Sequelize, Op, UpsertOptions } from 'sequelize';
+import { Sequelize } from 'sequelize';
 import UserDefiner from './models/user';
+
+import { SqlInterface, UserType } from './interface';
 
 declare global {
   interface Function {
@@ -10,22 +12,11 @@ declare global {
   }
 }
 
-export type SqlInterface = {
-  close: () => Promise<void>;
-  initialize: () => Promise<boolean>;
-
-  upsertUser: (data: UserType) => Promise<boolean>;
-};
-
-export type UserType = {
-  userId: number;
-  [key: string]: unknown;
-};
-
 const sql: SqlInterface = {
   close,
 
   upsertUser,
+  getUserInfo,
 
   initialize,
 };
@@ -57,8 +48,8 @@ export async function initialize() {
 
   UserDefiner(sqlInstance);
 
-  // sequelizeInstance.sync({ alter: true });
-  // sequelizeInstance.sync({ force: true });
+  // sqlInstance.sync({ alter: true });
+  // sqlInstance.sync({ force: true });
   return true;
 }
 
@@ -81,6 +72,7 @@ async function upsertUser(data: UserType) {
 
   try {
     await sequelize.models.User.upsert({
+      id: 1,
       ...data,
     });
 
@@ -91,3 +83,17 @@ async function upsertUser(data: UserType) {
 }
 
 upsertUser.needsSerial = true;
+
+async function getUserInfo() {
+  const sequelize: Sequelize = getInstance();
+
+  try {
+    const result = await sequelize.models.User.findOne({
+      attributes: { exclude: ['id'] },
+    });
+
+    return result?.toJSON();
+  } catch (error) {
+    return undefined;
+  }
+}

@@ -93,7 +93,7 @@ export default class ChildWindow {
 
   loadFile = (options: LoadFileOption, temp: string = 'index') => {
     this.win.loadFile(
-      app.isPackaged
+      app.isPackaged || process.env.NODE_ENV === 'production'
         ? path.resolve(__dirname, `pages/${temp}.html`)
         : path.resolve(__dirname, `../../pages/${temp}.html`),
       {

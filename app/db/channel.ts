@@ -1,6 +1,8 @@
 import { ipcMain, IpcMainInvokeEvent } from 'electron';
 import PQueue from 'p-queue';
-import sql, { SqlInterface } from './index';
+import sql from './index';
+
+import { SqlInterface } from './interface';
 
 export default { initialize };
 

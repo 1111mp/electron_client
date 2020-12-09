@@ -36,8 +36,8 @@ const Login: React.FC = React.memo(() => {
         console.log(res);
         if (res.code === 200) {
           /** login 成功之后 更新数据库 user信息 */
-          ipcRenderer
-            .invoke('sql-channel', 'upsertUser', {
+          (window as any).Signal.sqlClient
+            .upsertUser({
               token: res.token,
               ...res.data,
             })
@@ -50,7 +50,7 @@ const Login: React.FC = React.memo(() => {
                 })
               );
             })
-            .catch((error) => {
+            .catch((error: any) => {
               console.log(error);
             });
         }

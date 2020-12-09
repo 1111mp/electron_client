@@ -41,6 +41,14 @@ export default class CustomWindow {
       'window'
     );
 
+    if (
+      process.env.NODE_ENV === 'development' ||
+      process.env.DEBUG_PROD === 'true'
+    ) {
+      //开发者工具 https://newsn.net/say/electron-devtools.html
+      winInstance.getWebContents().openDevTools({ mode: 'undocked' });
+    }
+
     return winInstance;
   }
 

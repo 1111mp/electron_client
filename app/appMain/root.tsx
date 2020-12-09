@@ -36,7 +36,7 @@ const Root = ({ stores, statusCode, messages }: Props) => {
           <Router history={syncHistoryWithStore(History, stores.routerStore)}>
             {/* <Routes /> */}
             {renderRoutes(allRoutes)}
-            {window.location.hash === '#/' ? <Redirect to="index" /> : null}
+            <Redirect to="index" />
           </Router>
         </StoreContext.Provider>
       </Provider>

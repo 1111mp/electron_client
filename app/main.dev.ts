@@ -91,6 +91,7 @@ const createWindow = (userInfo: string, callback: Function) => {
     minHeight: Mainwin.minHeight,
     center: true,
     frame: false,
+    title: 'mainWindow', // 用来标识 mainWindow
     webPreferences:
       (process.env.NODE_ENV === 'development' ||
         process.env.E2E_BUILD === 'true') &&
@@ -117,7 +118,7 @@ const createWindow = (userInfo: string, callback: Function) => {
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-  mainWindow.on('ready-to-show', async () => {
+  mainWindow.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
@@ -125,10 +126,6 @@ const createWindow = (userInfo: string, callback: Function) => {
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
-      await mainWindow.webContents.executeJavaScript(
-        `window.UserInfo = ${userInfo}`
-      );
-
       mainWindow.show();
       mainWindow.focus();
     }
@@ -188,13 +185,13 @@ const createLogin = async () => {
 
   loginWindow.loadURL(`file://${__dirname}/pages/login.html`);
 
-  // if (
-  //   process.env.NODE_ENV === 'development' ||
-  //   process.env.DEBUG_PROD === 'true'
-  // ) {
-  //开发者工具 https://newsn.net/say/electron-devtools.html
-  loginWindow.webContents.openDevTools({ mode: 'undocked' });
-  // }
+  if (
+    process.env.NODE_ENV === 'development' ||
+    process.env.DEBUG_PROD === 'true'
+  ) {
+    //开发者工具 https://newsn.net/say/electron-devtools.html
+    loginWindow.webContents.openDevTools({ mode: 'undocked' });
+  }
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -242,6 +239,7 @@ const createLogin = async () => {
         ...(global as any).UserInfo,
         ...JSON.parse(userInfo),
       };
+
       createWindow(userInfo, () => {
         loginWindow && loginWindow.close();
       });

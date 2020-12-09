@@ -23,6 +23,12 @@ try {
   };
 
   window.closeLogin = () => ipcRenderer.send('close-login');
+
+  const sqlClient = require('./db/client');
+
+  window.Signal = {
+    sqlClient,
+  };
 } catch (error) {
   console.log(error);
 }

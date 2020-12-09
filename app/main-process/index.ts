@@ -112,6 +112,16 @@ export class MainProcess {
     }
   }
 
+  getMainWindow() {
+    return webContents
+      .getAllWebContents()
+      .find(
+        (webContent: any) =>
+          webContent.browserWindowOptions &&
+          webContent.browserWindowOptions.title === 'mainWindow'
+      );
+  }
+
   /** 从mainWindow的webContent获取挂载在全局window对象上的对应key的数据 */
   async getDataFromMainWindow(keys: string[]) {
     let script = '{';
@@ -128,7 +138,7 @@ export class MainProcess {
       });
     }
 
-    const mainWindow: BrowserWindow = (global as any)._mainWindow;
+    const mainWindow: BrowserWindow = this.getMainWindow();
 
     if (mainWindow && mainWindow.webContents) {
       return mainWindow.webContents
@@ -146,7 +156,7 @@ export class MainProcess {
 
   /** 调用mainWindow的webContent全局的方法 */
   invokeMainWindowFunc({ funcname, args }: { funcname: string; args: any }) {
-    const mainWindow: BrowserWindow = (global as any)._mainWindow;
+    const mainWindow: BrowserWindow = this.getMainWindow();
     if (mainWindow && mainWindow.webContents) {
       mainWindow.webContents.executeJavaScript(
         `window.${funcname}(${JSON.stringify(args)})`
@@ -285,11 +295,6 @@ function getEvents(mainProcess: MainProcess): { [key: string]: Function } {
     [listener.INVOKE_MAIN_WINDOW_FUNC]() {
       return (event: IpcMainEvent, data: { funcname: string; args: any }) => {
         mainProcess.invokeMainWindowFunc(data);
-      };
-    },
-    [listener.INTERFACE_EXPANSION]() {
-      return (event: IpcMainEvent) => {
-        (global as any)._mainWindow?.setBounds({ width: 1024 + 200 });
       };
     },
     ...dialog,
