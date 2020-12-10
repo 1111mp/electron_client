@@ -6,6 +6,7 @@ import { renderRoutes } from 'react-router-config';
 import { createBrowserHistory, createHashHistory } from 'history';
 import { syncHistoryWithStore } from '@superwf/mobx-react-router';
 import { IntlProvider } from 'react-intl';
+import { AliveScope } from 'react-activation';
 import { StoreContext } from './stores';
 import Menu from 'appMain/parts/menu';
 import Config from 'app/config';
@@ -34,9 +35,11 @@ const Root = ({ stores, statusCode, messages }: Props) => {
         <StoreContext.Provider value={stores}>
           <Menu />
           <Router history={syncHistoryWithStore(History, stores.routerStore)}>
-            {/* <Routes /> */}
-            {renderRoutes(allRoutes)}
-            <Redirect to="index" />
+            <AliveScope>
+              {/* <Routes /> */}
+              {renderRoutes(allRoutes)}
+              <Redirect to="index" />
+            </AliveScope>
           </Router>
         </StoreContext.Provider>
       </Provider>

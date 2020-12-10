@@ -13,8 +13,8 @@ const config: Config = {
   /** 默认不使用history模式 */
   isBorwserHistory: false,
 
-  // serverUrl: 'http://192.168.80.208:3000',
-  serverUrl: 'http://192.168.0.7:3000',
+  serverUrl: 'http://192.168.80.208:3000',
+  // serverUrl: 'http://192.168.0.7:3000',
 };
 
 /** 主界面 */
