@@ -10,12 +10,6 @@ import { useTargetStore } from 'appMain/stores';
 import RoomList from '../roomList';
 import Empty from 'components/empty';
 
-const themes = [
-  { label: '系统', value: 'system' },
-  { label: '浅色', value: 'light' },
-  { label: '深色', value: 'dark' },
-];
-
 const Home: React.FC<IAnyObject> = observer(({ route }) => {
   const routerStore = useTargetStore('routerStore');
 

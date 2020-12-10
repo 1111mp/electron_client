@@ -5,7 +5,6 @@ import BasicComponent from 'components/BasicComponent';
 
 import ReactIScroll from 'react-iscroll';
 import iScroll from 'iscroll/build/iscroll-probe';
-import { KeepAlive, withActivation } from 'react-activation';
 import { Button, Drawer } from 'antd';
 import { EllipsisOutlined } from '@ant-design/icons';
 import MsgsContainer from './msgsContainer';
@@ -78,7 +77,6 @@ function getData(): any[] {
   return res;
 }
 
-@withActivation
 export default class ChatInterface extends BasicComponent<IAnyObject> {
   state = {
     visible: false,
@@ -105,7 +103,7 @@ export default class ChatInterface extends BasicComponent<IAnyObject> {
   }
 
   /** https://github.com/CJY0208/react-activation/blob/master/README_CN.md */
-  componentDidActivate(prevProps: any, prevState: any) {
+  didUpdate(prevProps: any, prevState: any) {
     const { messages: prevMessages } = prevState;
     const { messages } = this.state;
     if (!_.isEqual(prevMessages, messages)) {
@@ -171,57 +169,52 @@ export default class ChatInterface extends BasicComponent<IAnyObject> {
     const { visible, messages, loading } = this.state;
 
     return (
-      <KeepAlive>
-        <div className="module-chat_interface">
-          <header className="module-chat_interface-header">
-            <p className="module-chat_interface-header--title">张逸凡</p>
-            <Button
-              type="link"
-              onClick={() => this.setState({ visible: true })}
-            >
-              <EllipsisOutlined style={{ fontSize: '20px' }} />
-            </Button>
-          </header>
-          <ReactIScroll
-            ref={(ref: any) => (this.iScroll = ref)}
-            iScroll={iScroll}
-            options={{
-              probeType: 2,
-              // disablePointer: true,
-              mouseWheel: true,
-              scrollbars: 'custom',
-              freeScroll: true,
-              fadeScrollbars: true,
-              interactiveScrollbars: true,
-              shrinkScrollbars: 'scale',
-              preventDefaultException: {
-                className: /message-content|message-wrapper|message-container/,
-              },
-            }}
-            onScrollEnd={this.onScrollHandler}
-          >
-            <div className="module-chat_interface--scroll">
-              <MsgsContainer messages={messages} loading={loading} />
-            </div>
-          </ReactIScroll>
-          <footer className="module-chat_interface--footer">
-            <Transmitter />
-          </footer>
-          <Drawer
-            title="Basic Drawer"
-            placement="right"
-            closable={false}
-            onClose={() => this.setState({ visible: false })}
-            visible={visible}
-            getContainer={false}
-            style={{ position: 'absolute' }}
-          >
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-          </Drawer>
-        </div>
-      </KeepAlive>
+      <div className="module-chat_interface">
+        <header className="module-chat_interface-header">
+          <p className="module-chat_interface-header--title">张逸凡</p>
+          <Button type="link" onClick={() => this.setState({ visible: true })}>
+            <EllipsisOutlined style={{ fontSize: '20px' }} />
+          </Button>
+        </header>
+        <ReactIScroll
+          ref={(ref: any) => (this.iScroll = ref)}
+          iScroll={iScroll}
+          options={{
+            probeType: 2,
+            // disablePointer: true,
+            mouseWheel: true,
+            scrollbars: 'custom',
+            freeScroll: true,
+            fadeScrollbars: true,
+            interactiveScrollbars: true,
+            shrinkScrollbars: 'scale',
+            preventDefaultException: {
+              className: /message-content|message-wrapper|message-container/,
+            },
+          }}
+          onScrollEnd={this.onScrollHandler}
+        >
+          <div className="module-chat_interface--scroll">
+            <MsgsContainer messages={messages} loading={loading} />
+          </div>
+        </ReactIScroll>
+        <footer className="module-chat_interface--footer">
+          <Transmitter />
+        </footer>
+        <Drawer
+          title="Basic Drawer"
+          placement="right"
+          closable={false}
+          onClose={() => this.setState({ visible: false })}
+          visible={visible}
+          getContainer={false}
+          style={{ position: 'absolute' }}
+        >
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+        </Drawer>
+      </div>
     );
   }
 }
