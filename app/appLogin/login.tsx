@@ -2,21 +2,20 @@ import React from 'react';
 import request from 'app/requests';
 import { ipcRenderer } from 'electron';
 import listener from 'app/constants/listener.json';
-import { Op } from 'sequelize';
 
 const Login: React.FC = React.memo(() => {
-  const [username, setUsername] = React.useState('');
+  const [account, setAccount] = React.useState('');
   const [pwd, setPwd] = React.useState('');
 
   const closeLogin = () => {
     (window as any).closeLogin();
   };
 
-  const usernameChange = React.useCallback(
+  const accountChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      setUsername(event.target.value);
+      setAccount(event.target.value);
     },
-    [setUsername]
+    [setAccount]
   );
 
   const pwdChange = React.useCallback(
@@ -27,10 +26,10 @@ const Login: React.FC = React.memo(() => {
   );
 
   const submit = React.useCallback(async () => {
-    if (!username || !pwd) return;
+    if (!account || !pwd) return;
     request('/login', {
       method: 'POST',
-      data: { username, pwd },
+      data: { account, pwd },
     })
       .then(async (res: any) => {
         console.log(res);
@@ -58,7 +57,7 @@ const Login: React.FC = React.memo(() => {
       .catch((err) => {
         console.log(err);
       });
-  }, [username, pwd]);
+  }, [account, pwd]);
 
   React.useEffect(() => {
     const handler = (event: KeyboardEvent) => {
@@ -86,13 +85,13 @@ const Login: React.FC = React.memo(() => {
       <p className="module-login-tip">Please sign in to continue</p>
       <ul className="module-login-form">
         <li className="module-login-form-username">
-          <label htmlFor="username">Username</label>
+          <label htmlFor="account">Account</label>
           <input
             type="text"
-            name="username"
-            placeholder="username"
-            value={username}
-            onChange={usernameChange}
+            name="account"
+            placeholder="account"
+            value={account}
+            onChange={accountChange}
           />
         </li>
         <li className="module-login-form-pwd">

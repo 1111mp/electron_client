@@ -42,7 +42,7 @@ const AddressBook: React.ComponentType<Props> = () => {
 
       return (
         <Fragment key={key}>
-          <Row row={row} style={style} />
+          <Row row={row} style={style} index={index} />
         </Fragment>
       );
     },
@@ -56,7 +56,7 @@ const AddressBook: React.ComponentType<Props> = () => {
   const getRowHeight = React.useCallback(
     ({ index }: { index: number }) => {
       const row = list.find((item, i: number) => i === index);
-      return row?.type ? 40 : 60;
+      return row?.type ? 30 : 60;
     },
     [list]
   );

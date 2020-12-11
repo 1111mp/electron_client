@@ -2,7 +2,7 @@ import { resolve } from 'path';
 import { userInfo } from 'os';
 import { app } from 'electron';
 import { Sequelize } from 'sequelize';
-import UserDefiner from './models/user';
+import UserDefiner from './models/user.model';
 
 import { SqlInterface, UserType } from './interface';
 
@@ -49,7 +49,7 @@ export async function initialize() {
   UserDefiner(sqlInstance);
 
   // sqlInstance.sync({ alter: true });
-  // sqlInstance.sync({ force: true });
+  sqlInstance.sync({ force: true });
   return true;
 }
 

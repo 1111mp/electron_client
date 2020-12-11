@@ -9,7 +9,7 @@ const Header: React.FC = () => {
   return (
     <div className="module-header">
       <p className="module-header-placeholder"></p>
-      <p className="module-header-search">
+      <div className="module-header-search">
         <Input
           className="search_input"
           placeholder="搜索"
@@ -17,7 +17,10 @@ const Header: React.FC = () => {
           allowClear={true}
           prefix={<SearchOutlined />}
         />
-      </p>
+        <p className="module-header-search__btn">
+          <span className="iconfont iconadd1"></span>
+        </p>
+      </div>
     </div>
   );
 };

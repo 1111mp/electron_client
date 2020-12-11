@@ -12,11 +12,13 @@
   }
 
   &-search {
+    @include flex($align:center);
     width: 100%;
     margin: 0;
     padding: 0 16px 12px;
 
     .search_input {
+      flex: 1;
       height: 28px;
       border-radius: 6px;
 
@@ -65,6 +67,44 @@
 
       &:hover {
         border-color: $ultramarine-ui-light;
+      }
+    }
+
+    &__btn {
+      @include flex($justify:center, $align:center);
+      margin: 0;
+      margin-left: 12px;
+      width: 26px;
+      height: 26px;
+      border-radius: 4px;
+      cursor: pointer;
+
+      @include light-theme() {
+        color: $color-gray-90;
+        background-color: $color-input-bkg;
+
+        &:hover {
+          background-color: #e4e4e4;
+        }
+      }
+
+      @include dark-theme() {
+        color: $color-gray-05;
+        background-color: $color-gray-95;
+
+        &:hover {
+          background-color: $color-gray-90;
+        }
+      }
+
+      .iconadd {
+        @include light-theme() {
+          color: $color-gray-90;
+        }
+
+        @include dark-theme() {
+          color: $color-gray-45;
+        }
       }
     }
   }

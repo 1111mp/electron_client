@@ -37,6 +37,10 @@ export default (sequelize: Sequelize) => {
         field: 'user_id',
         comment: '用户id',
       },
+      account: {
+        type: DataTypes.INTEGER,
+        comment: '账号 手机号',
+      },
       token: {
         type: DataTypes.STRING,
         comment: 'token 验签',
