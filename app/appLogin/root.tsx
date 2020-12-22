@@ -2,7 +2,7 @@ import React from 'react';
 import { hot } from 'react-hot-loader/root';
 import Login from './login';
 
-const App = () => {
+const App: React.ComponentType = () => {
   return <Login />;
 };
 

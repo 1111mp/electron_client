@@ -94,6 +94,7 @@ body,
       margin-top: 12px;
       padding: 6px 8px;
       border-radius: 4px;
+      border: 1px solid transparent;
 
       @include light-theme() {
         box-shadow: 0 6px 4px #D9D9D9;
@@ -103,6 +104,10 @@ body,
       @include dark-theme() {
         box-shadow: 0 4px 6px $color-gray-60;
         background-color: $color-gray-25;
+      }
+
+      &.err {
+        border: 1px solid red;
       }
 
       &>label {
@@ -141,58 +146,80 @@ body,
     }
   }
 
-  &-button {
-    position: relative;
-    height: 28px;
-    line-height: 28px;
+  &-footer {
+    width: 100%;
     margin-top: 24px;
-    padding: 0 12px;
-    align-self: flex-end;
-    border: none;
-    outline: none;
-    border-radius: 4px;
-    cursor: pointer;
-    overflow: hidden;
+    @include flex($justify: space-between, $align: center);
 
-    @include light-theme() {
-      color: $color-white;
-      box-shadow: 0 2px 4px #9e9c9c;
-      background-color: $themeColor;
+    &__tip {
+      font-size: 12px;
+      font-weight: 500;
+
+      @include light-theme() {
+        color: #474444;
+      }
+
+      @include dark-theme() {
+        color: $color-gray-15;
+      }
+
+      &>span {
+        color: $themeColor;
+        cursor: pointer;
+      }
     }
 
-    @include dark-theme() {
-      color: $color-white;
-      box-shadow: 0 2px 4px $color-gray-45;
-      background-color: $themeColor;
-    }
+    &__button {
+      position: relative;
+      width: 68px;
+      height: 28px;
+      line-height: 28px;
+      border: none;
+      outline: none;
+      border-radius: 4px;
+      cursor: pointer;
+      overflow: hidden;
 
-    &:hover {
-      background-color: #4ba1e2;
-    }
+      @include light-theme() {
+        color: $color-white;
+        box-shadow: 0 2px 4px #9e9c9c;
+        background-color: $themeColor;
+      }
 
-    &::after {
-      content: "";
-      display: block;
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      pointer-events: none;
-      //设置径向渐变
-      background-image: radial-gradient(circle, #cccccc 10%, transparent 10.01%);
-      background-repeat: no-repeat;
-      background-position: 50%;
-      transform: scale(10, 10);
-      opacity: 0;
-      transition: transform .3s, opacity .5s;
-    }
+      @include dark-theme() {
+        color: $color-white;
+        box-shadow: 0 2px 4px $color-gray-45;
+        background-color: $themeColor;
+      }
 
-    &:active::after {
-      transform: scale(0, 0);
-      opacity: .3;
-      //设置初始状态
-      transition: 0s;
+      &:hover {
+        background-color: #4ba1e2;
+      }
+
+      &::after {
+        content: "";
+        display: block;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        //设置径向渐变
+        background-image: radial-gradient(circle, #cccccc 10%, transparent 10.01%);
+        background-repeat: no-repeat;
+        background-position: 50%;
+        transform: scale(10, 10);
+        opacity: 0;
+        transition: transform .3s, opacity .5s;
+      }
+
+      &:active::after {
+        transform: scale(0, 0);
+        opacity: .3;
+        //设置初始状态
+        transition: 0s;
+      }
     }
   }
 }

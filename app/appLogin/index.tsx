@@ -3,7 +3,7 @@ import './styles.scss';
 import React, { Fragment } from 'react';
 import { render } from 'react-dom';
 import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
-import { applyTheme, getThemeFromDatabase } from 'app/utils';
+import { applyTheme } from 'app/utils';
 
 const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
 
