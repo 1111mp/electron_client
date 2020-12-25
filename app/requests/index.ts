@@ -41,7 +41,10 @@ axios.interceptors.response.use(
   }
 );
 
-export default function request(api: string, config: AxiosRequestConfig = {}) {
+export default function request(
+  api: string,
+  config: AxiosRequestConfig = {}
+): Promise<any> {
   return new Promise((resolve, reject) => {
     config.url = api;
     config.method = config.method || DEFAULT_API_CONFIG.method;
@@ -72,4 +75,20 @@ export default function request(api: string, config: AxiosRequestConfig = {}) {
       })
       .catch((error) => reject(error));
   });
+}
+
+type Values = {
+  [key: string]: any;
+};
+
+export function makeParams(keys: string[], values: Values) {
+  let params: Values = {};
+  keys &&
+    keys.forEach((key) => {
+      let value = values[key];
+      if (value !== undefined && value !== '' && value !== null) {
+        params[key] = value;
+      }
+    });
+  return params;
 }
