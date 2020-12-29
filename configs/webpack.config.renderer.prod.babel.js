@@ -9,6 +9,7 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import HtmlWebpackHarddiskPlugin from 'html-webpack-harddisk-plugin';
 import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
+// import CompressionWebpackPlugin from 'compression-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import { merge } from 'webpack-merge';
 import TerserPlugin from 'terser-webpack-plugin';
@@ -268,6 +269,17 @@ export default merge(baseConfig, {
     }),
 
     new HtmlWebpackHarddiskPlugin(),
+
+    // new CompressionWebpackPlugin({
+    //   filename: '[path][base].gz',
+    //   algorithm: 'gzip',
+    //   compressionOptions: {
+    //     level: 1,
+    //   },
+    //   test: new RegExp('\\.(' + ['js', 'css'].join('|') + ')$'),
+    //   threshold: 10240,
+    //   minRatio: 0.8,
+    // }),
 
     new BundleAnalyzerPlugin({
       analyzerMode:
