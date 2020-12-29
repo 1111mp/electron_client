@@ -2,8 +2,8 @@ import './styles.scss';
 
 import * as React from 'react';
 
-import { Avatar, Badge, Tag } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { Avatar, Badge } from 'antd';
+import UserOutlined from '@ant-design/icons/UserOutlined';
 
 type Props = {
   clickHandler?: (event: React.MouseEvent) => void;

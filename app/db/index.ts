@@ -49,7 +49,7 @@ export async function initialize() {
   UserDefiner(sqlInstance);
 
   // sqlInstance.sync({ alter: true });
-  sqlInstance.sync({ force: true });
+  // sqlInstance.sync({ force: true });
   return true;
 }
 

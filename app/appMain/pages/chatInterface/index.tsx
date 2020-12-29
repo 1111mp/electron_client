@@ -6,7 +6,7 @@ import BasicComponent from 'components/BasicComponent';
 import ReactIScroll from 'react-iscroll';
 import iScroll from 'iscroll/build/iscroll-probe';
 import { Button, Drawer } from 'antd';
-import { EllipsisOutlined } from '@ant-design/icons';
+import EllipsisOutlined from '@ant-design/icons/EllipsisOutlined';
 import MsgsContainer from './msgsContainer';
 import { Transmitter } from './transmitter';
 import _ from 'lodash';

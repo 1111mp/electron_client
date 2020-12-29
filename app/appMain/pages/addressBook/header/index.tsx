@@ -3,7 +3,7 @@ import './styles.scss';
 import React from 'react';
 
 import { Input } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import SearchOutlined from '@ant-design/icons/SearchOutlined';
 
 const Header: React.FC = () => {
   return (

@@ -6,21 +6,22 @@
 
 // const store = configuredStore();
 
-import React, { Fragment } from 'react';
+import React from 'react';
 import { render } from 'react-dom';
 // 消除警告React-Hot-Loader: react-🔥-dom patch is not detected. React 16.6+ features may not work.
 // 详见：https://github.com/gaearon/react-hot-loader#hot-loaderreact-dom
-import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
+// import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
 import { matchRoutes } from 'react-router-config';
-// import Root from './root';
+import Root from './root';
 import Config from 'app/config';
 import stores from './stores';
 import routerConfig from './routes/route_config';
+import { applyTheme, getThemeFromDatabase } from 'app/utils';
+import initMode from 'app/utils/mode_check';
+
 import './main.global.css';
 import 'app/app.global.css';
 import 'app/app.global.scss';
-import { applyTheme, getThemeFromDatabase } from 'app/utils';
-import initMode from 'app/utils/mode_check';
 
 function getPathname() {
   return Config.isBorwserHistory
@@ -50,8 +51,6 @@ function preloadComponent() {
   };
 }
 
-const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
-
 function loadLocaleData(locale: string): Promise<Record<string, any>> {
   switch (locale) {
     case 'en':
@@ -77,7 +76,7 @@ function appInit() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+(async () => {
   const loadAsyncComponents = preloadComponent();
   let { messages, user } = await appInit();
 
@@ -95,12 +94,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     statusCode = 500;
   }
 
-  // eslint-disable-next-line global-require
-  const Root = require('./root').default;
   render(
-    <AppContainer>
-      <Root stores={stores} statusCode={statusCode} messages={messages} />
-    </AppContainer>,
+    <Root stores={stores} statusCode={statusCode} messages={messages} />,
     document.getElementById('root')
   );
-});
+})();

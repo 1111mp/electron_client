@@ -30,21 +30,9 @@ export default merge(baseConfig, {
       : 'electron-preload',
 
   entry: {
-    appMain: [
-      'core-js',
-      'regenerator-runtime/runtime',
-      path.join(__dirname, '..', 'app/appMain/index.tsx'),
-    ],
-    appWin: [
-      'core-js',
-      'regenerator-runtime/runtime',
-      path.join(__dirname, '..', 'app/appWin/index.tsx'),
-    ],
-    appLogin: [
-      'core-js',
-      'regenerator-runtime/runtime',
-      path.join(__dirname, '..', 'app/appLogin/index.tsx'),
-    ],
+    appMain: [path.join(__dirname, '..', 'app/appMain/index.tsx')],
+    appWin: [path.join(__dirname, '..', 'app/appWin/index.tsx')],
+    appLogin: [path.join(__dirname, '..', 'app/appLogin/index.tsx')],
   },
 
   output: {
@@ -119,32 +107,23 @@ export default merge(baseConfig, {
           },
         ],
       },
-      // {
-      //   test: /\.styl(us)?$/,
-      //   use: [
-      //     {
-      //       loader: MiniCssExtractPlugin.loader,
-      //     },
-      //     {
-      //       loader: 'css-loader',
-      //       options: {
-      //         // modules: {
-      //         //   localIdentName: '[name]__[local]__[hash:base64:5]',
-      //         // },
-      //         sourceMap: true,
-      //         importLoaders: 1,
-      //       },
-      //     },
-      //     {
-      //       loader: 'stylus-loader',
-      //       options: {
-      //         sourceMap: true,
-      //         import: [path.join(__dirname, '../app/styles/mixin.styl')], //你公共样式存放的位置
-      //         // paths: [] //公共样式文件位置
-      //       },
-      //     },
-      //   ],
-      // },
+      {
+        test: /\.less$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+          },
+          { loader: 'css-loader' },
+          {
+            loader: 'less-loader',
+            options: {
+              lessOptions: {
+                javascriptEnabled: true,
+              },
+            },
+          },
+        ],
+      },
       // WOFF Font
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,

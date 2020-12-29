@@ -27,7 +27,10 @@ module.exports = (api) => {
     ],
     plugins: [
       require('react-activation/babel'),
-      require('@babel/plugin-transform-runtime'),
+      [
+        require('@babel/plugin-transform-runtime'),
+        { helpers: true, corejs: 3 },
+      ],
       // Stage 0
       require('@babel/plugin-proposal-function-bind'),
 
@@ -59,7 +62,8 @@ module.exports = (api) => {
       require('@babel/plugin-proposal-json-strings'),
 
       ...(development ? developmentPlugins : productionPlugins),
-      ['import', { libraryName: 'antd', libraryDirectory: 'es', style: 'css' }],
+      'lodash',
+      ['import', { libraryName: 'antd', libraryDirectory: 'es', style: true }],
     ],
   };
 };

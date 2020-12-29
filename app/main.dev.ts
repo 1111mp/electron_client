@@ -8,8 +8,6 @@
  * When running `yarn build` or `yarn build-main`, this file is compiled to
  * `./app/main.prod.js` using webpack. This gives us some performance wins.
  */
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
 import path from 'path';
 import {
   app,
@@ -22,7 +20,7 @@ import {
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import Config, { Mainwin, LoginWin } from './config';
+import { Mainwin, LoginWin } from './config';
 import { initialize as initSqlite } from './db';
 import sqlChannels from './db/channel';
 import initMainProcess from './main-process';
@@ -108,17 +106,17 @@ const createWindow = (userInfo: string, callback: Function) => {
 
   mainWindow.loadURL(`file://${__dirname}/pages/index.html`);
 
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
+  // if (
+  //   process.env.NODE_ENV === 'development' ||
+  //   process.env.DEBUG_PROD === 'true'
+  // ) {
     //开发者工具 https://newsn.net/say/electron-devtools.html
     mainWindow.webContents.openDevTools({ mode: 'undocked' });
-  }
+  // }
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-  mainWindow.webContents.on('did-finish-load', () => {
+  mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }

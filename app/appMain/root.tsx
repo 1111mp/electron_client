@@ -1,6 +1,5 @@
 import React from 'react';
 import { Provider } from 'mobx-react';
-import { hot } from 'react-hot-loader/root';
 import { Router, Redirect } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
 import { createBrowserHistory, createHashHistory } from 'history';
@@ -47,4 +46,4 @@ const Root = ({ stores, statusCode, messages }: Props) => {
   );
 };
 
-export default hot(Root);
+export default Root;

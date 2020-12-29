@@ -15,6 +15,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import HtmlWebpackHarddiskPlugin from 'html-webpack-harddisk-plugin';
 import baseConfig from './webpack.config.base';
 import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
+import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
 // When an ESLint server is running, we can't set the NODE_ENV so we'll check if it's
 // at the dev webpack config is not accidentally run in a production environment
@@ -61,26 +62,9 @@ export default merge(baseConfig, {
    * https://segmentfault.com/a/1190000006964335
    */
   entry: {
-    appMain: [
-      'core-js',
-      'regenerator-runtime/runtime',
-      ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
-      `webpack-dev-server/client?http://localhost:${port}/`,
-      'webpack/hot/only-dev-server',
-      require.resolve('../app/appMain/index.tsx'),
-    ],
-    appWin: [
-      ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
-      `webpack-dev-server/client?http://localhost:${port}/`,
-      'webpack/hot/only-dev-server',
-      require.resolve('../app/appWin/index.tsx'),
-    ],
-    appLogin: [
-      ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
-      `webpack-dev-server/client?http://localhost:${port}/`,
-      'webpack/hot/only-dev-server',
-      require.resolve('../app/appLogin/index.tsx'),
-    ],
+    appMain: require.resolve('../app/appMain/index.tsx'),
+    appWin: require.resolve('../app/appWin/index.tsx'),
+    appLogin: require.resolve('../app/appLogin/index.tsx'),
   },
 
   output: {
@@ -90,6 +74,18 @@ export default merge(baseConfig, {
 
   module: {
     rules: [
+      {
+        test: /\.[jt]sx?$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: require.resolve('babel-loader'),
+            options: {
+              plugins: [require.resolve('react-refresh/babel')].filter(Boolean),
+            },
+          },
+        ],
+      },
       {
         test: /\.global\.css$/,
         use: [
@@ -122,34 +118,6 @@ export default merge(baseConfig, {
           },
         ],
       },
-      // SASS support - compile all .global.scss files and pipe it to style.css
-      // {
-      //   test: /\.module\.(scss|sass)$/,
-      //   use: [
-      //     {
-      //       loader: 'style-loader',
-      //     },
-      //     {
-      //       loader: 'css-loader',
-      //       options: {
-      //         modules: {
-      //           localIdentName: '[name]__[local]__[hash:base64:5]',
-      //         },
-      //         sourceMap: true,
-      //         importLoaders: 1
-      //       }
-      //     },
-      //     {
-      //       loader: 'sass-loader',
-      //     },
-      //     {
-      //       loader: 'sass-resources-loader',
-      //       options: {
-      //         resources: [path.join(__dirname, '../app/styles/mixin.scss')]
-      //       }
-      //     }
-      //   ],
-      // },
       {
         test: /\.s[ac]ss$/i,
         use: [
@@ -173,59 +141,21 @@ export default merge(baseConfig, {
           },
         ],
       },
-      // SASS support - compile all other .scss files and pipe it to style.css
-      // {
-      //   test: /^((?!\.global).)*\.(scss|sass)$/,
-      //   use: [
-      //     {
-      //       loader: 'style-loader'
-      //     },
-      //     {
-      //       loader: 'css-loader',
-      //       options: {
-      //         modules: {
-      //           localIdentName: '[name]__[local]__[hash:base64:5]',
-      //         },
-      //         sourceMap: true,
-      //         importLoaders: 1
-      //       }
-      //     },
-      //     {
-      //       loader: 'sass-loader'
-      //     },
-      //     {
-      //       loader: 'sass-resources-loader',
-      //       options: {
-      //         resources: [path.join(__dirname, '../app/styles/mixin.scss')]
-      //       }
-      //     }
-      //   ],
-      // },
-      // {
-      //   test: /\.styl(us)?$/,
-      //   use: [
-      //     {
-      //       loader: 'style-loader',
-      //     },
-      //     {
-      //       loader: 'css-loader',
-      //       options: {
-      //         // modules: {
-      //         //   localIdentName: '[name]__[local]__[hash:base64:5]',
-      //         // },
-      //         sourceMap: true,
-      //         importLoaders: 1,
-      //       },
-      //     },
-      //     {
-      //       loader: 'stylus-loader',
-      //       options: {
-      //         import: [path.join(__dirname, '../app/styles/mixin.styl')], //你公共样式存放的位置
-      //         // paths: [] //公共样式文件位置
-      //       },
-      //     },
-      //   ],
-      // },
+      {
+        test: /\.less$/,
+        use: [
+          { loader: 'style-loader' },
+          { loader: 'css-loader' },
+          {
+            loader: 'less-loader',
+            options: {
+              lessOptions: {
+                javascriptEnabled: true,
+              },
+            },
+          },
+        ],
+      },
       // WOFF Font
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
@@ -291,9 +221,11 @@ export default merge(baseConfig, {
           sourceType: 'var',
         }),
 
-    new webpack.HotModuleReplacementPlugin({
-      multiStep: true,
-    }),
+    new webpack.NoEmitOnErrorsPlugin(),
+
+    // new webpack.HotModuleReplacementPlugin({
+    //   multiStep: true,
+    // }),
 
     new HtmlWebpackPlugin({
       filename: 'pages/index.html',
@@ -329,8 +261,6 @@ export default merge(baseConfig, {
     //   minRatio: 0.8,
     // }),
 
-    new webpack.NoEmitOnErrorsPlugin(),
-
     /**
      * Create global constants which can be configured at compile time.
      *
@@ -350,6 +280,8 @@ export default merge(baseConfig, {
     new webpack.LoaderOptionsPlugin({
       debug: true,
     }),
+
+    new ReactRefreshWebpackPlugin(),
   ],
 
   node: {

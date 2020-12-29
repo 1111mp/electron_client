@@ -4,7 +4,7 @@ import { ipcRenderer } from 'electron';
 import listener from 'app/constants/listener.json';
 
 const Login: React.FC = () => {
-  const [type, setType] = React.useState<1 | 2>(1);
+  const [type, setType] = React.useState<1 | 2>(1); // 1 sign in   2 sign up
   const [account, setAccount] = React.useState('');
   const [pwd, setPwd] = React.useState('');
   const [aerror, setArrror] = React.useState<boolean>(false);
@@ -14,20 +14,19 @@ const Login: React.FC = () => {
     (window as any).closeLogin();
   };
 
-  const accountChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+  const accountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (type === 2) {
       if (!/^1[3-9](\d{9})$/i.test(event.target.value)) {
         !aerror && setArrror(true);
       } else {
         aerror && setArrror(false);
       }
-      setAccount(event.target.value);
-    },
-    [aerror, setAccount, setArrror]
-  );
+    }
+    setAccount(event.target.value);
+  };
 
-  const pwdChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+  const pwdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (type === 2) {
       if (
         !/(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{6,16}$/i.test(
           event.target.value
@@ -37,12 +36,11 @@ const Login: React.FC = () => {
       } else {
         perror && setPrrror(false);
       }
-      setPwd(event.target.value);
-    },
-    [perror, setPwd, setPrrror]
-  );
+    }
+    setPwd(event.target.value);
+  };
 
-  const submit = React.useCallback(async () => {
+  const submit = async () => {
     if (!account || !pwd || aerror || perror) return;
     request(type === 1 ? '/login' : '/users/register', {
       method: 'POST',
@@ -74,7 +72,7 @@ const Login: React.FC = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [account, pwd]);
+  };
 
   React.useEffect(() => {
     const handler = (event: KeyboardEvent) => {

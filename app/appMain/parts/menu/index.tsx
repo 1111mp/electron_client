@@ -23,18 +23,14 @@ export const Menus: any[] = [
 
 const Menu: React.FC = observer(() => {
   const routerStore = useTargetStore('routerStore');
-  // console.log(111111)
 
-  const openSetting = React.useCallback(() => {
+  const openSetting = () => {
     openWeb({ ...CUSTOMWIN, url: `/settings?title=设置` });
-  }, []);
+  };
 
-  const menuHandler = React.useCallback(
-    (path: string) => {
-      routerStore.push(path);
-    },
-    [routerStore]
-  );
+  const menuHandler = (path: string) => {
+    routerStore.push(path);
+  };
 
   return (
     <div className="module-app-menu">

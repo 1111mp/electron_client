@@ -3,7 +3,7 @@ import './styles.scss';
 import React from 'react';
 import classNames from 'classnames';
 import { Avatar } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import UserOutlined from '@ant-design/icons/UserOutlined';
 
 type Props = {
   style: React.CSSProperties;

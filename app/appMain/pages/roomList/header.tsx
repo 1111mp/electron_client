@@ -1,12 +1,10 @@
 import './header.scss';
 
 import React from 'react';
-import BasicComponent from 'components/BasicComponent';
-// import { inject, observer } from 'mobx-react';
 
-import { Avatar, Input } from 'antd';
-import { UserOutlined, SearchOutlined } from '@ant-design/icons';
-import { CUSTOMWIN } from 'app/config';
+import { Input } from 'antd';
+import SearchOutlined from '@ant-design/icons/SearchOutlined';
+// import { CUSTOMWIN } from 'app/config';
 
 const Header: React.FC = () => {
   return (
