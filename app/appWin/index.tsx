@@ -1,11 +1,9 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { render } from 'react-dom';
-import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
+import Root from './root';
 
 import 'app/app.global.css';
 import 'app/app.global.scss';
-
-const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
 
 function loadLocaleData(locale: string): Promise<Record<string, any>> {
   switch (locale) {
@@ -17,15 +15,8 @@ function loadLocaleData(locale: string): Promise<Record<string, any>> {
   }
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+(async () => {
   const messages = await loadLocaleData(navigator.language);
 
-  // eslint-disable-next-line global-require
-  const Root = require('./root').default;
-  render(
-    <AppContainer>
-      <Root messages={messages} />
-    </AppContainer>,
-    document.getElementById('root')
-  );
-});
+  render(<Root messages={messages} />, document.getElementById('root'));
+})();

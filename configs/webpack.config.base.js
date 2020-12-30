@@ -23,6 +23,13 @@ export default {
           },
         },
       },
+      // https://github.com/webpack/webpack/issues/11467
+      {
+        test: /\.m?js/,
+        resolve: {
+          fullySpecified: false,
+        },
+      },
     ],
   },
 
@@ -41,7 +48,5 @@ export default {
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production',
     }),
-
-    new webpack.NamedModulesPlugin(),
   ],
 };

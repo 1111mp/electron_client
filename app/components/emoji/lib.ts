@@ -1,4 +1,4 @@
-import untypedData from 'emoji-datasource';
+import untypedData from 'emoji-datasource-apple';
 import emojiRegex from 'emoji-regex';
 import {
   compact,

@@ -9,6 +9,7 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import HtmlWebpackHarddiskPlugin from 'html-webpack-harddisk-plugin';
 import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
+import MomentLocalesPlugin from 'moment-locales-webpack-plugin';
 // import CompressionWebpackPlugin from 'compression-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import { merge } from 'webpack-merge';
@@ -21,7 +22,7 @@ CheckNodeEnv('production');
 DeleteSourceMaps();
 
 export default merge(baseConfig, {
-  devtool: process.env.DEBUG_PROD === 'true' ? 'source-map' : 'none',
+  devtool: process.env.DEBUG_PROD === 'true' ? 'source-map' : false,
 
   mode: 'production',
 
@@ -31,9 +32,9 @@ export default merge(baseConfig, {
       : 'electron-preload',
 
   entry: {
-    appMain: [path.join(__dirname, '..', 'app/appMain/index.tsx')],
-    appWin: [path.join(__dirname, '..', 'app/appWin/index.tsx')],
-    appLogin: [path.join(__dirname, '..', 'app/appLogin/index.tsx')],
+    appMain: path.join(__dirname, '..', 'app/appMain/index.tsx'),
+    appWin: path.join(__dirname, '..', 'app/appWin/index.tsx'),
+    appLogin: path.join(__dirname, '..', 'app/appLogin/index.tsx'),
   },
 
   output: {
@@ -188,11 +189,12 @@ export default merge(baseConfig, {
       : [
           new TerserPlugin({
             parallel: true,
-            sourceMap: true,
-            cache: true,
           }),
           new OptimizeCSSAssetsPlugin({
             cssProcessorOptions: {
+              discardComments: {
+                removeAll: true, // 移除注释
+              },
               map: {
                 inline: false,
                 annotation: true,
@@ -202,27 +204,8 @@ export default merge(baseConfig, {
         ],
     splitChunks: {
       chunks: 'all',
-      cacheGroups: {
-        // styles: {
-        //   name: 'styles',
-        //   test: /\.css$/,
-        //   chunks: 'all',
-        //   enforce: true,
-        // },
-        vender: {
-          test: /[\\/]node_modules[\\/]/,
-          priority: -10,
-        },
-        default: {
-          minChunks: 2,
-          priority: -20,
-          reuseExistingChunk: true,
-        },
-      },
     },
-    runtimeChunk: {
-      name: (entrypoint) => `runtime~${entrypoint.name}`,
-    },
+    runtimeChunk: 'single',
   },
 
   plugins: [
@@ -246,6 +229,8 @@ export default merge(baseConfig, {
       filename: '[name].[contenthash].css',
       chunkFilename: '[id].[contenthash].css',
     }),
+
+    new MomentLocalesPlugin({ localesToKeep: ['zh-cn'] }),
 
     new HtmlWebpackPlugin({
       filename: '../pages/index.html',

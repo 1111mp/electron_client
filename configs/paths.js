@@ -26,5 +26,5 @@ module.exports = {
     'main-process': resolveApp('app/main-process'),
   },
   extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
-  modules: [path.join(__dirname, '..', 'app'), 'node_modules'],
+  modules: [path.join(__dirname, '../app'), 'node_modules'],
 };

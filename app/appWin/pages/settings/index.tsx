@@ -3,7 +3,7 @@ import './styles.scss';
 import React, { Fragment } from 'react';
 import BasicComponent from 'components/BasicComponent';
 
-import { List, Typography, Divider, Radio } from 'antd';
+import { Divider, Radio } from 'antd';
 import { RadioChangeEvent } from 'antd/lib/radio';
 import listener from 'constants/listener.json';
 
