@@ -22,15 +22,14 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "allowJs": true,
-    "experimentalDecorators": true,
     "typeRoots": ["@types", "node_modules/@types"]
   },
   "exclude": [
     "test",
     "release",
-    "app/main.prod.js",
-    "app/renderer.prod.js",
-    "app/dist",
-    "dll"
+    "src/main.prod.js",
+    "src/renderer.prod.js",
+    "src/dist",
+    ".erb/dll"
   ]
 }

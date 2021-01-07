@@ -2,7 +2,7 @@
 
 const developmentEnvironments = ['development', 'test'];
 
-const developmentPlugins = [require('react-hot-loader/babel')];
+const developmentPlugins = [];
 
 const productionPlugins = [
   require('babel-plugin-dev-expression'),
@@ -26,7 +26,6 @@ module.exports = (api) => {
       [require('@babel/preset-react'), { development }],
     ],
     plugins: [
-      require('react-activation/babel'),
       [
         require('@babel/plugin-transform-runtime'),
         { helpers: true, corejs: 3 },
@@ -62,6 +61,7 @@ module.exports = (api) => {
       require('@babel/plugin-proposal-json-strings'),
 
       ...(development ? developmentPlugins : productionPlugins),
+      require('react-activation/babel'),
       'lodash',
       ['import', { libraryName: 'antd', libraryDirectory: 'es', style: true }],
     ],
