@@ -14,7 +14,7 @@ declare global {
 
 let sqlInstance: Sequelize | null = null;
 
-export async function initialize(login: any) {
+export async function initialize() {
   if (sqlInstance) throw new Error('Cannot initialize more than once!');
 
   const userDataPath = app.getPath('userData');
@@ -38,14 +38,6 @@ export async function initialize(login: any) {
     // await sqlInstance.sync();
   } catch (error) {
     // https://github.com/journeyapps/node-sqlcipher/issues/54
-    console.log(error);
-    setTimeout(() => {
-      login.webContents.send('electron-logsss', error);
-    }, 3000);
-    login &&
-      login.webContents.executeJavaScript(
-        `window.console.log(${JSON.stringify(error)})`
-      );
     return false;
   }
 

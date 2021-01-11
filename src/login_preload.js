@@ -29,11 +29,6 @@ try {
   window.Signal = {
     sqlClient,
   };
-
-  ipcRenderer.on('electron-logsss', (event, arg) => {
-    console.log(111111111);
-    console.log(arg);
-  });
 } catch (error) {
   console.log(error);
 }

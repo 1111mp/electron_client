@@ -165,15 +165,14 @@ const createLogin = async () => {
     },
   });
 
-
   loginWindow.loadURL(`file://${__dirname}/pages/login.html`);
 
   // if (
-    //   process.env.NODE_ENV === 'development' ||
-    //   process.env.DEBUG_PROD === 'true'
-    // ) {
-      // 开发者工具 https://newsn.net/say/electron-devtools.html
-      loginWindow.webContents.openDevTools({ mode: 'undocked' });
+  //   process.env.NODE_ENV === 'development' ||
+  //   process.env.DEBUG_PROD === 'true'
+  // ) {
+  // 开发者工具 https://newsn.net/say/electron-devtools.html
+  loginWindow.webContents.openDevTools({ mode: 'undocked' });
   // }
 
   // @TODO: Use 'ready-to-show' event
@@ -246,9 +245,7 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(async () => {
-    await createLogin();
-
-    const sqlInitPromise = initSqlite(loginWindow);
+    const sqlInitPromise = initSqlite();
 
     const timeout = new Promise((resolve) =>
       setTimeout(resolve, 3000, 'timeout')
@@ -289,7 +286,9 @@ app
 
     const success = await sqlInitPromise;
 
-    loginWindow!.webContents.executeJavaScript(`window.console.log(${success})`);
+    loginWindow!.webContents.executeJavaScript(
+      `window.console.log(${success})`
+    );
 
     if (!success) {
       console.log('sql.initialize was unsuccessful; returning early');
@@ -297,6 +296,8 @@ app
     }
 
     sqlChannels.initialize();
+
+    await createLogin();
   })
   .catch(console.log);
 
