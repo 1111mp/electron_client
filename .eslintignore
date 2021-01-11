@@ -34,6 +34,7 @@ node_modules
 release
 src/*.main.prod.js
 src/main.prod.js
+src/main.dev.ts
 src/main.prod.js.map
 src/renderer.prod.js
 src/renderer.prod.js.map

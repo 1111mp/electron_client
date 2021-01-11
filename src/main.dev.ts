@@ -74,7 +74,7 @@ const getAssetPath = (...paths: string[]): string => {
   return path.join(RESOURCES_PATH, ...paths);
 };
 
-const createWindow = async (callback: Function) => {
+const createWindow = async (callback: VoidFunction) => {
   mainWindow = new BrowserWindow({
     show: false,
     width: Mainwin.width,
@@ -94,13 +94,13 @@ const createWindow = async (callback: Function) => {
 
   mainWindow.loadURL(`file://${__dirname}/pages/index.html`);
 
-  // if (
-  //   process.env.NODE_ENV === 'development' ||
-  //   process.env.DEBUG_PROD === 'true'
-  // ) {
-  //开发者工具 https://newsn.net/say/electron-devtools.html
-  mainWindow.webContents.openDevTools({ mode: 'undocked' });
-  // }
+  if (
+    process.env.NODE_ENV === 'development' ||
+    process.env.DEBUG_PROD === 'true'
+  ) {
+    //开发者工具 https://newsn.net/say/electron-devtools.html
+    mainWindow.webContents.openDevTools({ mode: 'undocked' });
+  }
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -167,13 +167,13 @@ const createLogin = async () => {
 
   loginWindow.loadURL(`file://${__dirname}/pages/login.html`);
 
-  // if (
-  //   process.env.NODE_ENV === 'development' ||
-  //   process.env.DEBUG_PROD === 'true'
-  // ) {
-  // 开发者工具 https://newsn.net/say/electron-devtools.html
-  loginWindow.webContents.openDevTools({ mode: 'undocked' });
-  // }
+  if (
+    process.env.NODE_ENV === 'development' ||
+    process.env.DEBUG_PROD === 'true'
+  ) {
+    // 开发者工具 https://newsn.net/say/electron-devtools.html
+    loginWindow.webContents.openDevTools({ mode: 'undocked' });
+  }
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -285,10 +285,6 @@ app
     });
 
     const success = await sqlInitPromise;
-
-    loginWindow!.webContents.executeJavaScript(
-      `window.console.log(${success})`
-    );
 
     if (!success) {
       console.log('sql.initialize was unsuccessful; returning early');
