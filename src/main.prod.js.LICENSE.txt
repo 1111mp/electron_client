@@ -1,0 +1,5 @@
+/*! http://mths.be/fromcodepoint v0.1.0 by @mathias */
+
+//! moment.js
+
+//! moment.js locale configuration

@@ -1,0 +1,33 @@
+.enable-drag {
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+
+  @include light-theme {
+    background: $color-gray-25;
+    border: 1px solid $color-gray-25;
+  }
+
+  @include dark-theme() {
+    background: $color-gray-45;
+    border: 1px solid $color-gray-90;
+  }
+
+  &:hover {
+    @include light-theme {
+      background: $color-gray-45;
+    }
+
+    @include dark-theme {
+      background: $color-gray-25;
+    }
+  }
+}

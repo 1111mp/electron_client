@@ -1,0 +1,200 @@
+.message-wrapper {
+  margin-bottom: 16px;
+
+  .iconfont-group {
+    margin: 34px 12px 0 0;
+  }
+
+  .message-avatar {
+    width: 40px;
+    height: 40px;
+    margin-right: 14px;
+    border-radius: 50%;
+    background-color: #4F4F54;
+    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    // background-image: url('../../../images/image_default_avatar@2x.png');
+  }
+
+  .message-container {
+    max-width: 74%;
+
+    .user_name {
+      display: inline-block;
+      margin-bottom: 6px;
+      font-size: 12px;
+      font-weight: 400;
+
+      @include light-theme() {
+        color: $color-gray-90;
+      }
+
+      @include dark-theme() {
+        color: $color-gray-05;
+      }
+    }
+
+    .message-info {
+      margin-bottom: 4px;
+
+      &-user_name {
+        font-weight: 600;
+        color: #101F36;
+      }
+
+      &-timer {
+        font-size: 12px;
+        color: #B8BBBE;
+      }
+    }
+
+    .message-content {
+      flex: 1;
+      max-width: 68%;
+      position: relative;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 24px;
+      color: #54556C;
+      background-color: #e9e9e9;
+      box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.1);
+      user-select: text;
+      word-break: break-word;
+
+      .message-link {
+        color: rgba(255, 209, 100, .8);
+
+        &:hover {
+          color: rgba(255, 209, 100, 1);
+        }
+      }
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 14px;
+        right: 100%;
+        border: 6px solid transparent;
+        // border-right-color: #e9e9e9;
+
+        @include light-theme() {
+          border-right-color: $color-gray-05;
+        }
+
+        @include dark-theme() {
+          border-right-color: $color-gray-75;
+        }
+      }
+    }
+  }
+
+  &.left {
+    @include flex();
+
+    .message-container {
+      @include flex($direction: column);
+      margin-left: 8px;
+
+      .message-info {
+
+        &-user_name {
+          margin-right: 8px;
+        }
+      }
+
+      .message-content {
+        align-self: flex-start;
+
+        @include light-theme() {
+          color: #54556C;
+          background-color: $color-gray-05;
+        }
+
+        @include dark-theme() {
+          color: $color-gray-05;
+          background-color: $color-gray-75;
+        }
+
+        &::before {
+          transform: rotate(-90deg);
+
+          @include light-theme() {
+            border-bottom-color: $color-gray-05;
+          }
+
+          @include dark-theme() {
+            border-bottom-color: $color-gray-75;
+          }
+        }
+      }
+    }
+  }
+
+  &.right {
+    @include flex($justify:flex-end);
+
+    .message-avatar {
+      margin-right: 0;
+      margin-left: 14px;
+    }
+
+    .message-container {
+      @include flex($direction: column);
+      margin-right: 8px;
+
+      .user_name {
+        align-self: flex-end;
+      }
+
+      .message-info {
+        align-self: flex-end;
+
+        &-user_name {
+          margin-left: 8px;
+        }
+      }
+
+      .message-content {
+        align-self: flex-end;
+
+        @include light-theme() {
+          color: $color-gray-02;
+          background-color: $themeColor;
+        }
+
+        @include dark-theme() {
+          color: $color-gray-05;
+          background-color: $themeColor;
+        }
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 14px;
+          left: 100%;
+          border: 6px solid transparent;
+          border-left-color: $themeColor;
+          border-bottom-color: $themeColor;
+          transform: rotate(90deg);
+        }
+      }
+    }
+  }
+
+  .message-image-content {
+    align-self: flex-end;
+    max-width: 68%;
+    padding: 0;
+    margin-bottom: 16px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: none;
+  }
+}
+
+.message-wrapper:last-child {
+  margin-bottom: 0;
+}

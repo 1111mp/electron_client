@@ -1,0 +1,35 @@
+.day-wrapper {
+  @include flex($justify:center,$align:center);
+	margin: 16px 0;
+	font-weight: 400;
+
+  @include light-theme() {
+    color: #293146;
+  }
+
+  @include dark-theme() {
+    color: $color-gray-05;
+  }
+
+  &::before, &::after {
+    content: '';
+    width: 20%;
+    height: 1px;
+
+    @include light-theme() {
+      background-color: #F5F5F5;
+    }
+
+    @include dark-theme() {
+      background-color: $color-gray-45;
+    }
+  }
+
+  &::before {
+    margin-right: 8px;
+  }
+
+  &::after {
+    margin-left: 8px;
+  }
+}

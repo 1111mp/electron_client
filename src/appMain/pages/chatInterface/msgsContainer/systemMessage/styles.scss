@@ -1,0 +1,23 @@
+.system_message-wrapper {
+  max-width: 50%;
+	margin: 0 auto 16px;
+  font-weight: 400;
+  text-align: center;
+
+	&>span {
+    padding: 8px 10px;
+    border-radius: 4px;
+    text-align: left;
+    word-break: break-all;
+
+    @include light-theme() {
+      color: $color-black-alpha-40;
+      background-color: $color-gray-15;
+    }
+
+    @include dark-theme() {
+      color: $color-white-alpha-60;
+      background-color: rgba(60,60,66,.4);
+    }
+  }
+}

@@ -1,0 +1,76 @@
+.module-app-menu {
+  width: 61px;
+  height: 100%;
+  @include flex($direction: column, $align: center);
+  border-right: 1px solid;
+  z-index: 1;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+
+  @include light-theme() {
+    background-color: $color-menu-bkg;
+    border-color: $color-menu-border;
+  }
+
+  @include dark-theme() {
+    background-color: $color-menu-bkg-dark;
+    border-color: $color-menu-border-dark;
+  }
+
+  &-avatar {
+    margin-top: 20px;
+    -webkit-app-region: no-drag;
+    cursor: pointer;
+  }
+
+  &-container {
+    flex: 1;
+    margin-top: 20px;
+
+    &-item {
+      margin-bottom: 8px;
+      cursor: pointer;
+      -webkit-app-region: no-drag;
+
+      .iconfont {
+        font-size: 22px;
+        color: #687278;
+        transition: none;
+      }
+
+      &:hover {
+        .iconfont {
+          color: $color-gray-25;
+        }
+      }
+
+      &.active {
+        .iconfont {
+          color: $themeColor;
+        }
+
+        &:hover {
+          color: $themeColor;
+        }
+      }
+    }
+  }
+
+  &-setting {
+    margin-bottom: 16px;
+    -webkit-app-region: no-drag;
+    cursor: pointer;
+
+    .iconfont {
+      font-size: 20px;
+      color: #687278;
+      transition: none;
+    }
+
+    &:hover {
+      .iconfont {
+        color: $color-gray-25;
+      }
+    }
+  }
+}

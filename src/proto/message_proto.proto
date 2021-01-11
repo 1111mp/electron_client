@@ -1,0 +1,20 @@
+package messagepackage;
+
+syntax = "proto3";
+
+message Message {
+  required string msgId = 1;
+  required int32 type = 2;
+  required int32 sessionType = 3;
+  string content = 4;
+  required int32 status = 5;
+  required int32 sender = 6;
+  required int32 reciver = 7;
+  int64 time = 8;
+  string ext = 9;
+}
+
+message AckResponse {
+  required int32 code = 1;
+	required string msg = 2;
+}
