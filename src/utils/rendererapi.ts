@@ -1,4 +1,4 @@
-import RendererProcess from 'app/renderer-process';
+import initRendererProcess from 'app/renderer-process';
 import listener from 'constants/listener.json';
 
 export interface OpenArgs {
@@ -6,15 +6,17 @@ export interface OpenArgs {
   width?: number;
   height?: number;
   id?: string;
+  modal?: boolean;
 }
 
-export function openWeb({ url, width, height, id }: OpenArgs) {
+export function openWeb({ url, width, height, id, modal = false }: OpenArgs) {
   if (typeof window === 'undefined') return;
 
-  RendererProcess.getInstance().send(listener.CUSTOM_WIN_SHOW, {
+  initRendererProcess().send(listener.CUSTOM_WIN_SHOW, {
     url,
     width,
     height,
     id,
+    modal,
   });
 }

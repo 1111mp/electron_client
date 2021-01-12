@@ -1,7 +1,7 @@
 import { BrowserWindow, Event } from 'electron';
 import * as React from 'react';
 import { Component, Fragment } from 'react';
-import RendererProcess, { CallBack } from 'app/renderer-process';
+import initRendererProcess, { CallBack } from 'app/renderer-process';
 import { getLocationSearch, queryMergeToStr } from 'app/utils';
 import _ from 'lodash';
 import { OpenArgs } from 'app/utils/rendererapi';
@@ -41,7 +41,7 @@ export default class BasicComponent<
     super(props);
 
     // 实例化RendererProcess渲染进程监听函数
-    this.$renderer = RendererProcess.getInstance();
+    this.$renderer = initRendererProcess();
   }
 
   /** 重命名componentDidMount 让BasicComponent与React的Component生命周期区分开 */
@@ -180,7 +180,7 @@ export default class BasicComponent<
           return;
         }
         loadFinished = true;
-        resolve();
+        resolve(true);
       };
       head && head.appendChild(elScript);
 

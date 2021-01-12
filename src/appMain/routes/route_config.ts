@@ -1,4 +1,6 @@
 import loadable from '@loadable/component';
+import Home from 'appMain/pages/home';
+import AddressBook from 'appMain/pages/addressBook';
 
 export interface RouterConfig {
   path: string;
@@ -20,7 +22,7 @@ const allRoutes = [
   },
   {
     path: '/index',
-    component: loadable(() => import('appMain/pages/home')),
+    component: Home,
     // exact: true,
     routes: [
       {
@@ -32,7 +34,8 @@ const allRoutes = [
   },
   {
     path: '/addressbook',
-    component: loadable(() => import('appMain/pages/addressBook')),
+    // 同步加载打包
+    component: AddressBook,
     exact: true,
   },
 ] as RouterConfig[];

@@ -34,8 +34,8 @@ export async function initialize() {
     UserDefiner(sqlInstance);
 
     // await sqlInstance.sync({ alter: true });
-    await sqlInstance.sync({ force: true });
-    // await sqlInstance.sync();
+    // await sqlInstance.sync({ force: true });
+    await sqlInstance.sync();
   } catch (error) {
     // https://github.com/journeyapps/node-sqlcipher/issues/54
     return false;

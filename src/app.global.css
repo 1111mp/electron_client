@@ -71,7 +71,7 @@ body {
 }
 
 * {
-  transition: background .3s, color .3s, border .3s, color .3s;
+  transition: background .3s, color .3s, border .3s, border-color .3s;
 }
 
 *::before {

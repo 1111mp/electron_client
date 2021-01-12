@@ -30,7 +30,7 @@ export default class WinContainer extends BasicComponent<Props> {
   };
 
   $render() {
-    const { title, min = 'true' } = queryParse(location.search);
+    const { title, min = 'true', close = 'true' } = queryParse(location.search);
     const { enableDrag, contentStyle } = this.props;
     console.log(min);
     return (
@@ -58,12 +58,14 @@ export default class WinContainer extends BasicComponent<Props> {
                   <i className="iconfont icontop-minimum"></i>
                 </li>
               ) : null}
-              <li
-                className="module-win_container-layout-header--container-iconItem"
-                onClick={this.close}
-              >
-                <i className="iconfont icontop-close"></i>
-              </li>
+              {close === 'true' ? (
+                <li
+                  className="module-win_container-layout-header--container-iconItem"
+                  onClick={this.close}
+                >
+                  <i className="iconfont icontop-close"></i>
+                </li>
+              ) : null}
             </ul>
           </Header>
           <Content style={contentStyle}>{this.props.children}</Content>

@@ -1,10 +1,7 @@
 import { BrowserWindow, BrowserWindowConstructorOptions, app } from 'electron';
 import { LoadFileOption } from 'app/utils/dialog';
-
-const merge = require('lodash/merge');
-const path = require('path');
-const os = require('os');
-
+import { resolve } from 'path';
+import { merge } from 'lodash';
 export interface WindowListener {
   readyToShow?: () => void;
   show?: () => void;
@@ -43,7 +40,7 @@ export default class ChildWindow {
       )
     );
 
-    if (os.platform() === 'win32') {
+    if (process.platform === 'win32') {
       /** windows 下禁用右键 */
       this.win.hookWindowMessage(278, (e: Event) => {
         this.win.setEnabled(false);
@@ -95,8 +92,8 @@ export default class ChildWindow {
   loadFile = (options: LoadFileOption, temp: string = 'index') => {
     this.win.loadFile(
       app.isPackaged || process.env.NODE_ENV === 'production'
-        ? path.resolve(__dirname, `pages/${temp}.html`)
-        : path.resolve(__dirname, `../../pages/${temp}.html`),
+        ? resolve(__dirname, `pages/${temp}.html`)
+        : resolve(__dirname, `../../pages/${temp}.html`),
       {
         ...options,
       }

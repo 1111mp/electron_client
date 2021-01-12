@@ -25,7 +25,7 @@ const Menu: React.FC = observer(() => {
   const routerStore = useTargetStore('routerStore');
 
   const openSetting = () => {
-    openWeb({ ...CUSTOMWIN, url: `/settings?title=设置` });
+    openWeb({ ...CUSTOMWIN, url: `${CUSTOMWIN.url}?title=设置` });
   };
 
   const menuHandler = (path: string) => {

@@ -1,4 +1,4 @@
-import { Event, WebContents } from 'electron';
+import { BrowserWindow, Event, WebContents } from 'electron';
 import CustomWindow, { CustomWindowArgs } from './webWin';
 import { send } from '../common';
 
@@ -30,21 +30,30 @@ export function createCusWin(options: CustomWindowArgs) {
       }
       winStack[options.id] = {
         url: options.url,
-        win: new CustomWindow({
-          width: options.width,
-          height: options.height,
-          url: options.url,
-          closed: () => {
-            if (options.onClose && options.onClose() === false) return;
+        win: new CustomWindow(
+          Object.assign(
+            {
+              width: options.width,
+              height: options.height,
+              url: options.url,
+              modal: options.modal,
+              center: options.center,
+              closed: () => {
+                if (options.onClose && options.onClose() === false) return;
 
-            send(options.webContents, {
-              channel: listener.CUSTOM_WIN_CLOSE,
-              data: 'closed',
-            });
+                send(options.webContents, {
+                  channel: listener.CUSTOM_WIN_CLOSE,
+                  data: 'closed',
+                });
 
-            delete winStack[options.id];
-          },
-        }),
+                delete winStack[options.id];
+              },
+              x: options.x,
+              y: options.y,
+            },
+            options.modal ? { parent: options.parent } : {}
+          )
+        ),
       };
     }
   }
@@ -55,16 +64,42 @@ export default {
   [listener.CUSTOM_WIN_SHOW]() {
     return (event: Event, args: CustomWindowArgs) => {
       const webContents: WebContents = (event as any).sender;
-      const { id, width, height, url } = args;
+      const { id, width, height, url, modal = false, center = true } = args;
       const customWinId = id || webContents.id;
 
-      createCusWin({
-        id: customWinId,
-        width,
-        height,
-        url,
-        webContents,
-      });
+      if (modal || center) {
+        const parent: BrowserWindow = BrowserWindow.fromWebContents(
+          webContents
+        )!;
+        const {
+          x,
+          y,
+          width: parentWidth,
+          height: parentHeight,
+        } = parent!.getBounds();
+
+        createCusWin({
+          id: customWinId,
+          width,
+          height,
+          url,
+          modal,
+          webContents,
+          parent,
+          center,
+          x: x + parentWidth / 2 - width / 2,
+          y: y + parentHeight / 2 - height / 2,
+        });
+      } else {
+        createCusWin({
+          id: customWinId,
+          width,
+          height,
+          url,
+          modal,
+          webContents,
+        });
+      }
     };
   },
 };

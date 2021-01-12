@@ -1,11 +1,31 @@
 import './styles.scss';
 
 import React from 'react';
-
-import { Input } from 'antd';
+import { Menu, Input, Dropdown } from 'antd';
 import SearchOutlined from '@ant-design/icons/SearchOutlined';
 
-const Header: React.FC = () => {
+import { openWeb } from 'app/utils/rendererapi';
+import { ADDFRIEND } from 'app/config';
+
+const Header: React.FC = React.memo(() => {
+  const addFriend = () =>
+    openWeb({ ...ADDFRIEND, url: `/addfriend?title=添加朋友&min=false`, modal: true });
+
+  const renderOverlay = () => {
+    return (
+      <Menu>
+        <Menu.Item>
+          <p className="module-header-search__menu" onClick={addFriend}>
+            添加朋友
+          </p>
+        </Menu.Item>
+        <Menu.Item>
+          <p className="module-header-search__menu">发起群聊</p>
+        </Menu.Item>
+      </Menu>
+    );
+  };
+
   return (
     <div className="module-header">
       <p className="module-header-placeholder"></p>
@@ -17,12 +37,14 @@ const Header: React.FC = () => {
           allowClear={true}
           prefix={<SearchOutlined />}
         />
-        <p className="module-header-search__btn">
-          <span className="iconfont iconadd1"></span>
-        </p>
+        <Dropdown trigger={['click']} overlay={renderOverlay}>
+          <p className="module-header-search__btn">
+            <span className="iconfont iconadd1"></span>
+          </p>
+        </Dropdown>
       </div>
     </div>
   );
-};
+});
 
 export default Header;

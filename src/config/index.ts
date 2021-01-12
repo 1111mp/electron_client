@@ -73,4 +73,10 @@ export const EXPANSION = {
   url: '/notifier',
 };
 
+export const ADDFRIEND = {
+  width: 600,
+  height: 360,
+  url: '/addfriend',
+};
+
 export default config;

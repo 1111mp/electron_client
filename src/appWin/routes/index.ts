@@ -12,6 +12,11 @@ export default [
     exact: true,
   },
   {
+    path: '/addfriend',
+    component: loadable(() => import('appWin/pages/addFriend')),
+    exact: true,
+  },
+  {
     path: '/notifier',
     component: loadable(() => import('appWin/pages/notifier')),
     exact: true,

@@ -41,7 +41,9 @@ function preloadComponent() {
   }
 
   const promises = branch.map((config: any) => {
-    const loadAsyncComponent = config.route.component.preload();
+    const loadAsyncComponent = config.route.component.preload
+      ? config.route.component.preload()
+      : Promise.resolve(config.route.component);
     return loadAsyncComponent ? loadAsyncComponent : Promise.resolve(null);
   });
 

@@ -8,6 +8,14 @@
     .module-addressbook {
       flex: 1;
 
+      @include light-theme() {
+        background-color: $color-white;
+      }
+
+      @include dark-theme() {
+        background-color: $color-gray-95;
+      }
+
       &-list {
         @include flex($direction: column);
         width: 250px;
@@ -30,7 +38,7 @@
         @include dark-theme() {
           background-color: $color-gray-80;
           border-color: $color-gray-60;
-          box-shadow: 1px 0 2px $color-gray-65;
+          box-shadow: 1px 0 2px $color-gray-90;
         }
 
         &__header {
