@@ -187,6 +187,7 @@
     "@types/node": "14.14.10",
     "@types/react": "^16.9.44",
     "@types/react-dom": "^16.9.9",
+    "@types/react-helmet": "^6.1.0",
     "@types/react-router": "^5.1.9",
     "@types/react-router-config": "^5.0.2",
     "@types/react-router-dom": "^5.1.6",

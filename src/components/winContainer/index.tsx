@@ -2,75 +2,67 @@ import './styles.scss';
 
 import React from 'react';
 import { Fragment } from 'react';
-import BasicComponent from 'components/BasicComponent';
 import { Helmet } from 'react-helmet';
 import { Layout } from 'antd';
 import { queryParse } from 'app/utils';
+import { minimize, closeWin } from 'app/utils/rendererapi';
 
 const { Header, Content } = Layout;
 
-interface Props {
-  enableMin?: boolean;
+type Props = {
   enableDrag?: boolean;
   contentStyle?: object;
   close?: () => void | boolean;
-}
+};
 
-export default class WinContainer extends BasicComponent<Props> {
-  static defaultProps = {
-    enableMin: true,
-    enableDrag: true,
-  };
+const WinContainer: React.FC<Props> = (props) => {
+  const { close, enableDrag = true, contentStyle, children } = props;
+  const { title, min = 'true', isClose = 'true' } = queryParse(location.search);
 
-  close = () => {
-    const { close } = this.props;
-
+  const closeHandle = () => {
     if (close && typeof close === 'function' && close() === false) return;
-    this.$close();
+    closeWin();
   };
 
-  $render() {
-    const { title, min = 'true', close = 'true' } = queryParse(location.search);
-    const { enableDrag, contentStyle } = this.props;
-    console.log(min);
-    return (
-      <Fragment>
-        <Helmet>
-          <title>{title}</title>
-        </Helmet>
-        <Layout className="module-win_container-layout">
-          <Header
-            className={
-              'module-win_container-layout-header' +
-              (enableDrag ? ' enable-drag ' : '')
-            }
-          >
-            <p className="module-win_container-layout-header--title">
-              {title || ''}
-            </p>
-            <ul className="module-win_container-layout-header--container">
-              {min === 'true' ? (
-                <li
-                  className="module-win_container-layout-header--container-iconItem"
-                  style={{ marginRight: '8px' }}
-                  onClick={() => this.$minimize()}
-                >
-                  <i className="iconfont icontop-minimum"></i>
-                </li>
-              ) : null}
-              {close === 'true' ? (
-                <li
-                  className="module-win_container-layout-header--container-iconItem"
-                  onClick={this.close}
-                >
-                  <i className="iconfont icontop-close"></i>
-                </li>
-              ) : null}
-            </ul>
-          </Header>
-          <Content style={contentStyle}>{this.props.children}</Content>
-        </Layout>
-      </Fragment>
-    );
-  }
-}
+  return (
+    <Fragment>
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
+      <Layout className="module-win_container-layout">
+        <Header
+          className={
+            'module-win_container-layout-header' +
+            (enableDrag ? ' enable-drag ' : '')
+          }
+        >
+          <p className="module-win_container-layout-header--title">
+            {title || ''}
+          </p>
+          <ul className="module-win_container-layout-header--container">
+            {min === 'true' ? (
+              <li
+                className="module-win_container-layout-header--container-iconItem"
+                style={{ marginRight: '8px' }}
+                onClick={() => minimize()}
+              >
+                <i className="iconfont icontop-minimum"></i>
+              </li>
+            ) : null}
+            {isClose === 'true' ? (
+              <li
+                className="module-win_container-layout-header--container-iconItem"
+                onClick={closeHandle}
+              >
+                <i className="iconfont icontop-close"></i>
+              </li>
+            ) : null}
+          </ul>
+        </Header>
+        <Content style={contentStyle}>{children}</Content>
+      </Layout>
+    </Fragment>
+  );
+};
+
+export default WinContainer;

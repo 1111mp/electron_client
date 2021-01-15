@@ -2,7 +2,7 @@ import { BrowserWindow } from 'electron';
 
 export type CallBack = (event: any, args: any) => void;
 
-class RendererProcess {
+export class RendererProcess {
   /** 单例模式（仅适用于单线程） */
   static _instance: RendererProcess;
 
@@ -114,7 +114,6 @@ class RendererProcess {
 
   /** 向主线程发送消息 异步获取结果 */
   async invoke(channel: string, args: any): Promise<any> {
-    console.log(this._electron);
     return this._electron.ipcRenderer.invoke(channel, args);
   }
 
