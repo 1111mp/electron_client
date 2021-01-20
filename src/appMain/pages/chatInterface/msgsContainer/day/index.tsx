@@ -1,18 +1,18 @@
-import './styles.scss'
+import './styles.scss';
 
-import React, { Component } from 'react'
-// import moment from 'moment'
-// import { DATE_FORMAT, getLocale } from 'consts/notice'
-import { isSameDay, showTime } from 'app/utils/date'
+import React from 'react';
+import { isSameDay, showTime } from 'app/utils/date';
 
-export default class Day extends Component<IAnyObject>{
-	render() {
-		const { currentMessage, previousMessage } = this.props
-		if (currentMessage && !isSameDay(currentMessage.time, previousMessage.time)) {
-			return (
-				<div className="day-wrapper">{showTime(currentMessage.time)}</div>
-			)
-		}
-		return null
-	}
-}
+type Props = {
+  currentMessage: any;
+  previousMessage: any;
+};
+
+const Day: React.FC<Props & any> = ({ currentMessage, previousMessage }) => {
+  if (currentMessage && !isSameDay(currentMessage.time, previousMessage.time)) {
+    return <div className="day-wrapper">{showTime(currentMessage.time)}</div>;
+  }
+  return null;
+};
+
+export default Day;

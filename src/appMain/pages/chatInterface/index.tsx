@@ -9,7 +9,7 @@ import { Button, Drawer } from 'antd';
 import EllipsisOutlined from '@ant-design/icons/EllipsisOutlined';
 import MsgsContainer from './msgsContainer';
 import { Transmitter } from './transmitter';
-import _ from 'lodash';
+import { isEqual } from 'lodash';
 
 function getData(): any[] {
   let res: any[] = [];
@@ -77,144 +77,116 @@ function getData(): any[] {
   return res;
 }
 
-export default class ChatInterface extends BasicComponent<IAnyObject> {
-  state = {
-    visible: false,
-    messages: [],
-    loading: false,
-  };
+type ScrollInfoRef = {
+  maxScrollY?: number;
+  y?: number;
+};
 
-  beforeScrollHeight: number = 0;
-  beforeScrollTop: number = 0;
-  iScroll: any = null;
+const ChatInterface: React.ComponentType<IAnyObject> = () => {
+  const [messages, setMessages] = React.useState<any[]>([]);
+  const [visible, setVisible] = React.useState<boolean>(false);
+  const [loading, setLoading] = React.useState<boolean>(false);
 
-  didMount() {
-    setTimeout(() => {
-      let messages = getData();
-      this.setState(
-        {
-          messages,
-        },
-        () => {
-          this.scrollToBottom();
-        }
-      );
-    }, 0);
-  }
+  const scrollRef = React.useRef();
+  const infoRef = React.useRef<ScrollInfoRef>({
+    maxScrollY: 0,
+    y: 0,
+  });
 
-  /** https://github.com/CJY0208/react-activation/blob/master/README_CN.md */
-  didUpdate(prevProps: any, prevState: any) {
-    const { messages: prevMessages } = prevState;
-    const { messages } = this.state;
-    if (!_.isEqual(prevMessages, messages)) {
-      const instance = this.getIScrollInstance();
-      const { maxScrollY } = instance;
-      this.scrollTo(
-        0,
-        maxScrollY - this.beforeScrollHeight + this.beforeScrollTop,
-        0
-      );
-    }
-  }
-
-  loadMore = () => {
+  const loadMore = () => {
     console.log('loadMore');
-    // this.setState(
-    //   {
-    //     loading: true,
-    //   },
-    //   () => {
-    //     setTimeout(() => {
-    //       console.log(88888888888);
-    //       this.setState({
-    //         loading: false,
-    //         messages: getData().concat(this.state.messages),
-    //       });
-    //     }, 200);
-    //   }
-    // );
+    setLoading(true);
+    setTimeout(() => {
+      setMessages(getData().concat(messages));
+      setLoading(false);
+    }, 2000);
   };
 
-  scrollTo = (x: number = 0, y: number = 0, time: number = 500) => {
-    const instance = this.getIScrollInstance();
-    console.log(instance);
+  const onScrollHandler = (iScrollInstance: any) => {
+    const { y, maxScrollY } = iScrollInstance;
+    if (y > -50 && !loading) {
+      infoRef.current.maxScrollY = maxScrollY;
+      infoRef.current.y = y;
+      loadMore();
+    }
+  };
 
+  const scrollTo = (x: number = 0, y: number = 0, time: number = 500) => {
+    const instance = getIScrollInstance();
     instance && instance.scrollTo(x, y, time);
   };
 
-  scrollToBottom = () => {
-    // const iscroll: IAnyObject = this.iScroll || {};
-    setTimeout(() => {
-      const instance = this.getIScrollInstance();
-
-      instance && instance.scrollTo(0, instance.maxScrollY);
-    });
-  };
-
-  onScrollHandler = (iScrollInstance: any) => {
-    const { y, maxScrollY } = iScrollInstance;
-    if (y > -50 && !this.state.loading) {
-      this.beforeScrollHeight = maxScrollY;
-      this.beforeScrollTop = y;
-      this.loadMore();
-    }
-  };
-
-  getIScrollInstance: iScroll = () => {
-    const iscroll: IAnyObject = this.iScroll || {};
+  const getIScrollInstance: iScroll = () => {
+    const iscroll: IAnyObject = scrollRef.current || {};
     return iscroll.getIScroll && iscroll.getIScroll.call(iscroll);
   };
 
-  $render() {
-    const { visible, messages, loading } = this.state;
+  React.useEffect(() => {
+    setTimeout(() => {
+      setMessages(getData());
+    }, 1000);
+  }, []);
 
-    return (
-      <div className="module-chat_interface">
-        <header className="module-chat_interface-header">
-          <p className="module-chat_interface-header--title">张逸凡</p>
-          <Button type="link" onClick={() => this.setState({ visible: true })}>
-            <EllipsisOutlined style={{ fontSize: '20px' }} />
-          </Button>
-        </header>
-        <ReactIScroll
-          ref={(ref: any) => (this.iScroll = ref)}
-          iScroll={iScroll}
-          options={{
-            probeType: 2,
-            // disablePointer: true,
-            mouseWheel: true,
-            scrollbars: 'custom',
-            freeScroll: true,
-            fadeScrollbars: true,
-            interactiveScrollbars: true,
-            shrinkScrollbars: 'scale',
-            preventDefaultException: {
-              className: /message-content|message-wrapper|message-container/,
-            },
-          }}
-          onScrollEnd={this.onScrollHandler}
-        >
-          <div className="module-chat_interface--scroll">
-            <MsgsContainer messages={messages} loading={loading} />
-          </div>
-        </ReactIScroll>
-        <footer className="module-chat_interface--footer">
-          <Transmitter />
-        </footer>
-        <Drawer
-          title="Basic Drawer"
-          placement="right"
-          closable={false}
-          onClose={() => this.setState({ visible: false })}
-          visible={visible}
-          getContainer={false}
-          style={{ position: 'absolute' }}
-        >
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-        </Drawer>
-      </div>
-    );
-  }
-}
+  React.useEffect(() => {
+    const instance = getIScrollInstance();
+    if (instance) {
+      const { maxScrollY } = instance;
+      scrollTo(
+        0,
+        maxScrollY - infoRef.current.maxScrollY! + infoRef.current.y!,
+        0
+      );
+    }
+  }, [messages]);
+
+  return (
+    <div className="module-chat_interface">
+      <header className="module-chat_interface-header">
+        <p className="module-chat_interface-header--title">张逸凡</p>
+        <Button type="link" onClick={() => setVisible(true)}>
+          <EllipsisOutlined style={{ fontSize: '20px' }} />
+        </Button>
+      </header>
+      <ReactIScroll
+        ref={scrollRef}
+        iScroll={iScroll}
+        options={{
+          probeType: 2,
+          // disablePointer: true,
+          mouseWheel: true,
+          scrollbars: 'custom',
+          freeScroll: true,
+          fadeScrollbars: true,
+          interactiveScrollbars: true,
+          shrinkScrollbars: 'scale',
+          preventDefaultException: {
+            className: /message-content|message-wrapper|message-container/,
+          },
+        }}
+        onScrollEnd={onScrollHandler}
+      >
+        <div className="module-chat_interface--scroll">
+          <MsgsContainer messages={messages} loading={loading} />
+        </div>
+      </ReactIScroll>
+      <footer className="module-chat_interface--footer">
+        <Transmitter />
+      </footer>
+      <Drawer
+        title="Basic Drawer"
+        placement="right"
+        closable={false}
+        onClose={() => setVisible(false)}
+        visible={visible}
+        getContainer={false}
+        style={{ position: 'absolute' }}
+      >
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+      </Drawer>
+    </div>
+  );
+};
+
+export default ChatInterface;
