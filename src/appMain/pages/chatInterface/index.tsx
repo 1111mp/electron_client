@@ -1,7 +1,6 @@
 import './styles.scss';
 
 import React from 'react';
-import BasicComponent from 'components/BasicComponent';
 
 import ReactIScroll from 'react-iscroll';
 import iScroll from 'iscroll/build/iscroll-probe';
@@ -9,7 +8,6 @@ import { Button, Drawer } from 'antd';
 import EllipsisOutlined from '@ant-design/icons/EllipsisOutlined';
 import MsgsContainer from './msgsContainer';
 import { Transmitter } from './transmitter';
-import { isEqual } from 'lodash';
 
 function getData(): any[] {
   let res: any[] = [];
@@ -80,33 +78,36 @@ function getData(): any[] {
 type ScrollInfoRef = {
   maxScrollY?: number;
   y?: number;
+  loading?: boolean;
 };
 
 const ChatInterface: React.ComponentType<IAnyObject> = () => {
   const [messages, setMessages] = React.useState<any[]>([]);
   const [visible, setVisible] = React.useState<boolean>(false);
-  const [loading, setLoading] = React.useState<boolean>(false);
 
   const scrollRef = React.useRef();
   const infoRef = React.useRef<ScrollInfoRef>({
     maxScrollY: 0,
     y: 0,
+    loading: false,
   });
 
   const loadMore = () => {
     console.log('loadMore');
-    setLoading(true);
     setTimeout(() => {
       setMessages(getData().concat(messages));
-      setLoading(false);
+      infoRef.current.loading = false;
     }, 2000);
   };
 
   const onScrollHandler = (iScrollInstance: any) => {
     const { y, maxScrollY } = iScrollInstance;
-    if (y > -50 && !loading) {
-      infoRef.current.maxScrollY = maxScrollY;
-      infoRef.current.y = y;
+    if (y > -50 && !infoRef.current.loading) {
+      infoRef.current = {
+        maxScrollY,
+        y,
+        loading: true,
+      };
       loadMore();
     }
   };
@@ -166,7 +167,7 @@ const ChatInterface: React.ComponentType<IAnyObject> = () => {
         onScrollEnd={onScrollHandler}
       >
         <div className="module-chat_interface--scroll">
-          <MsgsContainer messages={messages} loading={loading} />
+          <MsgsContainer messages={messages} />
         </div>
       </ReactIScroll>
       <footer className="module-chat_interface--footer">

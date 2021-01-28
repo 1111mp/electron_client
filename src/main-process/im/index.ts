@@ -26,7 +26,7 @@ export class IM {
     try {
       this.socket = require('socket.io-client')(socketUrl, {
         transports: ['websocket'],
-        query: { token },
+        extraHeaders: { token },
         reconnectionAttempts: 20,
       });
 
