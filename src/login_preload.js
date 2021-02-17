@@ -1,5 +1,4 @@
 try {
-  const path = require('path');
   const { remote, ipcRenderer } = require('electron');
   const { nativeTheme, app } = remote.require('electron');
 
@@ -23,6 +22,7 @@ try {
   };
 
   window.closeLogin = () => ipcRenderer.send('close-login');
+  window.localeMessages = ipcRenderer.sendSync('locale-data');
 
   const sqlClient = require('./db/client');
 

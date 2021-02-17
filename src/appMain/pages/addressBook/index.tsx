@@ -38,13 +38,9 @@ const AddressBook: React.ComponentType<Props> = () => {
 
   const rowRenderer = React.useCallback(
     ({ key, index, style }: ListRowProps) => {
-      const row = list.find((item, i: number) => i === index);
+      const row = list[index];
 
-      return (
-        <Fragment key={key}>
-          <Row row={row} style={style} index={index} />
-        </Fragment>
-      );
+      return <Row key={key} row={row} style={style} index={index} />;
     },
     [list]
   );

@@ -32,6 +32,8 @@ try {
     window.Events.setThemeSetting(data);
   });
 
+  window.localeMessages = ipcRenderer.sendSync('locale-data');
+
   const sqlClient = require('./db/client');
 
   window.Signal = {

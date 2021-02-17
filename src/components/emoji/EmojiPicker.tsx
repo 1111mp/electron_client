@@ -19,10 +19,9 @@ import {
   zipObject,
 } from 'lodash';
 import { Emoji } from './Emoji';
-import { useIntl } from 'react-intl';
 import { dataByCategory, search } from './lib';
 import { useRestoreFocus } from 'utils/hooks';
-import { getMessage } from 'app/utils';
+import { useI18n } from 'app/utils/i18n';
 
 export type EmojiPickDataType = { skinTone?: number; shortName: string };
 
@@ -87,7 +86,7 @@ export const EmojiPicker = React.memo(
         disableSkinTones ? 0 : skinTone
       );
 
-      const { messages, formatMessage } = useIntl();
+      const i18n = useI18n();
 
       const handleToggleSearch = React.useCallback(
         (e: React.MouseEvent) => {
@@ -310,7 +309,7 @@ export const EmojiPicker = React.memo(
               type="button"
               ref={focusRef}
               onClick={handleToggleSearch}
-              title={getMessage(messages, 'EmojiPicker--search-placeholder')}
+              title={i18n('EmojiPicker--search-placeholder')}
               className={classNames(
                 'module-emoji-picker__button',
                 'module-emoji-picker__button--icon',
@@ -318,20 +317,14 @@ export const EmojiPicker = React.memo(
                   ? 'module-emoji-picker__button--icon--close'
                   : 'module-emoji-picker__button--icon--search'
               )}
-              aria-label={getMessage(
-                messages,
-                'EmojiPicker--search-placeholder'
-              )}
+              aria-label={i18n('EmojiPicker--search-placeholder')}
             />
             {searchMode ? (
               <div className="module-emoji-picker__header__search-field">
                 <input
                   ref={focusOnRender}
                   className="module-emoji-picker__header__search-field__input"
-                  placeholder={getMessage(
-                    messages,
-                    'EmojiPicker--search-placeholder'
-                  )}
+                  placeholder={i18n('EmojiPicker--search-placeholder')}
                   onChange={handleSearchChange}
                 />
               </div>
@@ -342,7 +335,7 @@ export const EmojiPicker = React.memo(
                     type="button"
                     key={cat}
                     data-category={cat}
-                    title={cat}
+                    title={i18n(`EmojiPicker__button--${cat}`)}
                     onClick={handleSelectCategory}
                     className={classNames(
                       'module-emoji-picker__button',
@@ -352,10 +345,7 @@ export const EmojiPicker = React.memo(
                         ? 'module-emoji-picker__button--selected'
                         : null
                     )}
-                    aria-label={getMessage(
-                      messages,
-                      `EmojiPicker__button--${cat}`
-                    )}
+                    aria-label={i18n(`EmojiPicker__button--${cat}`)}
                   />
                 )
               )
@@ -389,7 +379,7 @@ export const EmojiPicker = React.memo(
                 'module-emoji-picker__body--empty'
               )}
             >
-              {getMessage(messages, 'EmojiPicker--empty')}
+              {i18n('EmojiPicker--empty')}
               <Emoji
                 shortName="slightly_frowning_face"
                 size={16}
@@ -405,10 +395,7 @@ export const EmojiPicker = React.memo(
                   key={tone}
                   data-tone={tone}
                   onClick={handlePickTone}
-                  title={formatMessage((messages as any)['EmojiPicker--skin-tone'], {
-                    tone,
-                  })}
-                  // title={'EmojiPicker--skin-tone' + tone}
+                  title={i18n('EmojiPicker--skin-tone', [`${tone}`])}
                   className={classNames(
                     'module-emoji-picker__button',
                     'module-emoji-picker__button--footer',

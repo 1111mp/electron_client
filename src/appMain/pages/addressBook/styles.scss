@@ -23,6 +23,10 @@
         border-right: 1px solid;
         overflow: hidden;
 
+        .ReactVirtualized__List:focus {
+          outline: none;
+        }
+
         .ReactVirtualized__List-hidden {
           &::-webkit-scrollbar {
             display: none;

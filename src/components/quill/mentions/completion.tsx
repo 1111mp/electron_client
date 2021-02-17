@@ -26,6 +26,7 @@ declare global {
   }
 }
 
+const Keyboard = Quill.import('modules/keyboard');
 const MENTION_REGEX = /(?:^|\W)@([-+\w]*)$/;
 
 export class MentionCompletion {
@@ -66,10 +67,10 @@ export class MentionCompletion {
       return true;
     };
 
-    this.quill.keyboard.addBinding({ key: 37 }, clearResults); // Left Arrow
-    this.quill.keyboard.addBinding({ key: 38 }, changeIndex(-1)); // Up Arrow
-    this.quill.keyboard.addBinding({ key: 39 }, clearResults); // Right Arrow
-    this.quill.keyboard.addBinding({ key: 40 }, changeIndex(1)); // Down Arrow
+    this.quill.keyboard.addBinding({ key: Keyboard.keys.LEFT }, clearResults); // Left Arrow
+    this.quill.keyboard.addBinding({ key: Keyboard.keys.UP }, changeIndex(-1)); // Up Arrow
+    this.quill.keyboard.addBinding({ key: Keyboard.keys.RIGHT }, clearResults); // Right Arrow
+    this.quill.keyboard.addBinding({ key: Keyboard.keys.DOWN }, changeIndex(1)); // Down Arrow
 
     this.quill.on('text-change', _.debounce(this.onTextChange.bind(this), 0));
     this.quill.on('selection-change', this.onSelectionChange.bind(this));

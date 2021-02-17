@@ -1,6 +1,7 @@
 import { BrowserWindow, BrowserWindowConstructorOptions, app } from 'electron';
 import { LoadFileOption } from 'app/utils/dialog';
-import { resolve } from 'path';
+import { resolve, join } from 'path';
+import { parse, format } from 'url';
 import { merge } from 'lodash';
 export interface WindowListener {
   readyToShow?: () => void;
@@ -84,9 +85,24 @@ export default class ChildWindow {
       });
   };
 
-  loadURL = (url: string) => {
+  loadURL = (
+    name: string = 'index',
+    options: { [key: string]: string | number | boolean }
+  ) => {
+    const pathSegments =
+      app.isPackaged || process.env.NODE_ENV === 'production'
+        ? [__dirname, 'pages', `${name}.html`]
+        : [__dirname, '..', '..', 'pages', `${name}.html`];
+    const parsed = parse(join(...pathSegments));
+
     const userAgent = this.win.webContents.getUserAgent();
-    this.win.loadURL(url, { userAgent });
+
+    const prepareURL = format({
+      ...parsed,
+      ...options,
+    });
+
+    this.win.loadURL(prepareURL, { userAgent });
   };
 
   loadFile = (options: LoadFileOption, temp: string = 'index') => {

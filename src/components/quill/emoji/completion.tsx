@@ -23,6 +23,8 @@ interface EmojiPickerOptions {
   skinTone: number;
 }
 
+const Keyboard = Quill.import('modules/keyboard');
+
 export class EmojiCompletion {
   results: Array<EmojiData>;
 
@@ -58,14 +60,14 @@ export class EmojiCompletion {
       return true;
     };
 
-    this.quill.keyboard.addBinding({ key: 37 }, clearResults); // 37 = Left
-    this.quill.keyboard.addBinding({ key: 38 }, changeIndex(-1)); // 38 = Up
-    this.quill.keyboard.addBinding({ key: 39 }, clearResults); // 39 = Right
-    this.quill.keyboard.addBinding({ key: 40 }, changeIndex(1)); // 40 = Down
+    this.quill.keyboard.addBinding({ key: Keyboard.keys.LEFT }, clearResults); // 37 = Left
+    this.quill.keyboard.addBinding({ key: Keyboard.keys.UP }, changeIndex(-1)); // 38 = Up
+    this.quill.keyboard.addBinding({ key: Keyboard.keys.RIGHT }, clearResults); // 39 = Right
+    this.quill.keyboard.addBinding({ key: Keyboard.keys.DOWN }, changeIndex(1)); // 40 = Down
     this.quill.keyboard.addBinding(
       {
         // 186 + Shift = Colon
-        key: 186,
+        key: '186',
         shortKey: true,
       },
       () => this.onTextChange(true)
@@ -73,7 +75,7 @@ export class EmojiCompletion {
     this.quill.keyboard.addBinding(
       {
         // 58 = Also Colon
-        key: 58,
+        key: '58',
       },
       () => this.onTextChange(true)
     );
@@ -119,8 +121,8 @@ export class EmojiCompletion {
     const [leftTokenTextMatch, rightTokenTextMatch] = matchBlotTextPartitions(
       blot,
       index,
-      /(?<=^|\s):([-+0-9a-z_]*)(:?)$/,
-      /^([-+0-9a-z_]*):/
+      /(?<=^|\s):([-+0-9a-zA-Z_]*)(:?)$/,
+      /^([-+0-9a-zA-Z_]*):/
     );
 
     if (leftTokenTextMatch) {

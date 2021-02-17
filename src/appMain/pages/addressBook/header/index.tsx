@@ -5,11 +5,19 @@ import { Menu, Input, Dropdown } from 'antd';
 import SearchOutlined from '@ant-design/icons/SearchOutlined';
 
 import { openWeb } from 'app/utils/rendererapi';
+import { get } from 'lodash';
 import { ADDFRIEND } from 'app/config';
 
 const Header: React.FC = React.memo(() => {
-  const addFriend = () =>
-    openWeb({ ...ADDFRIEND, url: `/addfriend?title=添加朋友&min=false`, modal: true });
+  const addFriend = () => {
+    openWeb({
+      ...ADDFRIEND,
+      url: `/addfriend?header=${
+        get(window, 'platform') === 'darwin' ? false : true
+      }&title=添加朋友&min=false`,
+      modal: true,
+    });
+  };
 
   const renderOverlay = () => {
     return (

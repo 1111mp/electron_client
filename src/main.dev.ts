@@ -11,6 +11,7 @@
 // import 'core-js/stable';
 // import 'regenerator-runtime/runtime';
 import path from 'path';
+import url from 'url';
 import {
   app,
   BrowserWindow,
@@ -26,8 +27,10 @@ import { Mainwin, LoginWin } from './config';
 import { initialize as initSqlite } from './db';
 import sqlChannels from './db/channel';
 import initMainProcess from './main-process';
+import loadLocale from './main-process/locale';
 import TrayCreator from './main-process/tray';
 import listeners from './constants/listener.json';
+import packageJson from '../package.json';
 
 export default class AppUpdater {
   constructor() {
@@ -74,6 +77,35 @@ const getAssetPath = (...paths: string[]): string => {
   return path.join(RESOURCES_PATH, ...paths);
 };
 
+type Locale = {
+  name: string;
+  messages: {
+    [key: string]: string;
+  };
+};
+
+let locale: Locale;
+
+function prepareURL(
+  pathSegments: string[],
+  moreKeys: { [key: string]: string } = {}
+) {
+  const parsed = url.parse(path.join(...pathSegments));
+
+  return url.format({
+    ...parsed,
+    protocol: parsed.protocol || 'file:',
+    slashes: true,
+    query: {
+      name: packageJson.productName,
+      locale: locale.name,
+      version: app.getVersion(),
+      node_version: process.versions.node,
+      ...moreKeys,
+    },
+  });
+}
+
 const createWindow = async (callback: VoidFunction) => {
   mainWindow = new BrowserWindow({
     show: false,
@@ -85,14 +117,24 @@ const createWindow = async (callback: VoidFunction) => {
     frame: false,
     title: 'mainWindow', // 用来标识 mainWindow
     icon: getAssetPath('icon.png'),
+    titleBarStyle: process.platform === 'darwin' ? 'hidden' : 'default',
+    trafficLightPosition: {
+      x: 4,
+      y: 12,
+    },
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
       preload: path.join(__dirname, 'preload.js'),
+      backgroundThrottling: false,
     },
   });
 
-  mainWindow.loadURL(`file://${__dirname}/pages/index.html`);
+  const moreKeys = {
+    isFullScreen: String(Boolean(mainWindow.isFullScreen())),
+  };
+
+  mainWindow.loadURL(prepareURL([__dirname, 'pages', 'index.html'], moreKeys));
 
   if (
     process.env.NODE_ENV === 'development' ||
@@ -116,6 +158,26 @@ const createWindow = async (callback: VoidFunction) => {
     } else {
       mainWindow.show();
       mainWindow.focus();
+    }
+  });
+
+  mainWindow.on('close', (e) => {
+    // @ts-ignore
+    if (process.platform !== 'darwin' || mainWindow.readyForShutdown) return;
+
+    // Prevent the shutdown
+    e.preventDefault();
+
+    if (mainWindow!.isFullScreen()) {
+      mainWindow!.once('leave-full-screen', () => mainWindow!.hide());
+      mainWindow!.setFullScreen(false);
+    } else {
+      mainWindow!.hide();
+    }
+
+    if (mainWindow) {
+      // @ts-ignore
+      mainWindow.readyForShutdown = true;
     }
   });
 
@@ -162,10 +224,11 @@ const createLogin = async () => {
       nodeIntegration: true,
       enableRemoteModule: true,
       preload: path.join(__dirname, 'login_preload.js'),
+      backgroundThrottling: false,
     },
   });
 
-  loginWindow.loadURL(`file://${__dirname}/pages/login.html`);
+  loginWindow.loadURL(prepareURL([__dirname, 'pages', 'login.html']));
 
   if (
     process.env.NODE_ENV === 'development' ||
@@ -237,7 +300,7 @@ app.disableHardwareAcceleration();
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
-  if (process.platform !== 'darwin') {
+  if (process.platform !== 'darwin' || loginWindow) {
     app.quit();
   }
 });
@@ -245,6 +308,13 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(async () => {
+    if (!locale) {
+      const appLocale =
+        process.env.NODE_ENV === 'test' ? 'en' : app.getLocale();
+      console.log(appLocale);
+      locale = loadLocale({ appLocale });
+    }
+
     const sqlInitPromise = initSqlite();
 
     const timeout = new Promise((resolve) =>
@@ -300,13 +370,25 @@ app
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) createWindow(() => {});
+  if (loginWindow) return;
+
+  if (mainWindow === null) {
+    createWindow(() => {});
+  } else {
+    // @ts-ignore
+    mainWindow.readyForShutdown = false;
+    mainWindow.show();
+  }
 });
 
 ipcMain.on('close-login', () => {
   if (loginWindow) {
     loginWindow.close();
   }
+});
+
+ipcMain.on('locale-data', (event) => {
+  event.returnValue = locale.messages;
 });
 
 /** 添加主进程监听事件 */

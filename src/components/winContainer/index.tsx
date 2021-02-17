@@ -17,7 +17,9 @@ type Props = {
 
 const WinContainer: React.FC<Props> = (props) => {
   const { close, enableDrag = true, contentStyle, children } = props;
-  const { title, min = 'true', isClose = 'true' } = queryParse(location.search);
+  const { title, min = 'true', isClose = 'true', header = 'true' } = queryParse(
+    location.search
+  );
 
   const closeHandle = () => {
     if (close && typeof close === 'function' && close() === false) return;
@@ -30,35 +32,37 @@ const WinContainer: React.FC<Props> = (props) => {
         <title>{title}</title>
       </Helmet>
       <Layout className="module-win_container-layout">
-        <Header
-          className={
-            'module-win_container-layout-header' +
-            (enableDrag ? ' enable-drag ' : '')
-          }
-        >
-          <p className="module-win_container-layout-header--title">
-            {title || ''}
-          </p>
-          <ul className="module-win_container-layout-header--container">
-            {min === 'true' ? (
-              <li
-                className="module-win_container-layout-header--container-iconItem"
-                style={{ marginRight: '8px' }}
-                onClick={() => minimize()}
-              >
-                <i className="iconfont icontop-minimum"></i>
-              </li>
-            ) : null}
-            {isClose === 'true' ? (
-              <li
-                className="module-win_container-layout-header--container-iconItem"
-                onClick={closeHandle}
-              >
-                <i className="iconfont icontop-close"></i>
-              </li>
-            ) : null}
-          </ul>
-        </Header>
+        {header === 'true' ? (
+          <Header
+            className={
+              'module-win_container-layout-header' +
+              (enableDrag ? ' enable-drag ' : '')
+            }
+          >
+            <p className="module-win_container-layout-header--title">
+              {title || ''}
+            </p>
+            <ul className="module-win_container-layout-header--container">
+              {min === 'true' ? (
+                <li
+                  className="module-win_container-layout-header--container-iconItem"
+                  style={{ marginRight: '8px' }}
+                  onClick={() => minimize()}
+                >
+                  <i className="iconfont icontop-minimum"></i>
+                </li>
+              ) : null}
+              {isClose === 'true' ? (
+                <li
+                  className="module-win_container-layout-header--container-iconItem"
+                  onClick={closeHandle}
+                >
+                  <i className="iconfont icontop-close"></i>
+                </li>
+              ) : null}
+            </ul>
+          </Header>
+        ) : null}
         <Content style={contentStyle}>{children}</Content>
       </Layout>
     </Fragment>

@@ -53,34 +53,22 @@ function preloadComponent() {
   };
 }
 
-function loadLocaleData(locale: string): Promise<Record<string, any>> {
-  switch (locale) {
-    case 'en':
-      return import('../../_locales/en/messages.json');
-    case 'zh-CN':
-    default:
-      return import('../../_locales/zh_CN/messages.json');
-  }
-}
-
 function appInit() {
   return Promise.all([
     // createStore(),
-    loadLocaleData(navigator.language),
     getThemeFromDatabase(),
     initMode(),
   ]).then((res) => {
     return {
       // stores: res[0],
-      messages: res[0],
-      user: res[1],
+      user: res[0],
     };
   });
 }
 
 (async () => {
   const loadAsyncComponents = preloadComponent();
-  let { messages, user } = await appInit();
+  let { user } = await appInit();
 
   /** 初始化设置主题 */
   const { theme = 'system' } = user;
@@ -97,7 +85,7 @@ function appInit() {
   }
 
   render(
-    <Root stores={stores} statusCode={statusCode} messages={messages} />,
+    <Root stores={stores} statusCode={statusCode} />,
     document.getElementById('root')
   );
 })();

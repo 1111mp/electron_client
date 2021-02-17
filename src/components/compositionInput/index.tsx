@@ -33,6 +33,7 @@ import {
 } from 'components/quill/utils';
 import { convertShortName } from 'components/emoji/lib';
 import { SignalClipboard } from 'components/quill/signal-clipboard';
+import { useI18n } from 'app/utils/i18n';
 
 Quill.register('formats/emoji', EmojiBlot);
 Quill.register('formats/mention', MentionBlot);
@@ -110,9 +111,10 @@ export const CompositionInput: React.ComponentType<Props> = (props) => {
     ],
   } = props;
 
-  const [emojiCompletionElement, setEmojiCompletionElement] = React.useState<
-    JSX.Element
-  >();
+  const [
+    emojiCompletionElement,
+    setEmojiCompletionElement,
+  ] = React.useState<JSX.Element>();
   const [
     lastSelectionRange,
     setLastSelectionRange,
@@ -130,6 +132,8 @@ export const CompositionInput: React.ComponentType<Props> = (props) => {
   const memberRepositoryRef = React.useRef<MemberRepository>(
     new MemberRepository()
   );
+
+  const i18n = useI18n();
 
   const generateDelta = (
     text: string,
@@ -176,8 +180,7 @@ export const CompositionInput: React.ComponentType<Props> = (props) => {
 
   const insertEmoji = (e: EmojiPickDataType) => {
     const quill = quillRef.current;
-    console.log(quill);
-    console.log(e);
+
     if (quill === undefined) {
       return;
     }
@@ -237,8 +240,8 @@ export const CompositionInput: React.ComponentType<Props> = (props) => {
     }
 
     const [text, mentions] = getTextAndMentions();
-    console.log(text);
-    console.log(mentions);
+    // console.log(text);
+    // console.log(mentions);
 
     // window.log.info(`Submitting a message with ${mentions.length} mentions`);
     // onSubmit(text, mentions);
@@ -394,14 +397,23 @@ export const CompositionInput: React.ComponentType<Props> = (props) => {
         return;
       }
 
-      if (propsRef.current.onEditorStateChange) {
-        const selection = quill.getSelection();
+      const { onEditorStateChange } = propsRef.current;
 
-        propsRef.current.onEditorStateChange(
-          text,
-          mentions,
-          selection ? selection.index : undefined
-        );
+      if (onEditorStateChange) {
+        // `getSelection` inside the `onChange` event handler will be the
+        // selection value _before_ the change occurs. `setTimeout` 0 here will
+        // let `getSelection` return the selection after the change takes place.
+        // this is necessary for `maybeGrabLinkPreview` as it needs the correct
+        // `caretLocation` from the post-change selection index value.
+        setTimeout(() => {
+          const selection = quill.getSelection();
+
+          onEditorStateChange(
+            text,
+            mentions,
+            selection ? selection.index : undefined
+          );
+        }, 0);
       }
     }
 
@@ -489,7 +501,7 @@ export const CompositionInput: React.ComponentType<Props> = (props) => {
           },
         }}
         formats={['emoji', 'mention']}
-        placeholder={'sendMessage'}
+        placeholder={i18n('sendMessageToContact')}
         readOnly={disabled}
         ref={(element) => {
           if (element) {

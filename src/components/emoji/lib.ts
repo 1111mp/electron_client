@@ -131,15 +131,15 @@ export function getImagePath(
 const fuse = new Fuse(data, {
   shouldSort: true,
   threshold: 0.2,
-  maxPatternLength: 32,
+  // maxPatternLength: 32,
   minMatchCharLength: 1,
-  tokenize: true,
-  tokenSeparator: /[-_\s]+/,
+  // tokenize: true,
+  // tokenSeparator: /[-_\s]+/,
   keys: ['name', 'short_name', 'short_names'],
 });
 
 export function search(query: string, count = 0): Array<EmojiData> {
-  const results = fuse.search(query.substr(0, 32));
+  const results = fuse.search(query.substr(0, 32)).map((i) => i.item);
 
   if (count) {
     return take(results, count);

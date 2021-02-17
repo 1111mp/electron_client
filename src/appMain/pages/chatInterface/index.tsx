@@ -2,7 +2,9 @@ import './styles.scss';
 
 import React from 'react';
 
+// @ts-ignore
 import ReactIScroll from 'react-iscroll';
+// @ts-ignore
 import iScroll from 'iscroll/build/iscroll-probe';
 import { Button, Drawer } from 'antd';
 import EllipsisOutlined from '@ant-design/icons/EllipsisOutlined';
@@ -171,7 +173,7 @@ const ChatInterface: React.ComponentType<IAnyObject> = () => {
         </div>
       </ReactIScroll>
       <footer className="module-chat_interface--footer">
-        <Transmitter />
+        <Transmitter onPickEmoji={() => {}} />
       </footer>
       <Drawer
         title="Basic Drawer"

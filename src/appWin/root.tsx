@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Router } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
 import { createBrowserHistory, createHashHistory } from 'history';
-import { IntlProvider } from 'react-intl';
 import WinContainer from 'components/winContainer';
 import Config from 'app/config';
 import routes from './routes';
@@ -16,17 +15,12 @@ const history = Config.isBorwserHistory
 
 type Props = {
   statusCode?: number;
-  messages?: any;
 };
 
-const Root = ({ messages }: Props) => {
+const Root = ({}: Props) => {
   const { header } = queryParse(location.search);
   return (
-    <IntlProvider
-      locale={navigator.language}
-      defaultLocale={navigator.language}
-      messages={messages}
-    >
+    <Fragment>
       {header === 'false' ? (
         <Router history={history}>{renderRoutes(routes)}</Router>
       ) : (
@@ -34,7 +28,7 @@ const Root = ({ messages }: Props) => {
           <Router history={history}>{renderRoutes(routes)}</Router>
         </WinContainer>
       )}
-    </IntlProvider>
+    </Fragment>
   );
 };
 

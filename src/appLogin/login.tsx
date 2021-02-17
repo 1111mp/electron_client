@@ -2,6 +2,7 @@ import React from 'react';
 import request from 'app/requests';
 import { ipcRenderer } from 'electron';
 import listener from 'app/constants/listener.json';
+import { useI18n } from 'app/utils/i18n';
 
 const Login: React.FC = () => {
   const [type, setType] = React.useState<1 | 2>(1); // 1 sign in   2 sign up
@@ -9,6 +10,8 @@ const Login: React.FC = () => {
   const [pwd, setPwd] = React.useState('');
   const [aerror, setArrror] = React.useState<boolean>(false);
   const [perror, setPrrror] = React.useState<boolean>(false);
+
+  const i18n = useI18n();
 
   const closeLogin = () => {
     (window as any).closeLogin();
@@ -137,7 +140,7 @@ const Login: React.FC = () => {
           <span onClick={checkType}>{type === 1 ? 'Sign up' : 'Sign in'}</span>
         </p>
         <button className="module-login-footer__button" onClick={submit}>
-          {type === 1 ? 'Sign in' : 'Sign up'}
+          {type === 1 ? i18n('signIn') : i18n('signUp')}
         </button>
       </footer>
     </div>
