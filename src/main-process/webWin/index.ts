@@ -66,7 +66,7 @@ export default {
       const webContents: WebContents = (event as any).sender;
       const { id, width, height, url, modal = false, center = true } = args;
       const customWinId = id || webContents.id;
-
+      
       if (modal || center) {
         const parent: BrowserWindow = BrowserWindow.fromWebContents(
           webContents

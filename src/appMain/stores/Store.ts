@@ -4,12 +4,8 @@ export interface State {
   [key: string]: unknown;
 }
 
-interface Property {
+class Store {
   [key: string]: any;
-}
-
-class Store implements Property {
-  // [key: string]: any;
   name: string = ''; // 模块名
 
   private loaded: boolean = false;

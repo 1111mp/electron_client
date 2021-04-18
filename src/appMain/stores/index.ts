@@ -22,24 +22,26 @@ configure({
   enforceActions: 'never',
 });
 
-const storageMap: any = {
-  routerStore: RouterStore,
-  clientStore: ClientStore,
+export type TStore = {
+  routerStore: RouterStore;
+  clientStore: ClientStore;
 };
 
-function createStore() {
-  const keys = Object.keys(storageMap);
-  let store: IAnyObject;
+export type MStore = {
+  userStore: UserStore;
+};
 
-  store = {};
+export type RootStore = TStore & MStore;
 
-  keys.forEach((key) => {
-    store[key] = new storageMap[key]();
-  });
+export function createStore(): RootStore {
+  const stores: TStore = {
+    routerStore: new RouterStore(),
+    clientStore: new ClientStore(),
+  };
 
   try {
     manager.stores = {
-      user: new UserStore('user'),
+      userStore: new UserStore('user'),
       // Setting: new SettingStore('Setting'),
     };
   } catch (e) {
@@ -49,21 +51,30 @@ function createStore() {
   manager.init();
 
   return {
-    ...store,
-    ...manager.stores,
+    ...stores,
+    ...(manager.stores as MStore),
   };
 }
 
-const stores = createStore();
+// const stores = createStore();
 
-export const StoreContext = createContext(stores);
+export const StoreContext = createContext<RootStore | null>(null);
 
-export const useStores = () => useContext(StoreContext);
+export const useStores = () => {
+  const stores = useContext(StoreContext);
+  if (!stores) {
+    // this is especially useful in TypeScript so you don't need to be checking for null all the time
+    throw new Error('You have forgot to use StoreProvider, shame on you.');
+  }
+  return stores;
+};
 
-export function useTargetStore(target: string) {
+export function useTargetStore<K extends keyof RootStore>(
+  target: K
+): RootStore[K] {
   const stores = useStores();
 
-  return target ? stores[target] : stores;
+  return stores[target];
 }
 
-export default stores;
+// export default stores;

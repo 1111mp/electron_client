@@ -1,11 +1,10 @@
 import React from 'react';
-import { Provider } from 'mobx-react';
 import { Router, Redirect } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
 import { createBrowserHistory, createHashHistory } from 'history';
 import { syncHistoryWithStore } from '@superwf/mobx-react-router';
 import { AliveScope } from 'react-activation';
-import { StoreContext } from './stores';
+import { RootStore, StoreContext } from './stores';
 import { I18n } from 'app/utils/i18n';
 import Menu from 'appMain/parts/menu';
 import Config from 'app/config';
@@ -24,7 +23,7 @@ const History = Config.isBorwserHistory
   : createHashHistory();
 
 type Props = {
-  stores: any;
+  stores: RootStore;
   statusCode: number;
 };
 
@@ -33,20 +32,18 @@ const Root = ({ stores, statusCode }: Props) => {
   const { localeMessages } = window;
 
   return (
-    <Provider {...stores}>
-      <StoreContext.Provider value={stores}>
-        <I18n messages={localeMessages}>
-          <Menu />
-          <Router history={history}>
-            <AliveScope>
-              {/* <Routes /> */}
-              {renderRoutes(allRoutes)}
-              <Redirect to="index" />
-            </AliveScope>
-          </Router>
-        </I18n>
-      </StoreContext.Provider>
-    </Provider>
+    <StoreContext.Provider value={stores}>
+      <I18n messages={localeMessages}>
+        <Menu />
+        <Router history={history}>
+          <AliveScope>
+            {/* <Routes /> */}
+            {renderRoutes(allRoutes)}
+            <Redirect to="index" />
+          </AliveScope>
+        </Router>
+      </I18n>
+    </StoreContext.Provider>
   );
 };
 

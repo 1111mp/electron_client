@@ -14,7 +14,7 @@ import { render } from 'react-dom';
 import { matchRoutes } from 'react-router-config';
 import Root from './root';
 import Config from 'app/config';
-import stores from './stores';
+import { createStore } from './stores';
 import routerConfig from './routes/route_config';
 import { applyTheme, getThemeFromDatabase } from 'app/utils';
 import initMode from 'app/utils/mode_check';
@@ -54,21 +54,19 @@ function preloadComponent() {
 }
 
 function appInit() {
-  return Promise.all([
-    // createStore(),
-    getThemeFromDatabase(),
-    initMode(),
-  ]).then((res) => {
-    return {
-      // stores: res[0],
-      user: res[0],
-    };
-  });
+  return Promise.all([createStore(), getThemeFromDatabase(), initMode()]).then(
+    (res) => {
+      return {
+        stores: res[0],
+        user: res[1],
+      };
+    }
+  );
 }
 
 (async () => {
   const loadAsyncComponents = preloadComponent();
-  let { user } = await appInit();
+  let { stores, user } = await appInit();
 
   /** 初始化设置主题 */
   const { theme = 'system' } = user;

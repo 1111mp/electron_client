@@ -12,6 +12,7 @@
 // import 'regenerator-runtime/runtime';
 import path from 'path';
 import url from 'url';
+import fs from 'fs';
 import {
   app,
   BrowserWindow,
@@ -19,6 +20,7 @@ import {
   ipcMain,
   nativeImage,
   IpcMainEvent,
+  protocol,
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -270,6 +272,14 @@ const createLogin = async () => {
       });
     }
   );
+
+  // protocol.interceptFileProtocol('https', (request, callback) => {
+  //   console.log(request);
+  //   callback(
+  //     // @ts-ignore
+  //     fs.createReadStream(path.normalize(`${__dirname}/index.js`))
+  //   );
+  // });
 };
 
 function createTray() {

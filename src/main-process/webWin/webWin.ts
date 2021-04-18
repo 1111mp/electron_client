@@ -25,7 +25,7 @@ export default class CustomWindow {
       Object.assign(
         {
           frame: false,
-          modal: args.modal,
+          modal: false,
           center: true,
           width: args.width,
           height: args.height,
