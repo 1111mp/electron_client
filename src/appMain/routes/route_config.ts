@@ -1,6 +1,4 @@
 import loadable from '@loadable/component';
-import Home from 'appMain/pages/home';
-import AddressBook from 'appMain/pages/addressBook';
 
 export interface RouterConfig {
   path: string;
@@ -18,25 +16,27 @@ const allRoutes = [
   {
     path: '/',
     component: loadable(() => import('appMain/pages/indexPage')),
-    exact: true,
-  },
-  {
-    path: '/index',
-    component: Home,
     // exact: true,
     routes: [
       {
-        path: '/index/chat',
-        component: loadable(() => import('appMain/pages/chatInterface')),
+        path: '/index',
+        component: loadable(() => import('appMain/pages/home')),
+        // exact: true,
+        routes: [
+          {
+            path: '/index/chat',
+            component: loadable(() => import('appMain/pages/chatInterface')),
+            // exact: true,
+          },
+        ],
+      },
+      {
+        path: '/addressbook',
+        // 同步加载打包
+        component: loadable(() => import('appMain/pages/addressBook')),
         exact: true,
       },
     ],
-  },
-  {
-    path: '/addressbook',
-    // 同步加载打包
-    component: AddressBook,
-    exact: true,
   },
 ] as RouterConfig[];
 

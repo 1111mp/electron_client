@@ -1,7 +1,7 @@
 try {
   const path = require('path');
-  const { remote, ipcRenderer } = require('electron');
-  const { nativeTheme } = remote.require('electron');
+  const { ipcRenderer } = require('electron');
+  const { nativeTheme } = require('@electron/remote').require('electron');
 
   window.ROOT_PATH = window.location.href.startsWith('file') ? '../' : '/';
   window.platform = process.platform;

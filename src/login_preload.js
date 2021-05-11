@@ -1,6 +1,6 @@
 try {
-  const { remote, ipcRenderer } = require('electron');
-  const { nativeTheme, app } = remote.require('electron');
+  const { ipcRenderer } = require('electron');
+  const { nativeTheme, app } = require('@electron/remote').require('electron');
 
   // nativeTheme.themeSource = 'dark'
 

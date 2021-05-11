@@ -23,7 +23,7 @@ configure({
 });
 
 export type TStore = {
-  routerStore: RouterStore;
+  // routerStore: RouterStore;
   clientStore: ClientStore;
 };
 
@@ -35,7 +35,7 @@ export type RootStore = TStore & MStore;
 
 export function createStore(): RootStore {
   const stores: TStore = {
-    routerStore: new RouterStore(),
+    // routerStore: new RouterStore(),
     clientStore: new ClientStore(),
   };
 

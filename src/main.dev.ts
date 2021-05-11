@@ -34,6 +34,8 @@ import TrayCreator from './main-process/tray';
 import listeners from './constants/listener.json';
 import packageJson from '../package.json';
 
+require('@electron/remote/main').initialize();
+
 export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -126,6 +128,7 @@ const createWindow = async (callback: VoidFunction) => {
     },
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
       enableRemoteModule: true,
       preload: path.join(__dirname, 'preload.js'),
       backgroundThrottling: false,
@@ -210,7 +213,7 @@ const createLogin = async () => {
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
   ) {
-    await installExtensions();
+    // await installExtensions();
   }
 
   loginWindow = new BrowserWindow({
@@ -224,6 +227,7 @@ const createLogin = async () => {
     maximizable: false,
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
       enableRemoteModule: true,
       preload: path.join(__dirname, 'login_preload.js'),
       backgroundThrottling: false,

@@ -58,36 +58,34 @@ const AddressBook: React.ComponentType<Props> = () => {
   );
 
   return (
-    <KeepAlive>
-      <div className="module-addressbook">
-        <div
-          className="module-addressbook-list"
-          onMouseEnter={() => scrollHandler(false)}
-          onMouseLeave={() => scrollHandler(true)}
-        >
-          <header className="module-addressbook-list__header">
-            <Header />
-          </header>
-          <div className="module-addressbook-list__content">
-            <AutoSizer>
-              {({ width, height }) => (
-                <List
-                  className={classNames({
-                    'ReactVirtualized__List-hidden': hidden,
-                  })}
-                  height={height}
-                  rowCount={list.length}
-                  rowHeight={getRowHeight}
-                  rowRenderer={rowRenderer}
-                  style={{ overflow: 'overlay' }}
-                  width={width}
-                />
-              )}
-            </AutoSizer>
-          </div>
+    <div className="module-addressbook">
+      <div
+        className="module-addressbook-list"
+        onMouseEnter={() => scrollHandler(false)}
+        onMouseLeave={() => scrollHandler(true)}
+      >
+        <header className="module-addressbook-list__header">
+          <Header />
+        </header>
+        <div className="module-addressbook-list__content">
+          <AutoSizer>
+            {({ width, height }) => (
+              <List
+                className={classNames({
+                  'ReactVirtualized__List-hidden': hidden,
+                })}
+                height={height}
+                rowCount={list.length}
+                rowHeight={getRowHeight}
+                rowRenderer={rowRenderer}
+                style={{ overflow: 'overlay' }}
+                width={width}
+              />
+            )}
+          </AutoSizer>
         </div>
       </div>
-    </KeepAlive>
+    </div>
   );
 };
 

@@ -41,7 +41,7 @@ const item = {
     click(...args: any[]) {
       createCusWin({
         ...CUSTOMWIN,
-        url: `${CUSTOMWIN.url}?title=设置`
+        url: `${CUSTOMWIN.url}?title=设置`,
       });
     },
   },
@@ -50,8 +50,7 @@ const item = {
     label: '退出应用',
     role: 'quit',
     click(...args: any[]) {
-      const { remote } = require('electron');
-      remote.app.quit();
+      require('@electron/remote').app.quit();
     },
   },
 };

@@ -34,6 +34,7 @@ export default class ChildWindow {
           transparent: false,
           webPreferences: {
             nodeIntegration: true,
+            contextIsolation: false,
             enableRemoteModule: true,
           },
         },

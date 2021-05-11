@@ -1,0 +1,17 @@
+.module-index_page {
+  flex: 1;
+  @include flex();
+
+  &-routes {
+    flex: 1;
+    height: 100%;
+    @include flex();
+    overflow: hidden;
+
+    &>div {
+      width: 100%;
+      height: 100%;
+      display: flex;
+    }
+  }
+}

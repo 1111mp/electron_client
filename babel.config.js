@@ -57,11 +57,10 @@ module.exports = (api) => {
       // Stage 3
       require('@babel/plugin-syntax-dynamic-import'),
       require('@babel/plugin-syntax-import-meta'),
-      [require('@babel/plugin-proposal-class-properties'), { loose: true }],
+      [require('@babel/plugin-proposal-class-properties')],
       require('@babel/plugin-proposal-json-strings'),
 
       ...(development ? developmentPlugins : productionPlugins),
-      require('react-activation/babel'),
       'lodash',
       ['import', { libraryName: 'antd', libraryDirectory: 'es', style: true }],
     ],

@@ -1,60 +1,51 @@
-.ka-wrapper {
+.module-addressbook {
   flex: 1;
+  height: 100%;
 
-  .ka-content {
-    display: flex;
+  @include light-theme() {
+    background-color: $color-white;
+  }
+
+  @include dark-theme() {
+    background-color: $color-gray-95;
+  }
+
+  &-list {
+    @include flex($direction: column);
+    width: 250px;
     height: 100%;
+    border-right: 1px solid;
+    overflow: hidden;
 
-    .module-addressbook {
-      flex: 1;
+    .ReactVirtualized__List:focus {
+      outline: none;
+    }
 
-      @include light-theme() {
-        background-color: $color-white;
-      }
-
-      @include dark-theme() {
-        background-color: $color-gray-95;
-      }
-
-      &-list {
-        @include flex($direction: column);
-        width: 250px;
-        height: 100%;
-        border-right: 1px solid;
-        overflow: hidden;
-
-        .ReactVirtualized__List:focus {
-          outline: none;
-        }
-
-        .ReactVirtualized__List-hidden {
-          &::-webkit-scrollbar {
-            display: none;
-          }
-        }
-
-        @include light-theme() {
-          background-color: $color-white;
-          border-color: $color-sider-border;
-          box-shadow: 1px 0 2px $color-sider-border;
-        }
-
-        @include dark-theme() {
-          background-color: $color-gray-80;
-          border-color: $color-gray-60;
-          box-shadow: 1px 0 2px $color-gray-90;
-        }
-
-        &__header {
-          width: 100%;
-        }
-
-        &__content {
-          width: 100%;
-          flex: 1;
-        }
+    .ReactVirtualized__List-hidden {
+      &::-webkit-scrollbar {
+        display: none;
       }
     }
 
+    @include light-theme() {
+      background-color: $color-white;
+      border-color: $color-sider-border;
+      box-shadow: 1px 0 2px $color-sider-border;
+    }
+
+    @include dark-theme() {
+      background-color: $color-gray-80;
+      border-color: $color-gray-60;
+      box-shadow: 1px 0 2px $color-gray-90;
+    }
+
+    &__header {
+      width: 100%;
+    }
+
+    &__content {
+      width: 100%;
+      flex: 1;
+    }
   }
 }

@@ -1,12 +1,11 @@
 import './styles.scss';
 
 import React from 'react';
-import { observer } from 'mobx-react';
 import { Avatar } from 'antd';
 import classNames from 'classnames';
 import { CUSTOMWIN } from 'app/config';
 import { openWeb } from 'app/utils/rendererapi';
-import { useTargetStore } from 'appMain/stores';
+import { useHistory, useLocation } from 'react-router-dom';
 
 export const Menus: any[] = [
   {
@@ -21,15 +20,16 @@ export const Menus: any[] = [
   },
 ];
 
-const Menu: React.FC = observer(() => {
-  const routerStore = useTargetStore('routerStore');
+const Menu: React.FC = () => {
+  const history = useHistory();
+  const location = useLocation();
 
   const openSetting = () => {
     openWeb({ ...CUSTOMWIN, url: `${CUSTOMWIN.url}?title=设置` });
   };
 
   const menuHandler = (path: string) => {
-    routerStore.push(path);
+    history.push(path);
   };
 
   return (
@@ -42,7 +42,7 @@ const Menu: React.FC = observer(() => {
           <li
             key={menu.path}
             className={classNames('module-app-menu-container-item', {
-              active: routerStore.location.pathname.indexOf(menu.path) !== -1,
+              active: location.pathname.includes(menu.path),
             })}
             onClick={() => menuHandler(menu.path)}
           >
@@ -55,6 +55,6 @@ const Menu: React.FC = observer(() => {
       </p>
     </div>
   );
-});
+};
 
 export default Menu;

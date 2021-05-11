@@ -1,29 +1,27 @@
 import './styles.scss';
 
 import React, { Fragment } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react';
 import { useTargetStore } from 'appMain/stores';
 import Header from './header';
 import RoomItem from 'appMain/parts/roomItem';
 
 const RoomList: React.FC = observer(() => {
-  const routerStore = useTargetStore('routerStore');
+  const history = useHistory();
+  const location = useLocation();
 
-  const checkRoom = React.useCallback(
-    (event: React.MouseEvent) => {
-      event.stopPropagation();
-      routerStore.push('/index/chat');
-    },
-    [routerStore.location]
-  );
+  const checkRoom = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    history.push('/index/chat');
+  };
 
   const emptyAreaHandler = React.useCallback(
     (event: React.MouseEvent) => {
       event.stopPropagation();
-      routerStore.location.pathname !== 'index' &&
-        routerStore.replace('/index');
+      location.pathname !== 'index' && history.replace('/index');
     },
-    [routerStore.location]
+    [location]
   );
 
   return (

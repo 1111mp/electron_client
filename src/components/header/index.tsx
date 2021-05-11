@@ -11,7 +11,7 @@ const styles = require('./header.scss');
 // }
 
 interface HeaderProps extends IAnyObject {
-  isMaximized?: boolean
+  isMaximized?: boolean;
 }
 
 @inject((stores: IAnyObject) => ({
@@ -53,7 +53,7 @@ export default class AppHeader extends BasicComponent<HeaderProps> {
 
   minApp = () => {
     this.$minimize();
-  }
+  };
 
   setMaximize = (flag: boolean) => {
     const { setMaximized } = this.props;
@@ -64,20 +64,19 @@ export default class AppHeader extends BasicComponent<HeaderProps> {
     if (!flag) {
       this.$setSize(Mainwin.width, Mainwin.height);
     }
-  }
+  };
 
   closeApp = () => {
     /** 关闭之前可进行一些操作... */
-    require('electron').remote.app.quit();
-  }
+    require('@electron/remote').app.quit();
+  };
 
   renderHistory() {
     const { routerStore } = this.props;
     let goBack = true;
     let goForward = true;
 
-    const { remote } = require('electron');
-    const webContents = remote.getCurrentWebContents();
+    const webContents = require('@electron/remote').getCurrentWebContents();
 
     goBack = webContents.canGoBack();
     goForward = webContents.canGoForward();
@@ -85,22 +84,26 @@ export default class AppHeader extends BasicComponent<HeaderProps> {
     return (
       <ul className={styles.container}>
         <li
-          className={styles.iconHistory + (goBack ? '' : ` ${styles.hisoryDisabled}`)}
+          className={
+            styles.iconHistory + (goBack ? '' : ` ${styles.hisoryDisabled}`)
+          }
           style={{ marginRight: '2px' }}
-          onMouseDown={e => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
           onClick={() => goBack && routerStore.goBack()}
         >
           <i className={'iconfont iconpre ' + styles.icon}></i>
         </li>
         <li
-          className={styles.iconHistory + (goForward ? '' : ` ${styles.hisoryDisabled}`)}
-          onMouseDown={e => e.stopPropagation()}
+          className={
+            styles.iconHistory + (goForward ? '' : ` ${styles.hisoryDisabled}`)
+          }
+          onMouseDown={(e) => e.stopPropagation()}
           onClick={() => goForward && routerStore.goForward()}
         >
           <i className={'iconfont iconnext ' + styles.icon}></i>
         </li>
       </ul>
-    )
+    );
   }
 
   $render(): JSX.Element {
@@ -114,18 +117,38 @@ export default class AppHeader extends BasicComponent<HeaderProps> {
             <i className={styles.separater} />
           </p>
           <div className={styles.widgetsWrapper}>
-            <div className={styles.leftWrapper}>
-              {this.renderHistory()}
-            </div>
+            <div className={styles.leftWrapper}>{this.renderHistory()}</div>
             <div className={styles.rightWrapper}>
               <ul className={styles.container}>
-                <li className={styles.iconItem} style={{ marginRight: '8px' }} onMouseDown={e => e.stopPropagation()} onClick={this.minApp}>
+                <li
+                  className={styles.iconItem}
+                  style={{ marginRight: '8px' }}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={this.minApp}
+                >
                   <i className={'iconfont icontop-minimum ' + styles.icon}></i>
                 </li>
-                <li className={styles.iconItem} style={{ marginRight: '8px' }} onMouseDown={e => e.stopPropagation()} onClick={() => this.setMaximize(!isMaximized)}>
-                  <i className={'iconfont ' + (isMaximized ? 'icontop-tonormal ' : 'icontop-maximize ') + styles.icon}></i>
+                <li
+                  className={styles.iconItem}
+                  style={{ marginRight: '8px' }}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={() => this.setMaximize(!isMaximized)}
+                >
+                  <i
+                    className={
+                      'iconfont ' +
+                      (isMaximized
+                        ? 'icontop-tonormal '
+                        : 'icontop-maximize ') +
+                      styles.icon
+                    }
+                  ></i>
                 </li>
-                <li className={styles.iconItem} onMouseDown={e => e.stopPropagation()} onClick={this.closeApp}>
+                <li
+                  className={styles.iconItem}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={this.closeApp}
+                >
                   <i className={'iconfont icontop-close ' + styles.icon}></i>
                 </li>
               </ul>
