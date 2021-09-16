@@ -17,7 +17,7 @@
         "background": {
           "activeOnStart": true,
           "beginsPattern": "Compiling\\.\\.\\.$",
-          "endsPattern": "(Compiled successfully|Failed to compile)\\.$"
+          "endsPattern": "Project is running at:$"
         }
       }
     }

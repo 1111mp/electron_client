@@ -75,7 +75,7 @@ export default class CustomWindow {
   }
 
   loadUrl(url: string) {
-    this.winInstance && this.winInstance.loadURL(url);
+    this.winInstance && this.winInstance.loadURL(url, {});
   }
 
   getUrl() {

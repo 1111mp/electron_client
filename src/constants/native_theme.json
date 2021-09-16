@@ -1,0 +1,5 @@
+{
+  "INIT": "native-theme:init",
+  "CHANGED": "native-theme:changed",
+  "SETTING": "native-theme:setting"
+}

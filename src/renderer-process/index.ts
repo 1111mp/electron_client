@@ -29,7 +29,7 @@ export class RendererProcess {
     /** 防止初始化时electron还没有加载完成 */
     Object.defineProperty(this, '_win', {
       get() {
-        return require('@electron/remote').getCurrentWindow();
+        // return require('@electron/remote').getCurrentWindow();
       },
     });
 

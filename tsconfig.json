@@ -1,9 +1,13 @@
 {
   "extends": "./paths.json",
   "compilerOptions": {
-    "target": "ES2018",
+    "target": "es2017",
     "module": "CommonJS",
-    "lib": ["dom", "esnext"],
+    "lib": [
+      "dom", // Required to access `window`
+      "dom.iterable",
+      "es2020"
+    ],
     "declaration": true,
     "declarationMap": true,
     "noEmit": true,
@@ -16,6 +20,7 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "useUnknownInCatchVariables": false,
     /* Module Resolution Options */
     "moduleResolution": "node",
     "esModuleInterop": true,

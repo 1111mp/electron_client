@@ -1,6 +1,6 @@
 'use strict';
 
-import { Sequelize, Model, DataTypes, Optional } from 'sequelize';
+import { Sequelize, Model, DataTypes, Optional, BuildOptions } from 'sequelize';
 import moment from 'moment';
 
 /**
@@ -9,22 +9,33 @@ import moment from 'moment';
  * Cannot use namespace 'DataTypes' as a type.
  * https://github.com/sequelize/sequelize-auto/issues/384
  */
-interface UserAttributes {
+export interface UserAttributes {
   id: number;
   userId: number;
+  account: string;
   token: string;
-  theme: 'system' | 'light' | 'dark';
-  [key: string]: unknown;
+  avatar: string | null;
+  email: string | null;
+  theme: Theme;
+  regisTime: string;
+  updateTime: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
+export interface UserCreationAttributes
+  extends Optional<UserAttributes, 'theme'> {}
 
-interface UserInstance
+interface UserModel
   extends Model<UserAttributes, UserCreationAttributes>,
     UserAttributes {}
 
-export default (sequelize: Sequelize) => {
-  const User = sequelize.define<UserInstance>(
+export type UserStatic = typeof Model & {
+  new (values?: object, options?: BuildOptions): UserModel;
+};
+
+export function UserFactory(sequelize: Sequelize) {
+  return <UserStatic>sequelize.define(
     'User',
     {
       id: {
@@ -47,6 +58,7 @@ export default (sequelize: Sequelize) => {
       },
       avatar: {
         type: DataTypes.STRING,
+        allowNull: true,
         comment: '用户头像',
       },
       email: {
@@ -104,6 +116,4 @@ export default (sequelize: Sequelize) => {
       ],
     }
   );
-
-  return User;
-};
+}

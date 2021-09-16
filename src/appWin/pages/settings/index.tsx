@@ -4,33 +4,33 @@ import React, { Fragment } from 'react';
 
 import { Divider, Radio } from 'antd';
 import { RadioChangeEvent } from 'antd/lib/radio';
-import listener from 'constants/listener.json';
-import { invoke, send } from 'app/utils/rendererapi';
+// import listener from 'constants/listener.json';
+// import { invoke, send } from 'app/utils/rendererapi';
 
 const Settings: React.FC = () => {
-  const [theme, setTheme] = React.useState<'system' | 'light' | 'dark' | ''>(
-    ''
-  );
+  const [theme, setTheme] = React.useState<Theme>(window.systemTheme);
 
   const handleChange = React.useCallback(
     (event: RadioChangeEvent) => {
-      setTheme(event.target.value);
-      send(listener.INVOKE_MAIN_WINDOW_FUNC, {
-        funcname: 'setAppTheme',
-        args: event.target.value,
-      });
+      const theme = event.target.value as Theme;
+      setTheme(theme);
+      // send(listener.INVOKE_MAIN_WINDOW_FUNC, {
+      //   funcname: 'setAppTheme',
+      //   args: event.target.value,
+      // });
+      window.SignalContext.nativeThemeListener.theme_setting(theme);
     },
     [theme, setTheme]
   );
 
-  React.useEffect(() => {
-    invoke(listener.GET_DATA_FROM_MAIN_WINDOW_ASYNC, ['UserInfo']).then(
-      (data) => {
-        console.log(data);
-        setTheme(data.UserInfo.theme);
-      }
-    );
-  }, [setTheme]);
+  // React.useEffect(() => {
+  // invoke(listener.GET_DATA_FROM_MAIN_WINDOW_ASYNC, ['UserInfo']).then(
+  //   (data) => {
+  //     console.log(data);
+  //     setTheme(data.UserInfo.theme);
+  //   }
+  // );
+  // }, [setTheme]);
 
   return (
     <Fragment>

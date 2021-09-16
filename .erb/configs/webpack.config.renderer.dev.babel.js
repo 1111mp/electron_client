@@ -259,21 +259,25 @@ export default merge(baseConfig, {
     __filename: false,
   },
 
+  stats: 'errors-only',
+  watchOptions: {
+    aggregateTimeout: 600,
+    ignored: /node_modules/,
+  },
+
   devServer: {
     port,
-    publicPath,
     compress: true,
-    noInfo: false,
-    stats: 'errors-only',
-    inline: true,
-    lazy: false,
     hot: true,
     headers: { 'Access-Control-Allow-Origin': '*' },
-    contentBase: path.join(__dirname, 'dist'),
-    watchOptions: {
-      aggregateTimeout: 300,
-      ignored: /node_modules/,
-      poll: 100,
+    devMiddleware: {
+      publicPath,
+    },
+    static: {
+      directory: path.join(__dirname, 'dist'),
+    },
+    client: {
+      webSocketURL: `ws://localhost:${port}/ws`,
     },
     historyApiFallback: {
       verbose: true,

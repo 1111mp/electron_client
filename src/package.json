@@ -16,9 +16,9 @@
   "license": "MIT",
   "dependencies": {
     "@journeyapps/sqlcipher": "^5.2.0",
-    "emoji-datasource-apple": "^6.0.1",
+    "emoji-datasource-apple": "^7.0.2",
     "protobufjs": "~6.11.2",
-    "sequelize": "^6.6.2",
-    "socket.io-client": "^4.0.2"
+    "sequelize": "^6.6.5",
+    "socket.io-client": "^4.2.0"
   }
 }

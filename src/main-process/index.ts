@@ -139,7 +139,7 @@ export class MainProcess {
       });
     }
 
-    const mainWindow: WebContents = this.getMainWindow();
+    const mainWindow: WebContents = this.getMainWindow()!;
 
     if (mainWindow) {
       return mainWindow
@@ -157,7 +157,7 @@ export class MainProcess {
 
   /** 调用mainWindow的webContent全局的方法 */
   invokeMainWindowFunc({ funcname, args }: { funcname: string; args: any }) {
-    const mainWindow: WebContents = this.getMainWindow();
+    const mainWindow: WebContents = this.getMainWindow()!;
     if (mainWindow) {
       mainWindow.executeJavaScript(
         `window.${funcname}(${JSON.stringify(args)})`

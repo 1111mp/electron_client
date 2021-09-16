@@ -1,24 +1,11 @@
 try {
   const path = require('path');
   const { ipcRenderer } = require('electron');
-  const { nativeTheme } = require('@electron/remote').require('electron');
+
+  require('./renderer-process/windows/context');
 
   window.ROOT_PATH = window.location.href.startsWith('file') ? '../' : '/';
   window.platform = process.platform;
-
-  function setSystemTheme() {
-    window.systemTheme = nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
-  }
-
-  setSystemTheme();
-
-  /** 全局方法 设置主题 */
-  window.subscribeToSystemThemeChange = (fn) => {
-    nativeTheme.on('updated', () => {
-      setSystemTheme();
-      fn(window.systemTheme);
-    });
-  };
 
   ipcRenderer.on('add-dark-overlay', (event, data) => {
     window.Events.addDarkOverlay(data);
@@ -43,4 +30,4 @@ try {
   console.log(error);
 }
 
-console.log('preload complete');
+console.info('preload complete');

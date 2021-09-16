@@ -1,17 +1,14 @@
 import React, { Fragment } from 'react';
-import { Router } from 'react-router-dom';
+import { BrowserRouter, HashRouter } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
-import { createBrowserHistory, createHashHistory } from 'history';
 import WinContainer from 'components/winContainer';
 import Config from 'app/config';
 import routes from './routes';
 import { queryParse } from 'app/utils';
 
-const history = Config.isBorwserHistory
-  ? createBrowserHistory({
-      basename: window.location.pathname,
-    })
-  : createHashHistory();
+const Router: React.ComponentType<any> = Config.isBorwserHistory
+  ? BrowserRouter
+  : HashRouter;
 
 type Props = {
   statusCode?: number;
@@ -22,10 +19,10 @@ const Root = ({}: Props) => {
   return (
     <Fragment>
       {header === 'false' ? (
-        <Router history={history}>{renderRoutes(routes)}</Router>
+        <Router>{renderRoutes(routes)}</Router>
       ) : (
         <WinContainer>
-          <Router history={history}>{renderRoutes(routes)}</Router>
+          <Router>{renderRoutes(routes)}</Router>
         </WinContainer>
       )}
     </Fragment>

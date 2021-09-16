@@ -4,7 +4,7 @@
   @include flex($direction: column, $align: center);
   border-right: 1px solid;
   z-index: 1;
-  -webkit-user-select: none;
+  user-select: none;
   -webkit-app-region: drag;
 
   @include light-theme() {

@@ -1,25 +1,25 @@
 try {
   const { ipcRenderer } = require('electron');
-  const { nativeTheme, app } = require('@electron/remote').require('electron');
+  // const { nativeTheme } = require('@electron/remote');
 
   // nativeTheme.themeSource = 'dark'
 
   // window.ROOT_PATH = window.location.href.startsWith('file') ? '../' : '/';
   window.platform = process.platform;
 
-  function setSystemTheme() {
-    window.systemTheme = nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
-  }
+  // function setSystemTheme() {
+  //   window.systemTheme = nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
+  // }
 
-  setSystemTheme();
+  // setSystemTheme();
 
   /** 全局方法 设置主题 */
-  window.subscribeToSystemThemeChange = (fn) => {
-    nativeTheme.on('updated', () => {
-      setSystemTheme();
-      fn(window.systemTheme);
-    });
-  };
+  // window.subscribeToSystemThemeChange = (fn) => {
+  //   nativeTheme.on('updated', () => {
+  //     setSystemTheme();
+  //     fn(window.systemTheme);
+  //   });
+  // };
 
   window.closeLogin = () => ipcRenderer.send('close-login');
   window.localeMessages = ipcRenderer.sendSync('locale-data');

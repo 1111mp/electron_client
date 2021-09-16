@@ -1,5 +1,3 @@
-/* eslint global-require: off, no-console: off */
-
 /**
  * This module executes inside of electron's main process. You can start
  * electron renderer process from here and communicate with the other processes
@@ -12,7 +10,6 @@
 // import 'regenerator-runtime/runtime';
 import path from 'path';
 import url from 'url';
-import fs from 'fs';
 import {
   app,
   BrowserWindow,
@@ -20,21 +17,19 @@ import {
   ipcMain,
   nativeImage,
   IpcMainEvent,
-  protocol,
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { Mainwin, LoginWin } from './config';
 import { initialize as initSqlite } from './db';
-import sqlChannels from './db/channel';
+import { initialize as sqlChannels } from './db/channel';
 import initMainProcess from './main-process';
+import { NativeThemeNotifier } from './main-process/NativeThemeNotifier';
 import loadLocale from './main-process/locale';
 import TrayCreator from './main-process/tray';
 import listeners from './constants/listener.json';
 import packageJson from '../package.json';
-
-require('@electron/remote/main').initialize();
 
 export default class AppUpdater {
   constructor() {
@@ -44,8 +39,11 @@ export default class AppUpdater {
   }
 }
 
-let mainWindow: BrowserWindow | null = null;
-let loginWindow: BrowserWindow | null = null;
+const nativeThemeNotifier = new NativeThemeNotifier();
+nativeThemeNotifier.initialize();
+
+let mainWindow: BrowserWindow | null;
+let loginWindow: BrowserWindow | null;
 let tray = null; // 创建全局的变量 防止系统托盘被垃圾回收
 
 if (process.env.NODE_ENV === 'production') {
@@ -129,7 +127,6 @@ const createWindow = async (callback: VoidFunction) => {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-      enableRemoteModule: true,
       preload: path.join(__dirname, 'preload.js'),
       backgroundThrottling: false,
     },
@@ -148,6 +145,8 @@ const createWindow = async (callback: VoidFunction) => {
     //开发者工具 https://newsn.net/say/electron-devtools.html
     mainWindow.webContents.openDevTools({ mode: 'undocked' });
   }
+
+  nativeThemeNotifier.addWindow(mainWindow);
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -228,7 +227,6 @@ const createLogin = async () => {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-      enableRemoteModule: true,
       preload: path.join(__dirname, 'login_preload.js'),
       backgroundThrottling: false,
     },
@@ -243,6 +241,8 @@ const createLogin = async () => {
     // 开发者工具 https://newsn.net/say/electron-devtools.html
     loginWindow.webContents.openDevTools({ mode: 'undocked' });
   }
+
+  nativeThemeNotifier.addWindow(loginWindow);
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -370,12 +370,12 @@ app
 
     const success = await sqlInitPromise;
 
-    if (!success) {
+    if (success !== 'successed') {
       console.log('sql.initialize was unsuccessful; returning early');
       return;
     }
 
-    sqlChannels.initialize();
+    sqlChannels();
 
     await createLogin();
   })

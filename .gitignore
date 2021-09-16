@@ -39,6 +39,7 @@ src/renderer.prod.js
 src/renderer.prod.js.map
 src/style.css
 src/style.css.map
+src/renderer-process/**/*.js
 dist
 dll
 main.js
@@ -49,3 +50,7 @@ npm-debug.log.*
 *.css.d.ts
 *.sass.d.ts
 *.scss.d.ts
+
+yarn.lock
+/yarn.lock
+*.lock

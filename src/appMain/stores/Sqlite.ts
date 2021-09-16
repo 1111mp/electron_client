@@ -33,7 +33,7 @@ export default class Sqlite extends Persister {
 
         if (model === 'user') {
           /** user 数据 */
-          (window as any).Signal.sqlClient.upsertUser({ ...value });
+          window.Signal.sqlClient.upsertUser({ ...value });
         }
       } catch (error) {
         console.log(error);
@@ -49,7 +49,7 @@ export default class Sqlite extends Persister {
           let res;
 
           if (model === 'user') {
-            res = await (window as any).Signal.sqlClient.getUserInfo();
+            res = await window.Signal.sqlClient.getUserInfo();
           }
 
           return res;

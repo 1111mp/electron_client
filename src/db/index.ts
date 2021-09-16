@@ -2,9 +2,15 @@ import { resolve } from 'path';
 import { userInfo } from 'os';
 import { app } from 'electron';
 import { Sequelize } from 'sequelize';
-import UserDefiner from './models/user.model';
+import {
+  UserAttributes,
+  UserCreationAttributes,
+  UserFactory,
+} from './models/user.model';
 
-import { SqlInterface, UserType } from './interface';
+import { DB, SqlType } from './types';
+
+const user_id_key = 1;
 
 declare global {
   interface Function {
@@ -12,15 +18,17 @@ declare global {
   }
 }
 
-let sqlInstance: Sequelize | null = null;
+let db: DB | null = null;
+
+// let sequelize: Sequelize | null = null;
 
 export async function initialize() {
-  if (sqlInstance) throw new Error('Cannot initialize more than once!');
+  if (db) throw new Error('Cannot initialize more than once!');
 
   const userDataPath = app.getPath('userData');
 
   try {
-    sqlInstance = new Sequelize('database', '', userInfo().username, {
+    const sequelize = new Sequelize('database', '', userInfo().username, {
       dialect: 'sqlite',
       dialectModule: require('@journeyapps/sqlcipher'),
       storage: resolve(userDataPath, 'db/db.sqlite'),
@@ -31,71 +39,75 @@ export async function initialize() {
       },
     });
 
-    UserDefiner(sqlInstance);
+    const User = UserFactory(sequelize);
 
-    // await sqlInstance.sync({ alter: true });
-    // await sqlInstance.sync({ force: true });
-    await sqlInstance.sync();
+    db = {
+      sequelize,
+      User,
+    };
+
+    sequelize
+      .authenticate()
+      .then(() => {
+        console.info('connected to db');
+        sequelize.sync({ alter: true });
+        // db.sequelize.sync({ force: true });
+      })
+      .catch((error) => {
+        console.error(error);
+        throw 'error';
+      });
+
+    return 'successed';
   } catch (error) {
     // https://github.com/journeyapps/node-sqlcipher/issues/54
-    return false;
+    return 'failed';
   }
-
-  return true;
 }
 
 async function close() {
-  if (!sqlInstance) return;
+  if (!db) return;
 
-  const dbRef = sqlInstance;
-  sqlInstance = null;
-  await dbRef.close();
+  const dbRef = db;
+  db = null;
+  await dbRef.sequelize.close();
 }
 
-function getInstance(): Sequelize {
-  if (!sqlInstance) throw new Error('getInstance: globalInstance not set!');
+function getInstance(): DB {
+  if (!db) throw new Error('getInstance: globalInstance not set!');
 
-  return sqlInstance;
+  return db;
 }
 
-async function upsertUser(data: UserType) {
-  const sequelize: Sequelize = getInstance();
+function upsertUser(data: UserCreationAttributes) {
+  const db = getInstance();
 
-  try {
-    await sequelize.models.User.upsert({
-      id: 1,
-      ...data,
-    });
-
-    return true;
-  } catch (error) {
-    return false;
-  }
+  return db.User.upsert({
+    ...data,
+    id: user_id_key,
+    userId: data.id,
+  });
 }
 
 upsertUser.needsSerial = true;
 
 async function getUserInfo() {
-  const sequelize: Sequelize = getInstance();
+  const db = getInstance();
 
-  try {
-    const result = await sequelize.models.User.findOne({
+  return (
+    await db.User.findOne({
       attributes: { exclude: ['id'] },
-    });
-
-    return result?.toJSON();
-  } catch (error) {
-    return undefined;
-  }
+      where: {
+        id: user_id_key,
+      },
+    })
+  )?.toJSON() as UserAttributes;
 }
 
-const sql: SqlInterface = {
+export const sql: SqlType = {
+  initialize,
   close,
 
   upsertUser,
   getUserInfo,
-
-  initialize,
 };
-
-export default sql;

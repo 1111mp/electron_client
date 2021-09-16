@@ -1,8 +1,8 @@
 import { ipcMain, IpcMainInvokeEvent } from 'electron';
 import PQueue from 'p-queue';
-import sql from './index';
+import { sql } from './index';
 
-import { SqlInterface } from './interface';
+import { SqlType } from './types';
 
 let initialized = false;
 
@@ -36,7 +36,7 @@ function makeSQLJob(fn: Function, args: any[]) {
   };
 }
 
-async function handleCall(callName: keyof SqlInterface, args: any[]) {
+async function handleCall(callName: keyof SqlType, args: any[]) {
   const fn = sql[callName];
 
   if (!fn) {
@@ -85,7 +85,7 @@ async function handleCall(callName: keyof SqlInterface, args: any[]) {
   return result;
 }
 
-function initialize() {
+export function initialize() {
   if (initialized) {
     throw new Error('sqlChannels: already initialized!');
   }
@@ -95,7 +95,7 @@ function initialize() {
     SQL_CHANNEL_KEY,
     async (
       event: IpcMainInvokeEvent,
-      callName: keyof SqlInterface,
+      callName: keyof SqlType,
       ...args: any[]
     ) => {
       try {
@@ -116,5 +116,3 @@ function initialize() {
     }
   );
 }
-
-export default { initialize };

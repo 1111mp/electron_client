@@ -3,6 +3,7 @@ import { LoadFileOption } from 'app/utils/dialog';
 import { resolve, join } from 'path';
 import { parse, format } from 'url';
 import { merge } from 'lodash';
+
 export interface WindowListener {
   readyToShow?: () => void;
   show?: () => void;
@@ -30,12 +31,12 @@ export default class ChildWindow {
           center: true,
           // frame: false,
           show: false,
-          resizable: false,
+          // resizable: false,
           transparent: false,
           webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-            enableRemoteModule: true,
+            preload: join(__dirname, 'preload_win.js'),
           },
         },
         this.winOptions

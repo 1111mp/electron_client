@@ -14,7 +14,7 @@ const config: Config = {
   isBorwserHistory: false,
 
   // serverUrl: 'http://192.168.80.208:3000',
-  serverUrl: 'http://127.0.0.1:3000',
+  serverUrl: 'http://127.0.0.1:3000/api',
 };
 
 /** 主界面 */

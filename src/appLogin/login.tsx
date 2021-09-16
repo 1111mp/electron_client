@@ -45,7 +45,7 @@ const Login: React.FC = () => {
 
   const submit = async () => {
     if (!account || !pwd || aerror || perror) return;
-    request(type === 1 ? '/login' : '/users/register', {
+    request(type === 1 ? '/user/login' : '/user/register', {
       method: 'POST',
       data: { account, pwd },
     })
@@ -54,7 +54,7 @@ const Login: React.FC = () => {
         if (res.code === 200) {
           /** login 成功之后 更新数据库 user信息 */
           try {
-            (window as any).Signal.sqlClient
+            window.Signal.sqlClient
               .upsertUser({
                 token: res.token,
                 ...res.data,

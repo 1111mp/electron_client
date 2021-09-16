@@ -15,11 +15,18 @@ type Props = {
   close?: () => void | boolean;
 };
 
-const WinContainer: React.FC<Props> = (props) => {
-  const { close, enableDrag = true, contentStyle, children } = props;
-  const { title, min = 'true', isClose = 'true', header = 'true' } = queryParse(
-    location.search
-  );
+const WinContainer: React.FC<Props> = ({
+  close,
+  enableDrag = true,
+  contentStyle,
+  children,
+}) => {
+  const {
+    title,
+    min = 'true',
+    isClose = 'true',
+    header = 'true',
+  } = queryParse(location.search);
 
   const closeHandle = () => {
     if (close && typeof close === 'function' && close() === false) return;
@@ -36,7 +43,7 @@ const WinContainer: React.FC<Props> = (props) => {
           <Header
             className={
               'module-win_container-layout-header' +
-              (enableDrag ? ' enable-drag ' : '')
+              (enableDrag ? ' enable-drag' : '')
             }
           >
             <p className="module-win_container-layout-header--title">
