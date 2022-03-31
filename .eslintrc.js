@@ -1,59 +1,11 @@
 module.exports = {
-  extends: 'erb/typescript',
+  extends: 'erb',
   rules: {
-    strict: 0,
-    'arrow-parens': ['off'],
-    'compat/compat': 'error',
-    'consistent-return': 'off',
-    'comma-dangle': 'off',
-    'flowtype/boolean-style': ['error', 'boolean'],
-    'flowtype/define-flow-type': 'warn',
-    'flowtype/delimiter-dangle': ['error', 'never'],
-    'flowtype/generic-spacing': ['error', 'never'],
-    'flowtype/no-primitive-constructor-types': 'error',
-    'flowtype/no-weak-types': 'warn',
-    'flowtype/object-type-delimiter': ['error', 'comma'],
-    'flowtype/require-parameter-type': 'off',
-    'flowtype/require-return-type': 'off',
-    'flowtype/require-valid-file-annotation': 'off',
-    'flowtype/semi': ['error', 'always'],
-    'flowtype/space-after-type-colon': ['error', 'always'],
-    'flowtype/space-before-generic-bracket': ['error', 'never'],
-    'flowtype/space-before-type-colon': ['error', 'never'],
-    'flowtype/union-intersection-spacing': ['error', 'always'],
-    'flowtype/use-flow-type': 'error',
-    'flowtype/valid-syntax': 'error',
-    'generator-star-spacing': 'off',
-    'import/no-unresolved': 'error',
+    // A temporary hack related to IDE not resolving correct package.json
     'import/no-extraneous-dependencies': 'off',
-    'jsx-a11y/anchor-is-valid': 'off',
-    'no-console': 'off',
-    'no-use-before-define': 'off',
-    'no-multi-assign': 'off',
-    'promise/param-names': 'error',
-    'promise/always-return': 'error',
-    'promise/catch-or-return': 'error',
-    'promise/no-native': 'off',
-    'react/sort-comp': [
-      'error',
-      {
-        order: [
-          'type-annotations',
-          'static-methods',
-          'lifecycle',
-          'everything-else',
-          'render',
-        ],
-      },
-    ],
-    'react/jsx-no-bind': 'off',
-    'react/jsx-filename-extension': [
-      'error',
-      {
-        extensions: ['.js', '.jsx'],
-      },
-    ],
-    'react/prefer-stateless-function': 'off',
+    'import/no-unresolved': 'error',
+    // Since React 17 and typescript 4.1 you can safely disable the rule
+    'react/react-in-jsx-scope': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,
@@ -62,14 +14,14 @@ module.exports = {
     tsconfigRootDir: __dirname,
     createDefaultProgram: true,
   },
-  plugins: ['flowtype', 'import', 'promise', 'compat', 'react'],
   settings: {
     'import/resolver': {
       // See https://github.com/benmosher/eslint-plugin-import/issues/1396#issuecomment-575727774 for line below
       node: {},
       webpack: {
-        config: require.resolve('./configs/webpack.config.eslint.js'),
+        config: require.resolve('./.erb/configs/webpack.config.eslint.ts'),
       },
+      typescript: {},
     },
     'import/parsers': {
       '@typescript-eslint/parser': ['.ts', '.tsx'],

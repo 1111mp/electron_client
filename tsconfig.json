@@ -1,41 +1,29 @@
 {
   "extends": "./paths.json",
   "compilerOptions": {
-    "target": "es2017",
-    "module": "CommonJS",
-    "lib": [
-      "dom", // Required to access `window`
-      "dom.iterable",
-      "es2020"
-    ],
+    "target": "es2021",
+    "module": "commonjs",
+    "lib": ["dom", "esnext"],
     "declaration": true,
     "declarationMap": true,
-    "noEmit": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "strict": true,
     "pretty": true,
     "sourceMap": true,
-    /* Additional Checks */
-    "noUnusedLocals": true,
+    // "baseUrl": "./src",
+    "noUnusedLocals": false,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
     "useUnknownInCatchVariables": false,
-    /* Module Resolution Options */
+    "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "allowJs": true,
-    "typeRoots": ["@types", "node_modules/@types"]
+    "typeRoots": ["@types", "node_modules/@types"],
+    "outDir": "release/app/dist"
   },
-  "exclude": [
-    "test",
-    "release",
-    "src/main.prod.js",
-    "src/renderer.prod.js",
-    "src/dist",
-    ".erb/dll"
-  ]
+  "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]
 }

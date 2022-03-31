@@ -2,20 +2,10 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "app/*": ["src/*"],
-      "appMain/*": ["src/appMain/*"],
-      "appWin/*": ["src/appWin/*"],
-      "appLogin/*": ["src/appLogin/*"],
-      "requests/*": ["src/requests/*"],
-      "components/*": ["src/components/*"],
-      "containers/*": ["src/containers/*"],
-      "stores/*": ["src/stores/*"],
-      "routes/*": ["src/routes/*"],
-      "utils/*": ["src/utils/*"],
-      "config/*": ["src/config/*"],
-      "constants/*": ["src/constants/*"],
-      "renderer-process/*": ["src/renderer-process/*"],
-      "main-process/*": ["src/main-process/*"]
+      "App/*": ["src/*"],
+      "Main/*": ["src/main/*"],
+      "Renderer/*": ["src/renderer/*"],
+      "Components/*": ["src/renderer/components/*"]
     }
   }
 }

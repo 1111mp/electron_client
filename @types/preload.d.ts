@@ -1,0 +1,46 @@
+import { SqlClientType } from 'Main/db/types';
+import { WindowArgs } from 'Main/window';
+import { Theme, WindowName } from 'App/types';
+import { NativeThemeListener } from 'Renderer/utils/NativeThemeListener';
+
+declare global {
+  var UserInfo: DB.UserAttributes;
+
+  interface ContextType {
+    NODE_ENV: string;
+    platform: string;
+    ROOT_PATH: string;
+
+    getUserInfo: () => DB.UserAttributes;
+    updateUserInfo: (userInfo: DB.UserAttributes) => void;
+
+    localeMessages: I18n.Message;
+    sqlClient: SqlClientType;
+
+    getUserTheme: () => Theme;
+    getSystemTheme: () => Exclude<Theme, 'system'>;
+    themeSetting: (theme: Theme) => void;
+
+    themeChangedListener: (fn: ThemeChangedListenerFN) => void;
+    themeSettingListener: (fn: ThemeSettingListenerFN) => void;
+
+    // for login window
+    loginSuccessed: (user_str: string) => void;
+    closeLogin: () => void;
+
+    // for other window
+    windowOpen: (args: WindowArgs) => void;
+    windowClose: (name: WindowName) => void;
+  }
+
+  interface Window {
+    Context: ContextType;
+
+    // for theme
+    systemTheme: Theme;
+
+    ThemeContext: {
+      nativeThemeListener: NativeThemeListener;
+    };
+  }
+}
