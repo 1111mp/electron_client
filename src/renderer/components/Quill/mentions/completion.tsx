@@ -1,13 +1,10 @@
 import { createRef } from 'react';
-import { createPortal } from 'react-dom';
-import { Popper } from 'react-popper';
 import classNames from 'classnames';
 import Quill, { DeltaStatic } from 'quill';
 import Delta from 'quill-delta';
 import { Avatar } from 'antd';
 import { debounce } from 'lodash';
 import { ConversationType } from '../memberRepository';
-// import { LocalizerType } from '../../types/Util';
 import { MemberRepository } from '../memberRepository';
 import { matchBlotTextPartitions } from '../utils';
 
@@ -33,8 +30,6 @@ export class MentionCompletion {
 
   index: number;
 
-  root: HTMLDivElement;
-
   quill: Quill;
 
   options: MentionCompletionOptions;
@@ -45,7 +40,6 @@ export class MentionCompletion {
     this.results = [];
     this.index = 0;
     this.options = options;
-    this.root = document.body.appendChild(document.createElement('div'));
     this.quill = quill;
     this.suggestionListRef = createRef<HTMLDivElement>();
 
@@ -75,10 +69,6 @@ export class MentionCompletion {
     this.quill.on('selection-change', this.onSelectionChange.bind(this));
   }
 
-  destroy(): void {
-    this.root.remove();
-  }
-
   changeIndex(by: number): void {
     this.index = (this.index + by + this.results.length) % this.results.length;
     this.render();
@@ -93,7 +83,7 @@ export class MentionCompletion {
     }
   }
 
-  onSelectionChange(): void {
+  onSelectionChange() {
     // Selection should never change while we're editing a mention
     this.clearResults();
   }
@@ -133,7 +123,7 @@ export class MentionCompletion {
     return [];
   }
 
-  onTextChange(): void {
+  onTextChange() {
     const showMemberResults = this.possiblyShowMemberResults();
 
     if (showMemberResults.length > 0) {
@@ -145,7 +135,7 @@ export class MentionCompletion {
     }
   }
 
-  completeMention(resultIndexArg?: number): void {
+  completeMention(resultIndexArg?: number) {
     const resultIndex = resultIndexArg || this.index;
 
     const range = this.quill.getSelection();
@@ -179,7 +169,7 @@ export class MentionCompletion {
     index: number,
     range: number,
     withTrailingSpace = false
-  ): void {
+  ) {
     const delta = new Delta()
       .retain(index)
       .delete(range)
@@ -196,18 +186,14 @@ export class MentionCompletion {
     this.clearResults();
   }
 
-  clearResults(): void {
+  clearResults() {
     this.results = [];
     this.index = 0;
 
     this.render();
   }
 
-  onUnmount(): void {
-    document.body.removeChild(this.root);
-  }
-
-  render(): void {
+  render() {
     const { results: memberResults, index: memberResultsIndex } = this;
 
     if (memberResults.length === 0) {
@@ -215,80 +201,52 @@ export class MentionCompletion {
       return;
     }
 
-    const element = createPortal(
-      <Popper
-        placement="top"
-        modifiers={[
-          {
-            name: 'sameWidth',
-            enabled: true,
-            phase: 'beforeWrite',
-            requires: ['computeStyles'],
-            fn: ({ state }) => {
-              state.styles.popper.width = `${state.rects.reference.width}px`;
-            },
-            effect: ({ state }) => {
-              state.elements.popper.style.width = `${
-                state.elements.reference.getBoundingClientRect().width
-              }px`;
-            },
-          },
-        ]}
+    const element = (
+      <div
+        className="module-composition-input__suggestions"
+        role="listbox"
+        aria-expanded
+        aria-activedescendant={`mention-result--${
+          memberResults.length ? memberResults[memberResultsIndex].name : ''
+        }`}
+        tabIndex={0}
       >
-        {({ ref, style }) => (
-          <div
-            ref={ref}
-            className="module-composition-input__suggestions"
-            style={{
-              ...style,
-              bottom: '6px',
-            }}
-            role="listbox"
-            aria-expanded
-            aria-activedescendant={`mention-result--${
-              memberResults.length ? memberResults[memberResultsIndex].name : ''
-            }`}
-            tabIndex={0}
-          >
-            <div
-              ref={this.suggestionListRef}
-              className="module-composition-input__suggestions--scroller"
+        <div
+          ref={this.suggestionListRef}
+          className="module-composition-input__suggestions--scroller"
+        >
+          {memberResults.map((member, index) => (
+            <button
+              type="button"
+              key={member.uuid}
+              id={`mention-result--${member.name}`}
+              role="option button"
+              aria-selected={memberResultsIndex === index}
+              onClick={() => {
+                this.completeMention(index);
+              }}
+              className={classNames(
+                'module-composition-input__suggestions__row',
+                'module-composition-input__suggestions__row--mention',
+                memberResultsIndex === index
+                  ? 'module-composition-input__suggestions__row--selected'
+                  : null
+              )}
             >
-              {memberResults.map((member, index) => (
-                <button
-                  type="button"
-                  key={member.uuid}
-                  id={`mention-result--${member.name}`}
-                  role="option button"
-                  aria-selected={memberResultsIndex === index}
-                  onClick={() => {
-                    this.completeMention(index);
-                  }}
-                  className={classNames(
-                    'module-composition-input__suggestions__row',
-                    'module-composition-input__suggestions__row--mention',
-                    memberResultsIndex === index
-                      ? 'module-composition-input__suggestions__row--selected'
-                      : null
-                  )}
-                >
-                  <Avatar
-                    src={member.avatarPath}
-                    shape="circle"
-                    // i18n={this.options.i18n}
-                    size={28}
-                    alt={member.title}
-                  />
-                  <div className="module-composition-input__suggestions__title">
-                    {member.title}
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </Popper>,
-      this.root
+              <Avatar
+                src={member.avatarPath}
+                shape="circle"
+                // i18n={this.options.i18n}
+                size={28}
+                alt={member.title}
+              />
+              <div className="module-composition-input__suggestions__title">
+                {member.title}
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
     );
 
     this.options.setMentionPickerElement(element);

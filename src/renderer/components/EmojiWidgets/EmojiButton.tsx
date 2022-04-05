@@ -1,9 +1,9 @@
 import './Button.scss';
 
-import * as React from 'react';
+import { memo, useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 
-import { Manager, Popper, Reference } from 'react-popper';
+import { usePopper } from 'react-popper';
 import { EmojiPicker, Props as EmojiPickerProps } from './EmojiPicker';
 import { get, noop } from 'lodash';
 
@@ -12,30 +12,27 @@ export type Props = Pick<
   'doSend' | 'onPickEmoji' | 'onSetSkinTone' | 'recentEmojis' | 'skinTone'
 >;
 
-export const EmojiButton = React.memo(({ onPickEmoji }: Props) => {
-  const [open, setOpen] = React.useState(false);
-  const [popperRoot, setPopperRoot] = React.useState<HTMLElement | null>(null);
+export const EmojiButton = memo(({ onPickEmoji }: Props) => {
+  const [open, setOpen] = useState(false);
 
-  const handleClickButton = React.useCallback(() => {
-    if (popperRoot) {
-      setOpen(false);
-    } else {
-      setOpen(true);
-    }
-  }, [popperRoot, setOpen]);
+  const [referenceElement, setReferenceElement] =
+    useState<HTMLLIElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
+    null
+  );
 
-  /** 关闭 emoji 弹窗 */
-  const handleClose = React.useCallback(() => {
-    setOpen(false);
-  }, [setOpen]);
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: 'top-start',
+  });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (open) {
-      const root = document.createElement('div');
-      setPopperRoot(root);
-      document.body.appendChild(root);
-      const handleOutsideClick = ({ target }: MouseEvent) => {
-        if (!root.contains(target as Node)) {
+      const root = document.querySelector('#destination');
+
+      const handleOutsideClick = (evt: MouseEvent) => {
+        evt.stopPropagation();
+
+        if (!root!.contains(evt.target as Node)) {
           setOpen(false);
         }
       };
@@ -44,16 +41,14 @@ export const EmojiButton = React.memo(({ onPickEmoji }: Props) => {
 
       return () => {
         document.removeEventListener('click', handleOutsideClick);
-        document.body.removeChild(root);
-        setPopperRoot(null);
       };
     }
 
     return noop;
-  }, [open, setOpen, setPopperRoot]);
+  }, [open, setOpen]);
 
-  /** 添加打开 emoji 弹窗的快捷键 */
-  React.useEffect(() => {
+  // 添加打开 emoji 弹窗的快捷键
+  useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
       const { ctrlKey, key, metaKey, shiftKey } = event;
       const commandKey = get(window, 'platform') === 'darwin' && metaKey;
@@ -75,34 +70,39 @@ export const EmojiButton = React.memo(({ onPickEmoji }: Props) => {
     };
   }, [open, setOpen]);
 
+  const handleClickButton: React.MouseEventHandler<HTMLLIElement> = (evt) => {
+    evt.stopPropagation();
+    setOpen(!open);
+  };
+
+  // close emoji pop-ups
+  const handleClose = useCallback(() => {
+    setOpen(false);
+  }, [setOpen]);
+
   return (
-    <Manager>
-      <Reference>
-        {({ ref }) => (
-          <li
-            ref={ref}
-            className="action-content__emoji"
-            onClick={handleClickButton}
-          >
-            <span className={'iconfont iconemoji'}></span>
-          </li>
-        )}
-      </Reference>
-      {open && popperRoot
-        ? createPortal(
-            <Popper placement="top-start">
-              {({ ref, style }) => (
-                <EmojiPicker
-                  ref={ref}
-                  style={{ ...style, bottom: '12px' }}
-                  onClose={handleClose}
-                  onPickEmoji={onPickEmoji}
-                />
-              )}
-            </Popper>,
-            popperRoot
-          )
-        : null}
-    </Manager>
+    <>
+      <li
+        ref={setReferenceElement}
+        className="action-content__emoji"
+        onClick={handleClickButton}
+      >
+        <span className="iconfont iconemoji"></span>
+      </li>
+      {createPortal(
+        open ? (
+          <EmojiPicker
+            ref={setPopperElement}
+            style={{ ...styles.popper, bottom: '12px' }}
+            onClose={handleClose}
+            onPickEmoji={onPickEmoji}
+            {...attributes.popper}
+          />
+        ) : (
+          <></>
+        ),
+        document.querySelector('#destination')!
+      )}
+    </>
   );
 });

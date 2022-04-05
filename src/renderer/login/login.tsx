@@ -46,7 +46,7 @@ const Login: React.FC = () => {
   const submit = async () => {
     if (!account || !pwd || aerror || perror) return;
     request(type === 1 ? '/user/login' : '/user/register', {
-      method: 'POST',
+      method: 'GET',
       data: { account, pwd },
     })
       .then(async (res: any) => {

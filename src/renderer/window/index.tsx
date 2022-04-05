@@ -1,6 +1,6 @@
 import './styles.scss';
 
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { matchRoutes } from 'react-router-dom';
 import Root from './root';
 import { routerConfig } from './routes';
@@ -53,5 +53,6 @@ function preloadComponent() {
     statusCode = 500;
   }
 
-  render(<Root statusCode={statusCode} />, document.getElementById('root'));
+  const root = createRoot(document.getElementById('root')!);
+  root.render(<Root statusCode={statusCode} />);
 })();

@@ -1,12 +1,10 @@
 import Parchment from 'parchment';
 import Quill from 'quill';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Emojify } from 'Components/Emojify';
 import { MentionBlotValue } from '../utils';
 
-class QuillEmbed extends Parchment.Embed {}
-
-const Embed: typeof QuillEmbed = Quill.import('blots/embed');
+const Embed: typeof Parchment.Embed = Quill.import('blots/embed');
 
 export class MentionBlot extends Embed {
   static blotName = 'mention';
@@ -44,14 +42,14 @@ export class MentionBlot extends Embed {
 
     const mentionSpan = document.createElement('span');
 
-    render(
+    const root = createRoot(mentionSpan);
+    root.render(
       <span className="module-composition-input__at-mention">
         <bdi>
           @
           <Emojify text={mention.title} />
         </bdi>
-      </span>,
-      mentionSpan
+      </span>
     );
 
     node.appendChild(mentionSpan);
@@ -60,7 +58,6 @@ export class MentionBlot extends Embed {
   constructor(node: Node) {
     super(node);
 
-    console.log(this.contentNode);
     this.contentNode && this.contentNode.removeAttribute('contenteditable');
   }
 }

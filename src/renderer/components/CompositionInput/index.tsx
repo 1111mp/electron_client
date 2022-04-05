@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import Quill, { KeyboardStatic, RangeStatic, DeltaStatic } from 'quill';
 import Delta from 'quill-delta';
 import ReactQuill from 'react-quill';
-import { Manager, Reference } from 'react-popper';
+import { Manager, Reference, usePopper } from 'react-popper';
 
 import { EmojiBlot, EmojiCompletion } from 'Components/Quill/emoji';
 import {
@@ -34,6 +34,7 @@ import {
 import { convertShortName } from 'Components/EmojiWidgets/lib';
 import { SignalClipboard } from 'Components/Quill/signal-clipboard';
 import { useI18n } from 'Renderer/utils/i18n';
+import { createPortal } from 'react-dom';
 
 Quill.register('formats/emoji', EmojiBlot);
 Quill.register('formats/mention', MentionBlot);
@@ -117,6 +118,19 @@ export const CompositionInput: React.ComponentType<Props> = (props) => {
     useState<RangeStatic | null>(null);
   const [mentionCompletionElement, setMentionCompletionElement] =
     useState<JSX.Element>();
+
+  const [referenceElement, setReferenceElement] =
+    useState<HTMLDivElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
+    null
+  );
+  const { styles, attributes, state } = usePopper(
+    referenceElement,
+    popperElement,
+    {
+      placement: 'top-start',
+    }
+  );
 
   const emojiCompletionRef = useRef<EmojiCompletion>();
   const mentionCompletionRef = useRef<MentionCompletion>();
@@ -542,21 +556,38 @@ export const CompositionInput: React.ComponentType<Props> = (props) => {
   }, []);
 
   return (
-    <Manager>
-      <Reference>
-        {({ ref }) => (
-          <div className="module-composition-input__input" ref={ref}>
-            <div
-              ref={scrollerRef}
-              className="module-composition-input__input__scroller"
-            >
-              {reactQuill}
-              {emojiCompletionElement}
-              {mentionCompletionElement}
-            </div>
+    <>
+      <div
+        className="module-composition-input__input"
+        ref={setReferenceElement}
+      >
+        <div
+          ref={scrollerRef}
+          className="module-composition-input__input__scroller"
+        >
+          {reactQuill}
+        </div>
+      </div>
+      {createPortal(
+        emojiCompletionElement || mentionCompletionElement ? (
+          <div
+            ref={setPopperElement}
+            style={{
+              ...styles.popper,
+              width: state ? state.rects.reference.width : 0,
+            }}
+            {...attributes.popper}
+          >
+            {emojiCompletionElement
+              ? emojiCompletionElement
+              : mentionCompletionElement}
           </div>
-        )}
-      </Reference>
-    </Manager>
+        ) : (
+          <></>
+        ),
+        document.querySelector('#destination')!
+      )}
+      {/* {mentionCompletionElement} */}
+    </>
   );
 };

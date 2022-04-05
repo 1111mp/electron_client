@@ -1,10 +1,7 @@
 import Quill from 'quill';
 import Delta from 'quill-delta';
-import _ from 'lodash';
+import { debounce } from 'lodash';
 
-import { Popper } from 'react-popper';
-// import classNames from 'classnames';
-import { createPortal } from 'react-dom';
 import {
   EmojiData,
   search,
@@ -31,15 +28,12 @@ export class EmojiCompletion {
 
   options: EmojiPickerOptions;
 
-  root: HTMLDivElement;
-
   quill: Quill;
 
   constructor(quill: Quill, options: EmojiPickerOptions) {
     this.results = [];
     this.index = 0;
     this.options = options;
-    this.root = document.body.appendChild(document.createElement('div'));
     this.quill = quill;
 
     const clearResults = () => {
@@ -81,16 +75,12 @@ export class EmojiCompletion {
 
     this.quill.on(
       'text-change',
-      _.debounce(() => this.onTextChange(), 100)
+      debounce(() => this.onTextChange(), 100)
     );
     this.quill.on('selection-change', this.onSelectionChange.bind(this));
   }
 
-  destroy(): void {
-    this.root.remove();
-  }
-
-  changeIndex(by: number): void {
+  changeIndex(by: number) {
     // debugger
     this.index = (this.index + by + this.results.length) % this.results.length;
     this.render();
@@ -103,7 +93,7 @@ export class EmojiCompletion {
     return getBlotTextPartitions(blot, index);
   }
 
-  onSelectionChange(): void {
+  onSelectionChange() {
     // Selection should never change while we're editing an emoji
     this.reset();
   }
@@ -191,7 +181,7 @@ export class EmojiCompletion {
     return PASS_THROUGH;
   }
 
-  completeEmoji(): void {
+  completeEmoji() {
     const range = this.quill.getSelection();
 
     if (range === null) return;
@@ -218,7 +208,7 @@ export class EmojiCompletion {
     index: number,
     range: number,
     withTrailingSpace = false
-  ): void {
+  ) {
     const emoji = convertShortName(emojiData.short_name, this.options.skinTone);
 
     const delta = new Delta().retain(index).delete(range).insert({ emoji });
@@ -240,7 +230,7 @@ export class EmojiCompletion {
     this.reset();
   }
 
-  reset(): void {
+  reset() {
     if (this.results.length) {
       this.results = [];
       this.index = 0;
@@ -249,11 +239,7 @@ export class EmojiCompletion {
     }
   }
 
-  onUnmount(): void {
-    document.body.removeChild(this.root);
-  }
-
-  render(): void {
+  render() {
     const { results: emojiResults, index: emojiResultsIndex } = this;
 
     if (emojiResults.length === 0) {
@@ -261,76 +247,45 @@ export class EmojiCompletion {
       return;
     }
 
-    const element = createPortal(
-      <Popper
-        placement="top-start"
-        modifiers={[
-          {
-            name: 'sameWidth',
-            enabled: true,
-            phase: 'beforeWrite',
-            requires: ['computeStyles'],
-            fn: ({ state }) => {
-              state.styles.popper.width = `${state.rects.reference.width}px`;
-            },
-            effect: ({ state }) => {
-              state.elements.popper.style.width = `${
-                state.elements.reference.getBoundingClientRect().width
-              }px`;
-            },
-          },
-        ]}
+    const element = (
+      <div
+        className="module-composition-input__suggestions"
+        role="listbox"
+        aria-expanded
+        aria-activedescendant={`emoji-result--${
+          emojiResults.length ? emojiResults[emojiResultsIndex].short_name : ''
+        }`}
+        tabIndex={0}
       >
-        {({ ref, style }) => (
-          <div
-            ref={ref}
-            className="module-composition-input__suggestions"
-            style={{
-              ...style,
-              // left: '20px',
-              bottom: '6px',
+        {emojiResults.map((emoji, index) => (
+          <button
+            type="button"
+            key={emoji.short_name}
+            id={`emoji-result--${emoji.short_name}`}
+            role="option button"
+            aria-selected={emojiResultsIndex === index}
+            onClick={() => {
+              this.index = index;
+              this.completeEmoji();
             }}
-            role="listbox"
-            aria-expanded
-            aria-activedescendant={`emoji-result--${
-              emojiResults.length
-                ? emojiResults[emojiResultsIndex].short_name
-                : ''
-            }`}
-            tabIndex={0}
+            className={
+              'module-composition-input__suggestions__row' +
+              (emojiResultsIndex === index
+                ? ' module-composition-input__suggestions__row--selected'
+                : '')
+            }
           >
-            {emojiResults.map((emoji, index) => (
-              <button
-                type="button"
-                key={emoji.short_name}
-                id={`emoji-result--${emoji.short_name}`}
-                role="option button"
-                aria-selected={emojiResultsIndex === index}
-                onClick={() => {
-                  this.index = index;
-                  this.completeEmoji();
-                }}
-                className={
-                  'module-composition-input__suggestions__row' +
-                  (emojiResultsIndex === index
-                    ? ' module-composition-input__suggestions__row--selected'
-                    : '')
-                }
-              >
-                <Emoji
-                  shortName={emoji.short_name}
-                  size={16}
-                  skinTone={this.options.skinTone}
-                />
-                <div className="module-composition-input__suggestions__row__short-name">
-                  :{emoji.short_name}:
-                </div>
-              </button>
-            ))}
-          </div>
-        )}
-      </Popper>,
-      this.root
+            <Emoji
+              shortName={emoji.short_name}
+              size={16}
+              skinTone={this.options.skinTone}
+            />
+            <div className="module-composition-input__suggestions__row__short-name">
+              :{emoji.short_name}:
+            </div>
+          </button>
+        ))}
+      </div>
     );
 
     this.options.setEmojiPickerElement(element);

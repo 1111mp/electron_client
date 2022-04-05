@@ -1,6 +1,6 @@
 import './styles.scss';
 
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import Root from './root';
 // import { applyTheme } from 'app/utils';
 
@@ -8,6 +8,6 @@ import Root from './root';
   // (window as any).subscribeToSystemThemeChange((theme: string) => {
   //   applyTheme(theme);
   // });
-
-  render(<Root />, document.getElementById('root'));
+  const root = createRoot(document.getElementById('root')!);
+  root.render(<Root />);
 })();

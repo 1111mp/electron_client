@@ -46,6 +46,7 @@ export class NativeThemeListener {
   private update(update: boolean = false): void {
     // TODO electron not support this way to change
     update &&
+      this.holder.Context.updateUserInfo &&
       this.holder.Context.updateUserInfo({
         ...window.Context.getUserInfo(),
         theme: this.theme,
