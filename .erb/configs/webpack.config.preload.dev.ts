@@ -13,11 +13,11 @@ if (process.env.NODE_ENV === 'production') {
   checkNodeEnv('development');
 }
 
-const preload_files = fs.readdirSync(webpackPaths.srcProloadPath);
+const preload_files = fs.readdirSync(webpackPaths.srcPreloadPath);
 const entry = preload_files.reduce(
   (acc, cur) => ({
     ...acc,
-    [cur.split('.')[0]]: path.join(webpackPaths.srcProloadPath, cur),
+    [cur.split('.')[0]]: path.join(webpackPaths.srcPreloadPath, cur),
   }),
   {}
 );

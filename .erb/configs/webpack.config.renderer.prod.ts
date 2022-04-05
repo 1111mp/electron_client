@@ -32,12 +32,16 @@ const configuration: webpack.Configuration = {
 
   target: ['web', 'electron-renderer'],
 
-  entry: [path.join(webpackPaths.srcRendererPath, 'index.tsx')],
+  entry: {
+    main: path.join(webpackPaths.srcRendererPath, 'main/index.tsx'),
+    login: path.join(webpackPaths.srcRendererPath, 'login/index.tsx'),
+    window: path.join(webpackPaths.srcRendererPath, 'window/index.tsx'),
+  },
 
   output: {
     path: webpackPaths.distRendererPath,
     publicPath: './',
-    filename: 'renderer.js',
+    filename: '[name].bundle.js',
     library: {
       type: 'umd',
     },
@@ -52,18 +56,40 @@ const configuration: webpack.Configuration = {
           {
             loader: 'css-loader',
             options: {
-              modules: true,
+              modules: {
+                localIdentName: '[name]__[local]__[hash:base64:5]',
+              },
               sourceMap: true,
               importLoaders: 1,
             },
           },
           'sass-loader',
+          {
+            loader: 'sass-resources-loader',
+            options: {
+              resources: [
+                path.join(webpackPaths.srcRendererPath, 'styles/mixin.scss'),
+              ],
+            },
+          },
         ],
         include: /\.module\.s?(c|a)ss$/,
       },
       {
         test: /\.s?(a|c)ss$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'sass-loader',
+          {
+            loader: 'sass-resources-loader',
+            options: {
+              resources: [
+                path.join(webpackPaths.srcRendererPath, 'styles/mixin.scss'),
+              ],
+            },
+          },
+        ],
         exclude: /\.module\.s?(c|a)ss$/,
       },
       // Fonts
@@ -105,7 +131,8 @@ const configuration: webpack.Configuration = {
     }),
 
     new MiniCssExtractPlugin({
-      filename: 'style.css',
+      filename: '[name].[contenthash].css',
+      chunkFilename: '[id].[contenthash].css',
     }),
 
     new BundleAnalyzerPlugin({
@@ -113,13 +140,40 @@ const configuration: webpack.Configuration = {
     }),
 
     new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: path.join(webpackPaths.srcRendererPath, 'index.ejs'),
+      filename: 'main.html',
+      template: path.join(webpackPaths.srcRendererPath, 'main/index.ejs'),
       minify: {
         collapseWhitespace: true,
         removeAttributeQuotes: true,
         removeComments: true,
       },
+      chunks: ['main'],
+      isBrowser: false,
+      isDevelopment: process.env.NODE_ENV !== 'production',
+    }),
+
+    new HtmlWebpackPlugin({
+      filename: 'login.html',
+      template: path.join(webpackPaths.srcRendererPath, 'login/index.ejs'),
+      minify: {
+        collapseWhitespace: true,
+        removeAttributeQuotes: true,
+        removeComments: true,
+      },
+      chunks: ['login'],
+      isBrowser: false,
+      isDevelopment: process.env.NODE_ENV !== 'production',
+    }),
+
+    new HtmlWebpackPlugin({
+      filename: 'window.html',
+      template: path.join(webpackPaths.srcRendererPath, 'window/index.ejs'),
+      minify: {
+        collapseWhitespace: true,
+        removeAttributeQuotes: true,
+        removeComments: true,
+      },
+      chunks: ['window'],
       isBrowser: false,
       isDevelopment: process.env.NODE_ENV !== 'production',
     }),
