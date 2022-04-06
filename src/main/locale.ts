@@ -1,5 +1,6 @@
 import { join } from 'path';
 import { readFileSync } from 'fs';
+import { app } from 'electron';
 import { merge } from 'lodash';
 import { setup } from './i18n';
 
@@ -14,18 +15,14 @@ function normalizeLocaleName(locale: string) {
 function getLocaleMessages(locale: string): I18n.Message {
   const onDiskLocale = locale.replace('-', '_');
 
-  const targetFile = join(
-    __dirname,
-    '../..',
-    '_locales',
-    onDiskLocale,
-    'messages.json'
-  );
+  const targetFile = app.isPackaged
+    ? join(process.resourcesPath, '_locales', onDiskLocale, 'messages.json')
+    : join(__dirname, '../..', '_locales', onDiskLocale, 'messages.json');
 
   return JSON.parse(readFileSync(targetFile, 'utf-8'));
 }
 
-export function loadLocale({
+export default function loadLocale({
   appLocale,
 }: { appLocale?: string } = {}): I18n.Locale {
   if (!appLocale) {

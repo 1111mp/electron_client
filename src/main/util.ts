@@ -18,19 +18,19 @@ if (process.env.NODE_ENV === 'development') {
   resolveHtmlPath = ({ html, url: hash, search }) => {
     const url = new URL(`http://localhost:${port}`);
     url.pathname = html;
-    if (hash !== void 0) {
+    if (hash !== undefined) {
       url.hash = hash;
     }
-    if (search !== void 0) {
+    if (search !== undefined) {
       url.search = new URLSearchParams(search).toString();
     }
     return url.href;
   };
 } else {
   resolveHtmlPath = ({ html, url, search }) => {
-    const search_str = new URLSearchParams(search).toString();
+    const searchStr = new URLSearchParams(search).toString();
     return `file://${path.resolve(__dirname, '../renderer/', html)}${
-      url ? `#${url}` : ''
-    }${search_str}`;
+      url ? `#${url}?` : '?'
+    }${searchStr}`;
   };
 }

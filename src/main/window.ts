@@ -89,6 +89,12 @@ export function setupForNewWindow(
 
     nativeThemeNotifier.addWindow(window);
 
+    // if (
+    //   process.env.NODE_ENV === 'development' ||
+    //   process.env.DEBUG_PROD === 'true'
+    // )
+    window.webContents.openDevTools({ mode: 'undocked' });
+
     window.on('ready-to-show', () => {
       if (!window) {
         throw new Error(`"window[${name}]" is not defined`);
@@ -99,8 +105,10 @@ export function setupForNewWindow(
     });
 
     window.on('closed', () => {
-      windowsPool.has(name) && windowsPool.delete(name);
+      if (windowsPool.has(name)) windowsPool.delete(name);
     });
+
+    return;
   });
 
   /**

@@ -18,9 +18,6 @@
     "prepare": "husky install"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "cross-env NODE_ENV=development eslint --cache"
-    ],
     "*.json,.{eslintrc,prettierrc}": [
       "prettier --ignore-path .eslintignore --parser json --write"
     ],
@@ -39,7 +36,18 @@
     "files": [
       "dist",
       "node_modules",
-      "package.json"
+      "package.json",
+      "!node_modules/emoji-datasource-apple/emoji_pretty.json",
+      "!node_modules/emoji-datasource-apple/img/apple/sheets*",
+      "!node_modules/spellchecker/vendor/hunspell/**/*",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme,test,__tests__,tests,powered-test,example,examples,*.d.ts,.snyk-*.flag,benchmark}",
+      "node_modules/intl-tel-input/build/**",
+      "!**/node_modules/**/prebuilds/**",
+      "!**/*.{o,hprof,orig,pyc,pyo,rbc}",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,thumbs.db,.gitignore,.gitattributes,.flowconfig,.yarn-metadata.json,.idea,appveyor.yml,.travis.yml,circle.yml,npm-debug.log,.nyc_output,yarn.lock,.yarn-integrity}",
+      "!**/node_modules/react-dom/*/*.development.js",
+      "!node_modules/.cache"
     ],
     "afterSign": ".erb/scripts/notarize.js",
     "mac": {
@@ -81,18 +89,26 @@
       ],
       "category": "Development"
     },
+    "nsis": {
+      "include": "./installer.nsi",
+      "oneClick": false,
+      "deleteAppDataOnUninstall": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "menuCategory": false
+    },
     "directories": {
       "app": "release/app",
       "buildResources": "assets",
       "output": "release/build"
     },
     "extraResources": [
-      "./assets/**"
+      "./assets/**",
+      "./_locales/**"
     ],
     "publish": {
-      "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate"
+      "provider": "generic",
+      "url": "http://127.0.0.1:3000"
     }
   },
   "repository": {

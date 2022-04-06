@@ -1,3 +1,5 @@
+/** eslint vars-on-top: off, no-var: off */
+
 import { SqlClientType } from 'Main/db/types';
 import { WindowArgs } from 'Main/window';
 import { Theme, WindowName } from 'App/types';
@@ -12,7 +14,7 @@ declare global {
     ROOT_PATH: string;
 
     getUserInfo: () => DB.UserAttributes;
-    updateUserInfo: (userInfo: DB.UserAttributes) => void;
+    updateUserInfo: (userInfo: DB.UserAttributes) => unknown;
 
     localeMessages: I18n.Message;
     sqlClient: SqlClientType;

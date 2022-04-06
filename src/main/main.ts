@@ -15,10 +15,10 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath, SearchType } from './util';
 import packageJson from '../../package.json';
-import { loadLocale } from './locale';
+import loadLocale from './locale';
 import { initialize as initSqlite } from './db';
 import { initialize as sqlChannels } from './db/channel';
-import { NativeThemeNotifier } from './/NativeThemeNotifier';
+import { NativeThemeNotifier } from './NativeThemeNotifier';
 import { setupForNewWindow } from './window';
 
 export default class AppUpdater {
@@ -124,6 +124,9 @@ const createWindow = async (callback: VoidFunction) => {
 
   nativeThemeNotifier.addWindow(mainWindow);
 
+  // if (isDevelopment)
+  mainWindow.webContents.openDevTools({ mode: 'undocked' });
+
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
@@ -184,6 +187,8 @@ const createLogin = async () => {
 
   loginWindow.loadURL(resolveHtmlPath({ html: 'login.html', search }));
 
+  loginWindow.webContents.openDevTools({ mode: 'undocked' });
+
   loginWindow.on('ready-to-show', () => {
     if (!loginWindow) {
       throw new Error('"loginWindow" is not defined');
@@ -208,8 +213,14 @@ const createLogin = async () => {
     };
 
     createWindow(() => {
-      loginWindow && loginWindow.close();
+      if (loginWindow) loginWindow.close();
     });
+  });
+
+  ipcMain.once('close-login', () => {
+    if (loginWindow) {
+      loginWindow.close();
+    }
   });
 };
 
@@ -241,38 +252,40 @@ app
       setTimeout(resolve, 3000, 'timeout')
     );
 
-    Promise.race([sqlInitPromise, timeout]).then((maybeTimeout) => {
-      if (maybeTimeout !== 'timeout') return;
+    Promise.race([sqlInitPromise, timeout])
+      .then((maybeTimeout) => {
+        if (maybeTimeout !== 'timeout') return;
 
-      /** 这里可以加载 loading 过渡 */
-      console.log(
-        'sql.initialize is taking more than three seconds; showing loading dialog'
-      );
+        /** 这里可以加载 loading 过渡 */
+        console.log(
+          'sql.initialize is taking more than three seconds; showing loading dialog'
+        );
 
-      // loadingWindow = new BrowserWindow({
-      //   show: false,
-      //   width: 300,
-      //   height: 265,
-      //   resizable: false,
-      //   frame: false,
-      //   backgroundColor: '#3a76f0',
-      //   webPreferences: {
-      //     nodeIntegration: false,
-      //     preload: path.join(__dirname, 'loading_preload.js'),
-      //   },
-      //   icon: windowIcon,
-      // });
+        // loadingWindow = new BrowserWindow({
+        //   show: false,
+        //   width: 300,
+        //   height: 265,
+        //   resizable: false,
+        //   frame: false,
+        //   backgroundColor: '#3a76f0',
+        //   webPreferences: {
+        //     nodeIntegration: false,
+        //     preload: path.join(__dirname, 'loading_preload.js'),
+        //   },
+        //   icon: windowIcon,
+        // });
 
-      // loadingWindow.once('ready-to-show', async () => {
-      //   loadingWindow.show();
-      //   // Wait for sql initialization to complete
-      //   await sqlInitPromise;
-      //   loadingWindow.destroy();
-      //   loadingWindow = null;
-      // });
+        // loadingWindow.once('ready-to-show', async () => {
+        //   loadingWindow.show();
+        //   // Wait for sql initialization to complete
+        //   await sqlInitPromise;
+        //   loadingWindow.destroy();
+        //   loadingWindow = null;
+        // });
 
-      // loadingWindow.loadURL(prepareURL([__dirname, 'loading.html']));
-    });
+        // loadingWindow.loadURL(prepareURL([__dirname, 'loading.html']));
+      })
+      .catch((err) => console.error(err));
 
     const success = await sqlInitPromise;
 

@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { sqlClient } from '../db/client';
 import { WindowArgs } from '../window';
-import { Theme, WindowName } from 'App/types';
+import { Theme, WindowName } from '../../types';
 
 (async function () {
   try {
@@ -14,11 +14,12 @@ import { Theme, WindowName } from 'App/types';
     contextBridge.exposeInMainWorld('Context', {
       platform: process.platform,
       NODE_ENV: process.env.NODE_ENV,
-      ROOT_PATH: window.location.href.startsWith('file') ? '../' : '/',
+      ROOT_PATH: window.location.href.startsWith('file') ? '../../' : '/',
 
       getUserInfo: () => UserInfo,
-      updateUserInfo: (userInfo: DB.UserAttributes) =>
-        (UserInfo = { ...userInfo }),
+      updateUserInfo: (userInfo: DB.UserAttributes) => {
+        UserInfo = { ...userInfo };
+      },
 
       windowOpen: (args: WindowArgs) => ipcRenderer.send('window:open', args),
       windowClose: (name: WindowName) => ipcRenderer.send('window:close', name),
@@ -46,7 +47,9 @@ import { Theme, WindowName } from 'App/types';
       localeMessages,
       sqlClient,
     });
-  } catch (err) {}
+  } catch (err) {
+    console.error(err);
+  }
 
   console.log('preload complete');
 })();
