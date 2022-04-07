@@ -1,6 +1,5 @@
 {
   "name": "electron-client",
-  "productName": "ElectronClient",
   "description": "ElectronClient application based on React, React Router, Webpack, React Hot Loader for rapid application development",
   "scripts": {
     "build": "concurrently \"npm run build:main\" \"npm run build:renderer\"",
@@ -9,6 +8,14 @@
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
     "package": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never",
+    "package:win32": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --win --ia32 --publish never",
+    "package:win64": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --win --x64 --publish never",
+    "package:mac": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --mac --publish never",
+    "publish": "ts-node ./.erb/scripts/publish.ts",
+    "publish:full:win32": "npm run package:win32 && cross-env PUBLISH_TYPE=full platform=win32 archs=ia32 npm run publish",
+    "publish:full:win64": "npm run package:win64 && cross-env PUBLISH_TYPE=full platform=win32 archs=x64 npm run publish",
+    "publish:full:mac": "npm run package:mac && cross-env PUBLISH_TYPE=full platform=darwin npm run publish",
+    "package:asar": "npm run package && npm run publish:asar",
     "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts && opencollective-postinstall",
     "start": "ts-node ./.erb/scripts/check-port-in-use.js && npm run start:renderer",
     "start:main": "cross-env NODE_ENV=development electron -r ts-node/register/transpile-only ./src/main/main.ts",
@@ -36,6 +43,7 @@
     "appId": "org.erb.ElectronClient",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
+    "artifactName": "${productName}_Setup_${arch}_${version}.${ext}",
     "files": [
       "dist",
       "node_modules",
@@ -111,7 +119,7 @@
     ],
     "publish": {
       "provider": "generic",
-      "url": "http://127.0.0.1:3000"
+      "url": "http://192.168.0.3:3000"
     }
   },
   "repository": {
@@ -176,6 +184,7 @@
     "@types/loadable__component": "^5.13.4",
     "@types/lodash": "^4.14.181",
     "@types/node": "17.0.23",
+    "@types/progress": "^2.0.5",
     "@types/react": "^17.0.43",
     "@types/react-dom": "^17.0.14",
     "@types/react-test-renderer": "^17.0.1",
@@ -186,6 +195,8 @@
     "@types/webpack-env": "^1.16.3",
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.18.0",
+    "@vscode/sudo-prompt": "^9.3.1",
+    "adm-zip": "^0.5.9",
     "browserslist-config-erb": "^0.0.3",
     "chalk": "^4.1.2",
     "concurrently": "^7.1.0",
@@ -212,6 +223,7 @@
     "eslint-plugin-react": "^7.29.4",
     "eslint-plugin-react-hooks": "^4.4.0",
     "file-loader": "^6.2.0",
+    "form-data": "^4.0.0",
     "html-webpack-plugin": "^5.5.0",
     "husky": "^7.0.4",
     "identity-obj-proxy": "^3.0.0",
@@ -221,6 +233,7 @@
     "mobx-logger": "^0.7.1",
     "opencollective-postinstall": "^2.0.3",
     "prettier": "^2.6.2",
+    "progress": "^2.0.3",
     "react-refresh": "^0.12.0",
     "react-refresh-typescript": "^2.0.4",
     "react-test-renderer": "^18.0.0",

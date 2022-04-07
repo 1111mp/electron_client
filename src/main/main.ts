@@ -78,7 +78,7 @@ const getAssetPath = (...paths: string[]): string => {
 
 function getBaseSearch(): SearchType {
   return {
-    name: packageJson.productName,
+    name: packageJson.build.productName,
     locale: locale.name,
     version: app.getVersion(),
     node_version: process.versions.node,
