@@ -870,6 +870,13 @@
   resolved "https://registry.npmmirror.com/@tsconfig/node16/-/node16-1.0.2.tgz#423c77877d0569db20e1fc80885ac4118314010e"
   integrity sha512-eZxlbI8GZscaGS7kkc/trHTT5xgrjH3/1n2JDwusC9iahPKWMRvRjJSAN5mCXviuTGQ/lHnhvv8Q1YTpnfz9gA==
 
+"@types/adm-zip@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.npmmirror.com/@types/adm-zip/-/adm-zip-0.5.0.tgz#94c90a837ce02e256c7c665a6a1eb295906333c1"
+  integrity sha512-FCJBJq9ODsQZUNURo5ILAQueuA8WJhRvuihS3ke2iI25mJlfV2LK8jG2Qj2z2AWg8U0FtWWqBHVRetceLskSaw==
+  dependencies:
+    "@types/node" "*"
+
 "@types/aria-query@^4.2.0":
   version "4.2.2"
   resolved "https://registry.npmmirror.com/@types/aria-query/-/aria-query-4.2.2.tgz#ed4e0ad92306a704f9fb132a0cfcf77486dbe2bc"
@@ -4534,7 +4541,7 @@ fresh@0.5.2:
   resolved "https://registry.npmmirror.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
   integrity sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==
 
-fs-extra@^10.0.0:
+fs-extra@^10.0.0, fs-extra@^10.0.1:
   version "10.0.1"
   resolved "https://registry.npmmirror.com/fs-extra/-/fs-extra-10.0.1.tgz#27de43b4320e833f6867cc044bfce29fdf0ef3b8"
   integrity sha512-NbdoVMZso2Lsrn/QwLXOy6rm0ufY2zEOKCDzJR/0kBsb0E6qed0P3iYK+Ath3BfvXEeu4JhEtXLgILx5psUfag==
