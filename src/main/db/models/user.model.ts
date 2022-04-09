@@ -4,7 +4,7 @@ import { Sequelize, Model, DataTypes, Optional, BuildOptions } from 'sequelize';
 import moment from 'moment';
 
 /**
- * sequelize + ts 文档：https://www.gobeta.net/books/demopark-sequelize-docs-zh-cn/typescript/
+ * sequelize + ts document：https://www.gobeta.net/books/demopark-sequelize-docs-zh-cn/typescript/
  *
  * Cannot use namespace 'DataTypes' as a type.
  * https://github.com/sequelize/sequelize-auto/issues/384

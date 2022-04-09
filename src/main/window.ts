@@ -97,7 +97,7 @@ export function setupForNewWindow(
 
     window.on('ready-to-show', () => {
       if (!window) {
-        throw new Error(`"window[${name}]" is not defined`);
+        throw new Error(`"window[${name}]" is not defined.`);
       }
 
       window.show();
@@ -126,4 +126,34 @@ export function setupForNewWindow(
       console.log(`window[${name}]: close window failed.`);
     }
   });
+
+  if (process.platform === 'win32') {
+    // Windows
+    // Minimizes the window.
+    ipcMain.on('window:minimize', (_event: unknown, name: WindowName) => {
+      try {
+        windowsPool.get(name)?.maximize();
+      } catch (_err) {
+        console.log(`window[${name}]: minimize window failed.`);
+      }
+    });
+
+    // Maximizes the window.
+    ipcMain.on('window:maximize', (_event: unknown, name: WindowName) => {
+      try {
+        windowsPool.get(name)?.maximize();
+      } catch (_err) {
+        console.log(`window[${name}]: maximize window failed.`);
+      }
+    });
+
+    // Unmaximizes the window.
+    ipcMain.on('window:unmaximize', (_event: unknown, name: WindowName) => {
+      try {
+        windowsPool.get(name)?.unmaximize();
+      } catch (_err) {
+        console.log(`window[${name}]: maximize window failed.`);
+      }
+    });
+  }
 }
