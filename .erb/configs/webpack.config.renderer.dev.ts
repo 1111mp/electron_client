@@ -1,6 +1,6 @@
 import 'webpack-dev-server';
 import path, { join } from 'path';
-import fs from 'fs';
+import fs from 'fs-extra';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import chalk from 'chalk';

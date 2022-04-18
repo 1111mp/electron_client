@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'fs-extra';
 import webpackPaths from '../configs/webpack.paths';
 
 const { srcNodeModulesPath } = webpackPaths;

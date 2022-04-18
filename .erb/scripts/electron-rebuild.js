@@ -1,5 +1,5 @@
 import { execSync } from 'child_process';
-import fs from 'fs';
+import fs from 'fs-extra';
 import { dependencies } from '../../release/app/package.json';
 import webpackPaths from '../configs/webpack.paths';
 

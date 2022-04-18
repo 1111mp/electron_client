@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { readFileSync } from 'fs';
+import { readFileSync } from 'fs-extra';
 import { app } from 'electron';
 import { merge } from 'lodash';
 import { setup } from './i18n';

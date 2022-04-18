@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'fs-extra';
 import chalk from 'chalk';
 import { execSync } from 'child_process';
 import { dependencies } from '../../package.json';
