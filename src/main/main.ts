@@ -124,8 +124,7 @@ const createWindow = async (callback: VoidFunction) => {
 
   nativeThemeNotifier.addWindow(mainWindow);
 
-  // if (isDevelopment)
-  mainWindow.webContents.openDevTools({ mode: 'undocked' });
+  if (isDevelopment) mainWindow.webContents.openDevTools({ mode: 'undocked' });
 
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
@@ -187,7 +186,7 @@ const createLogin = async () => {
 
   loginWindow.loadURL(resolveHtmlPath({ html: 'login.html', search }));
 
-  loginWindow.webContents.openDevTools({ mode: 'undocked' });
+  if (isDevelopment) loginWindow.webContents.openDevTools({ mode: 'undocked' });
 
   loginWindow.on('ready-to-show', () => {
     if (!loginWindow) {
