@@ -21,7 +21,7 @@ import { initialize as sqlChannels } from './db/channel';
 import { NativeThemeNotifier } from './NativeThemeNotifier';
 import { setupForNewWindow } from './window';
 
-export default class AppUpdater {
+class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
     autoUpdater.logger = log;
@@ -37,6 +37,8 @@ let loginWindow: BrowserWindow | null = null;
 
 let locale: I18n.Locale;
 
+let appShouldQuit: boolean = false;
+
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
   console.log(msgTemplate(arg));
@@ -48,10 +50,10 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-const isDevelopment =
+const isDebug =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
-if (isDevelopment) {
+if (isDebug) {
   require('electron-debug')();
 }
 
@@ -86,7 +88,7 @@ function getBaseSearch(): SearchType {
 }
 
 const createWindow = async (callback: VoidFunction) => {
-  if (isDevelopment) {
+  if (isDebug) {
     await installExtensions();
   }
 
@@ -124,7 +126,7 @@ const createWindow = async (callback: VoidFunction) => {
 
   nativeThemeNotifier.addWindow(mainWindow);
 
-  if (isDevelopment) mainWindow.webContents.openDevTools({ mode: 'undocked' });
+  if (isDebug) mainWindow.webContents.openDevTools({ mode: 'undocked' });
 
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
@@ -186,7 +188,7 @@ const createLogin = async () => {
 
   loginWindow.loadURL(resolveHtmlPath({ html: 'login.html', search }));
 
-  if (isDevelopment) loginWindow.webContents.openDevTools({ mode: 'undocked' });
+  if (isDebug) loginWindow.webContents.openDevTools({ mode: 'undocked' });
 
   loginWindow.on('ready-to-show', () => {
     if (!loginWindow) {
@@ -218,6 +220,7 @@ const createLogin = async () => {
 
   ipcMain.once('close-login', () => {
     if (loginWindow) {
+      appShouldQuit = true;
       loginWindow.close();
     }
   });
@@ -230,7 +233,7 @@ const createLogin = async () => {
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
-  if (process.platform !== 'darwin') {
+  if (process.platform !== 'darwin' || appShouldQuit) {
     app.quit();
   }
 });

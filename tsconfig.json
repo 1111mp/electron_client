@@ -1,6 +1,7 @@
 {
   "extends": "./paths.json",
   "compilerOptions": {
+    "incremental": true,
     "target": "es2021",
     "module": "commonjs",
     "lib": ["dom", "esnext"],

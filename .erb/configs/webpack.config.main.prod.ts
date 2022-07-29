@@ -16,13 +16,6 @@ import deleteSourceMaps from '../scripts/delete-source-maps';
 checkNodeEnv('production');
 deleteSourceMaps();
 
-const devtoolsConfig =
-  process.env.DEBUG_PROD === 'true'
-    ? {
-        devtool: 'source-map',
-      }
-    : {};
-
 const preload_files = fs.readdirSync(webpackPaths.srcPreloadPath);
 const entrys = preload_files.reduce(
   (acc, cur) => ({
@@ -33,7 +26,7 @@ const entrys = preload_files.reduce(
 );
 
 const configuration: webpack.Configuration = {
-  ...devtoolsConfig,
+  devtool: 'source-map',
 
   mode: 'production',
 

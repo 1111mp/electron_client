@@ -2,21 +2,21 @@
   "name": "electron-client",
   "version": "1.0.0",
   "description": "ElectronClient application based on React, React Router, Webpack, React Hot Loader for rapid application development",
-  "main": "./dist/main/main.js",
+  "license": "MIT",
   "author": {
     "name": "1111mp",
     "email": "The1111mp@gmail.com",
     "url": "https://github.com/1111mp/electron_client"
   },
+  "main": "./dist/main/main.js",
   "scripts": {
     "electron-rebuild": "node -r ts-node/register ../../.erb/scripts/electron-rebuild.js",
-    "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts",
-    "postinstall": "npm run electron-rebuild && npm run link-modules"
+    "postinstall": "npm run electron-rebuild && npm run link-modules",
+    "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts"
   },
   "dependencies": {
     "@journeyapps/sqlcipher": "^5.3.1",
     "emoji-datasource-apple": "^14.0.0",
     "sequelize": "^6.21.3"
-  },
-  "license": "MIT"
+  }
 }
