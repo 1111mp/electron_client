@@ -232,15 +232,21 @@ const configuration: webpack.Configuration = {
         .on('error', (spawnError) => console.error(spawnError));
 
       console.log('Starting Main Process...');
-      // spawn('npm', ['run', 'start:main'], {
-      //   shell: true,
-      //   stdio: 'inherit',
-      // })
-      //   .on('close', (code: number) => {
-      //     preloadProcess.kill();
-      //     process.exit(code!);
-      //   })
-      //   .on('error', (spawnError) => console.error(spawnError));
+      let args = ['run', 'start:main'];
+      if (process.env.MAIN_ARGS) {
+        args = args.concat(
+          ['--', ...process.env.MAIN_ARGS.matchAll(/"[^"]+"|[^\s"]+/g)].flat()
+        );
+      }
+      spawn('npm', args, {
+        shell: true,
+        stdio: 'inherit',
+      })
+        .on('close', (code: number) => {
+          preloadProcess.kill();
+          process.exit(code!);
+        })
+        .on('error', (spawnError) => console.error(spawnError));
       return middlewares;
     },
   },
