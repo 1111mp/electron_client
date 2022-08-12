@@ -1,7 +1,6 @@
 /** eslint vars-on-top: off, no-var: off */
 
 import { SqlClientType } from 'Main/db/types';
-import { WindowArgs } from 'Main/window';
 import { Theme, WindowName } from 'App/types';
 import { NativeThemeListener } from 'Renderer/utils/NativeThemeListener';
 
@@ -31,7 +30,7 @@ declare global {
     closeLogin: () => void;
 
     // for other window
-    windowOpen: (args: WindowArgs) => void;
+    windowOpen: (args: Windows.Args) => void;
     windowClose: (name: WindowName) => void;
   }
 

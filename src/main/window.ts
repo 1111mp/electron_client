@@ -1,37 +1,22 @@
 import path from 'path';
 import { app, BrowserWindow, ipcMain, IpcMainEvent } from 'electron';
-import { resolveHtmlPath, SearchType } from './util';
+import { resolveHtmlPath } from './util';
 import { NativeThemeNotifier } from './NativeThemeNotifier';
 import { WindowName } from '../types';
-
-export type WindowArgs = {
-  name: WindowName; // for window (unique)
-  width?: number;
-  height?: number;
-  minWidth?: number;
-  minHeight?: number;
-  title?: string;
-  frame?: boolean;
-  center?: boolean;
-  resizable?: boolean;
-  url?: string; // e.g "/setting"
-  search?: SearchType;
-  modal?: boolean;
-};
 
 // todo save created window
 const windowsPool: Map<WindowName, BrowserWindow> = new Map();
 
 /**
  * @description: setup for new window
- * @param {SearchType} baseSearch
+ * @param {Windows.SearchType} baseSearch
  * @return {void}
  */
 export function setupForNewWindow(
   nativeThemeNotifier: NativeThemeNotifier,
-  getBaseSearch: () => SearchType
+  getBaseSearch: () => Windows.SearchType
 ) {
-  ipcMain.on('window:open', (event: IpcMainEvent, args: WindowArgs) => {
+  ipcMain.on('window:open', (event: IpcMainEvent, args: Windows.Args) => {
     const {
       name,
       width = 640,

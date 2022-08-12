@@ -2,15 +2,13 @@
 import { URL } from 'url';
 import path from 'path';
 
-export type SearchType = { [key: string]: string };
-
 export let resolveHtmlPath: ({
   html,
   search,
 }: {
   html: string;
   url?: string;
-  search?: SearchType;
+  search?: Windows.SearchType;
 }) => string;
 
 if (process.env.NODE_ENV === 'development') {

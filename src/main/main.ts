@@ -13,7 +13,7 @@ import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import { resolveHtmlPath, SearchType } from './util';
+import { resolveHtmlPath } from './util';
 import packageJson from '../../package.json';
 import loadLocale from './locale';
 import { initialize as initSqlite } from './db';
@@ -78,7 +78,7 @@ const getAssetPath = (...paths: string[]): string => {
   return path.join(RESOURCES_PATH, ...paths);
 };
 
-function getBaseSearch(): SearchType {
+function getBaseSearch(): Windows.SearchType {
   return {
     name: packageJson.build.productName,
     locale: locale.name,

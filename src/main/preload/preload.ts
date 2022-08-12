@@ -1,6 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { sqlClient } from '../db/client';
-import { WindowArgs } from '../window';
 import { Theme, WindowName } from '../../types';
 
 (async function () {
@@ -21,7 +20,7 @@ import { Theme, WindowName } from '../../types';
         UserInfo = { ...userInfo };
       },
 
-      windowOpen: (args: WindowArgs) => ipcRenderer.send('window:open', args),
+      windowOpen: (args: Windows.Args) => ipcRenderer.send('window:open', args),
       windowClose: (name: WindowName) => ipcRenderer.send('window:close', name),
 
       getUserTheme: (): Theme => ipcRenderer.sendSync('native-theme:get_user'),

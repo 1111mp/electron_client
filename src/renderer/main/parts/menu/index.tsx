@@ -3,10 +3,8 @@ import './styles.scss';
 import React from 'react';
 import { Avatar } from 'antd';
 import classNames from 'classnames';
-// import { CUSTOMWIN } from 'Renderer/config';
-// import { openWeb } from 'app/utils/rendererapi';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { WindowName } from 'App/types';
+import { WindowName, WindowUrl } from 'App/types';
 
 export const Menus: any[] = [
   {
@@ -28,7 +26,7 @@ export const Menu: React.ComponentType = () => {
   const openSetting = () => {
     window.Context.windowOpen({
       name: WindowName.Setting,
-      url: '/setting',
+      url: WindowUrl.Setting,
     });
   };
 

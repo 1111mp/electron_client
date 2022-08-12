@@ -1,5 +1,4 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { WindowArgs } from '../window';
 import { Theme, WindowName } from 'App/types';
 
 try {
@@ -11,7 +10,7 @@ try {
 
     localeMessages,
 
-    windowOpen: (args: WindowArgs) => ipcRenderer.send('window:open', args),
+    windowOpen: (args: Windows.Args) => ipcRenderer.send('window:open', args),
     windowClose: (name: WindowName) => ipcRenderer.send('window:close', name),
 
     getUserTheme: (): Theme => ipcRenderer.sendSync('native-theme:get_user'),
