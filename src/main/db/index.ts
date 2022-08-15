@@ -3,6 +3,7 @@ import { userInfo } from 'os';
 import { app } from 'electron';
 import { Sequelize } from 'sequelize';
 import { UserCreationAttributes, UserFactory } from './models/user.model';
+import Logging from '../logging';
 
 import { DB, SqlType } from './types';
 
@@ -15,6 +16,7 @@ declare global {
 }
 
 let db: DB | null = null;
+const { getLogger } = Logging();
 
 // let sequelize: Sequelize | null = null;
 
@@ -23,7 +25,7 @@ export function initialize(): Promise<'successed' | 'failed'> {
 
   return new Promise((resolve) => {
     const userDataPath = app.getPath('userData');
-    console.log(pathResolve(userDataPath, 'db/sqlite.db'));
+    getLogger().info(`db path: ${pathResolve(userDataPath, 'db/sqlite.db')}`);
     try {
       const sequelize = new Sequelize({
         dialect: 'sqlite',
@@ -54,13 +56,13 @@ export function initialize(): Promise<'successed' | 'failed'> {
       sequelize
         .authenticate()
         .then(async () => {
-          console.info('connected to db');
+          getLogger().info('connected to db');
           await sequelize.sync({ alter: true });
           // await sequelize.sync({ force: true });
           resolve('successed');
         })
         .catch((error) => {
-          console.error(error);
+          getLogger().error(`db authenticate error: ${error}`);
           // throw 'error';
           resolve('failed');
         });
@@ -80,7 +82,10 @@ async function close() {
 }
 
 function getInstance(): DB {
-  if (!db) throw new Error('getInstance: globalInstance not set!');
+  if (!db) {
+    getLogger().error('getInstance: globalInstance not set!');
+    throw new Error('getInstance: globalInstance not set!');
+  }
 
   return db;
 }

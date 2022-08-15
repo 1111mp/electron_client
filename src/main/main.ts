@@ -20,6 +20,7 @@ import { initialize as initSqlite } from './db';
 import { initialize as sqlChannels } from './db/channel';
 import { NativeThemeNotifier } from './NativeThemeNotifier';
 import { setupForNewWindow } from './window';
+import Logging from './logging';
 
 class AppUpdater {
   constructor() {
@@ -28,6 +29,8 @@ class AppUpdater {
     autoUpdater.checkForUpdatesAndNotify();
   }
 }
+
+const { getLogger } = Logging();
 
 const nativeThemeNotifier = new NativeThemeNotifier();
 nativeThemeNotifier.initialize();
@@ -129,8 +132,10 @@ const createWindow = async (callback: VoidFunction) => {
   if (isDebug) mainWindow.webContents.openDevTools({ mode: 'undocked' });
 
   mainWindow.on('ready-to-show', () => {
+    getLogger().info('main window is ready-to-show');
+
     if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
+      return;
     }
 
     callback();
@@ -138,6 +143,7 @@ const createWindow = async (callback: VoidFunction) => {
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
+      getLogger().info('showing main window');
       mainWindow.show();
       mainWindow.focus();
     }
@@ -191,13 +197,16 @@ const createLogin = async () => {
   if (isDebug) loginWindow.webContents.openDevTools({ mode: 'undocked' });
 
   loginWindow.on('ready-to-show', () => {
+    getLogger().info('login window is ready-to-show');
+
     if (!loginWindow) {
-      throw new Error('"loginWindow" is not defined');
+      return;
     }
 
     if (process.env.START_MINIMIZED) {
       loginWindow.minimize();
     } else {
+      getLogger().info('showing login window');
       loginWindow.show();
       loginWindow.focus();
     }
@@ -231,6 +240,7 @@ const createLogin = async () => {
  */
 
 app.on('window-all-closed', () => {
+  getLogger().info('main process handling window-all-closed');
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
   if (process.platform !== 'darwin' || appShouldQuit) {
@@ -241,10 +251,12 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(async () => {
+    getLogger().info('app ready');
+
     if (!locale) {
       const appLocale =
         process.env.NODE_ENV === 'test' ? 'en' : app.getLocale();
-      console.log(appLocale);
+      getLogger().info(`locale: ${appLocale}`);
       locale = loadLocale({ appLocale });
     }
 
@@ -259,7 +271,7 @@ app
         if (maybeTimeout !== 'timeout') return;
 
         /** 这里可以加载 loading 过渡 */
-        console.log(
+        getLogger().info(
           'sql.initialize is taking more than three seconds; showing loading dialog'
         );
 
@@ -292,7 +304,7 @@ app
     const success = await sqlInitPromise;
 
     if (success !== 'successed') {
-      console.log('sql.initialize was unsuccessful; returning early');
+      getLogger().error('sql.initialize was unsuccessful; returning early');
       return;
     }
 
@@ -309,7 +321,7 @@ app
       else mainWindow.show();
     });
   })
-  .catch(console.log);
+  .catch(getLogger().log);
 
 ipcMain.on('locale-data', (event) => {
   event.returnValue = locale.messages;

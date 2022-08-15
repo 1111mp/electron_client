@@ -15,14 +15,14 @@ declare global {
       modal?: boolean;
     };
 
-    type Entity =
+    type Info =
       | {
           name: WindowName.Setting;
           url: WindowUrl.Setting;
         }
       | { name: WindowName.Info; url: WindowUrl.Info };
 
-    type Args = Entity & Base;
+    type Args = Info & Base;
 
     type SearchType = { [key: string]: string };
   }
