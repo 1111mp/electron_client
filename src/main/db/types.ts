@@ -1,25 +1,33 @@
-import { Sequelize } from 'sequelize';
-import { UserStatic, UserCreationAttributes } from './models/user.model';
+import { LogFunctions } from 'electron-log';
 
-export type DB = {
-  sequelize: Sequelize;
-  User: UserStatic;
-};
-
-export type SqlBaseType = {
+export type DataInterface = {
   close: () => Promise<void>;
+  removeDB: () => Promise<void>;
 
-  upsertUser: (data: UserCreationAttributes) => Promise<any>;
+  // user
+  updateOrCreateUser(users: DB.UserAttributes): Promise<void>;
   getUserInfo: () => Promise<DB.UserAttributes>;
 };
 
-export type SqlType = SqlBaseType & {
-  initialize: () => Promise<'successed' | 'failed'>;
+export type ClientInterface = DataInterface & {};
+
+export type ServerInterface = DataInterface & {
+  // Server-only
+
+  initialize: (options: {
+    configDir: string;
+    key: string;
+    logger: Omit<LogFunctions, 'log'>;
+  }) => Promise<void>;
 };
 
-export type SqlClientType = SqlBaseType & {};
+export type ClientJobType = {
+  fnName: string;
+  start: number;
+  resolve?: (value: unknown) => void;
+  reject?: (error: Error) => void;
 
-// export type UserType = {
-//   userId: number;
-//   [key: string]: unknown;
-// };
+  // Only in DEBUG mode
+  complete?: boolean;
+  args?: ReadonlyArray<unknown>;
+};

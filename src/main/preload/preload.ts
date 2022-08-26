@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { sqlClient } from '../db/client';
+import sqlClient from '../db/client';
 import { Theme, WindowName } from '../../types';
 
 (async function () {

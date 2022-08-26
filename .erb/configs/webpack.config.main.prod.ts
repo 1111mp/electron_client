@@ -17,6 +17,8 @@ checkNodeEnv('production');
 deleteSourceMaps();
 
 const preload_files = fs.readdirSync(webpackPaths.srcPreloadPath);
+const mainWorkerPath = path.join(webpackPaths.srcBDPath, 'mainWorker.ts');
+
 const entrys = preload_files.reduce(
   (acc, cur) => ({
     ...acc,
@@ -24,6 +26,8 @@ const entrys = preload_files.reduce(
   }),
   {}
 );
+
+entrys['mainWorker'] = mainWorkerPath;
 
 const configuration: webpack.Configuration = {
   devtool: 'source-map',

@@ -12,8 +12,6 @@ declare global {
       theme: Theme;
       regisTime: string;
       updateTime: string;
-      createdAt?: Date;
-      updatedAt?: Date;
     }
   }
 }

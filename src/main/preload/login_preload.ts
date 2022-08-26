@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { sqlClient } from '../db/client';
+import sqlClient from '../db/client';
 
 try {
   const localeMessages = ipcRenderer.sendSync('locale-data');

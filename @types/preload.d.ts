@@ -1,6 +1,6 @@
 /** eslint vars-on-top: off, no-var: off */
 
-import { SqlClientType } from 'Main/db/types';
+import { ClientInterface } from 'Main/db/types';
 import { Theme, WindowName } from 'App/types';
 import { NativeThemeListener } from 'Renderer/utils/NativeThemeListener';
 
@@ -16,7 +16,7 @@ declare global {
     updateUserInfo: (userInfo: DB.UserAttributes) => unknown;
 
     localeMessages: I18n.Message;
-    sqlClient: SqlClientType;
+    sqlClient: ClientInterface;
 
     getUserTheme: () => Theme;
     getSystemTheme: () => Exclude<Theme, 'system'>;

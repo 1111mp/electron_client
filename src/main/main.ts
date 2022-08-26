@@ -9,6 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
+import { userInfo } from 'os';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -16,8 +17,10 @@ import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import packageJson from '../../package.json';
 import loadLocale from './locale';
-import { initialize as initSqlite } from './db';
-import { initialize as sqlChannels } from './db/channel';
+// import { initialize as initSqlite } from './db';
+// import { initialize as sqlChannels } from './db/channel';
+import { MainSQL } from './db/main';
+import * as sqlChannels from './sql_channel';
 import { NativeThemeNotifier } from './NativeThemeNotifier';
 import { setupForNewWindow } from './window';
 import Logging from './logging';
@@ -31,6 +34,11 @@ class AppUpdater {
 }
 
 const { getLogger } = Logging();
+
+let sqlInitTimeStart = 0;
+let sqlInitTimeEnd = 0;
+
+const sql = new MainSQL();
 
 const nativeThemeNotifier = new NativeThemeNotifier();
 nativeThemeNotifier.initialize();
@@ -235,93 +243,127 @@ const createLogin = async () => {
   });
 };
 
+async function initializeSQL(
+  userDataPath: string
+): Promise<{ ok: true; error: undefined } | { ok: false; error: Error }> {
+  const key = userInfo().username;
+
+  if (!key) {
+    getLogger().info(
+      'key/initialize: Generating new encryption key, since we did not find it on disk'
+    );
+  }
+
+  console.log(key);
+
+  sqlInitTimeStart = Date.now();
+
+  try {
+    await sql.initialize({ configDir: userDataPath, key, logger: getLogger() });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return { ok: false, error };
+    }
+
+    return {
+      ok: false,
+      error: new Error(`initializeSQL: Caught a non-error '${error}'`),
+    };
+  } finally {
+    sqlInitTimeEnd = Date.now();
+  }
+
+  return { ok: true, error: undefined };
+}
+
 /**
  * Add event listeners...
  */
 
-app.on('window-all-closed', () => {
+app.on('ready', async () => {
+  getLogger().info('app ready');
+
+  const userDataPath = app.getPath('userData');
+
+  if (!locale) {
+    const appLocale = process.env.NODE_ENV === 'test' ? 'en' : app.getLocale();
+    getLogger().info(`locale: ${appLocale}`);
+    locale = loadLocale({ appLocale });
+  }
+
+  const sqlInitPromise = initializeSQL(userDataPath);
+
+  const timeout = new Promise((resolve) =>
+    setTimeout(resolve, 3000, 'timeout')
+  );
+
+  Promise.race([sqlInitPromise, timeout])
+    .then((maybeTimeout) => {
+      if (maybeTimeout !== 'timeout') return;
+
+      /** 这里可以加载 loading 过渡 */
+      getLogger().info(
+        'sql.initialize is taking more than three seconds; showing loading dialog'
+      );
+
+      // loadingWindow = new BrowserWindow({
+      //   show: false,
+      //   width: 300,
+      //   height: 265,
+      //   resizable: false,
+      //   frame: false,
+      //   backgroundColor: '#3a76f0',
+      //   webPreferences: {
+      //     nodeIntegration: false,
+      //     preload: path.join(__dirname, 'loading_preload.js'),
+      //   },
+      //   icon: windowIcon,
+      // });
+
+      // loadingWindow.once('ready-to-show', async () => {
+      //   loadingWindow.show();
+      //   // Wait for sql initialization to complete
+      //   await sqlInitPromise;
+      //   loadingWindow.destroy();
+      //   loadingWindow = null;
+      // });
+
+      // loadingWindow.loadURL(prepareURL([__dirname, 'loading.html']));
+    })
+    .catch((err) => console.error(err));
+
+  const { ok, error: sqlError } = await sqlInitPromise;
+
+  console.log(ok);
+
+  if (sqlError) {
+    getLogger().error('sql.initialize was unsuccessful; returning early');
+    return;
+  }
+
+  sqlChannels.initialize(sql);
+
+  createLogin();
+});
+
+app.on('activate', () => {
+  // On macOS it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (loginWindow) return;
+
+  if (mainWindow === null) createWindow(() => {});
+  else mainWindow.show();
+});
+
+app.on('window-all-closed', async () => {
   getLogger().info('main process handling window-all-closed');
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
   if (process.platform !== 'darwin' || appShouldQuit) {
+    await sql.close();
     app.quit();
   }
 });
-
-app
-  .whenReady()
-  .then(async () => {
-    getLogger().info('app ready');
-
-    if (!locale) {
-      const appLocale =
-        process.env.NODE_ENV === 'test' ? 'en' : app.getLocale();
-      getLogger().info(`locale: ${appLocale}`);
-      locale = loadLocale({ appLocale });
-    }
-
-    const sqlInitPromise = initSqlite();
-
-    const timeout = new Promise((resolve) =>
-      setTimeout(resolve, 3000, 'timeout')
-    );
-
-    Promise.race([sqlInitPromise, timeout])
-      .then((maybeTimeout) => {
-        if (maybeTimeout !== 'timeout') return;
-
-        /** 这里可以加载 loading 过渡 */
-        getLogger().info(
-          'sql.initialize is taking more than three seconds; showing loading dialog'
-        );
-
-        // loadingWindow = new BrowserWindow({
-        //   show: false,
-        //   width: 300,
-        //   height: 265,
-        //   resizable: false,
-        //   frame: false,
-        //   backgroundColor: '#3a76f0',
-        //   webPreferences: {
-        //     nodeIntegration: false,
-        //     preload: path.join(__dirname, 'loading_preload.js'),
-        //   },
-        //   icon: windowIcon,
-        // });
-
-        // loadingWindow.once('ready-to-show', async () => {
-        //   loadingWindow.show();
-        //   // Wait for sql initialization to complete
-        //   await sqlInitPromise;
-        //   loadingWindow.destroy();
-        //   loadingWindow = null;
-        // });
-
-        // loadingWindow.loadURL(prepareURL([__dirname, 'loading.html']));
-      })
-      .catch((err) => console.error(err));
-
-    const success = await sqlInitPromise;
-
-    if (success !== 'successed') {
-      getLogger().error('sql.initialize was unsuccessful; returning early');
-      return;
-    }
-
-    sqlChannels();
-
-    createLogin();
-
-    app.on('activate', () => {
-      // On macOS it's common to re-create a window in the app when the
-      // dock icon is clicked and there are no other windows open.
-      if (loginWindow) return;
-
-      if (mainWindow === null) createWindow(() => {});
-      else mainWindow.show();
-    });
-  })
-  .catch(getLogger().log);
 
 ipcMain.on('locale-data', (event) => {
   event.returnValue = locale.messages;
