@@ -37,6 +37,37 @@ function updateToSchemaVersion1(
   logger.info('updateToSchemaVersion1: success!');
 }
 
+
+function updateToSchemaVersion2(
+  currentVersion: number,
+  db: Database,
+  logger: Omit<LogFunctions, 'log'>
+) {
+  if (currentVersion >= 2) return;
+
+  logger.info('updateToSchemaVersion1: starting...');
+
+  db.transaction(() => {
+    db.exec(`
+      CREATE TABLE group(
+        id INTEGER PRIMARY KEY,
+        userId INTEGER NOT NULL,
+        account STRING NOT NULL,
+        token STRING,
+        avatar STRING DEFAULT NULL,
+        email STRING DEFAULT NULL,
+        theme STRING,
+        regisTime STRING,
+        updateTime STRING
+      );
+    `);
+
+    db.pragma('user_version = 2');
+  })();
+
+  logger.info('updateToSchemaVersion1: success!');
+}
+
 export const SCHEMA_VERSIONS = [updateToSchemaVersion1];
 
 export function updateSchema(

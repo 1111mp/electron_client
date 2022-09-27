@@ -10,6 +10,7 @@ class Logging {
   constructor() {
     this.log = log;
     this.log.transports.file.resolvePath = (variables) => {
+      console.log(variables.libraryDefaultDir)
       return join(
         variables.libraryDefaultDir,
         `${moment().format('YYYY-MM-DD')}.log`

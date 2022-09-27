@@ -104,7 +104,8 @@ const Login: React.FC = () => {
         <span className="iconfont icontop-close" onClick={closeLogin}></span>
       </p>
       <h3 className="module-login-welcome">
-        Hi, <span className="module-login-welcome-highlight">Good Day!</span>
+        Hi,{' '}
+        <span className="module-login-welcome-highlight">Good Day!</span>
       </h3>
       <p className="module-login-tip">{`Please ${
         type === 1 ? 'sign in' : 'sign up'
@@ -139,6 +140,22 @@ const Login: React.FC = () => {
         </p>
         <button className="module-login-footer__button" onClick={submit}>
           {type === 1 ? i18n('signIn') : i18n('signUp')}
+        </button>
+        <button
+          className="module-login-footer__button"
+          onClick={() => {
+            window.Context.checkForUpdates();
+          }}
+        >
+          检查更新
+        </button>
+        <button
+          className="module-login-footer__button"
+          onClick={() => {
+            window.Context.comfirmUpdate();
+          }}
+        >
+          确认
         </button>
       </footer>
     </div>

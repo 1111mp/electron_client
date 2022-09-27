@@ -8,7 +8,7 @@ import webpackPaths from '../configs/webpack.paths';
 import { version } from '../../release/app/package.json';
 import { build } from '../../package.json';
 
-const host = '192.168.0.3',
+const host = '127.0.0.1',
   port = 3000;
 
 const { PUBLISH_TYPE } = process.env;
