@@ -183,6 +183,8 @@ const createWindow = async (callback: VoidFunction) => {
     webPreferences: {
       // nodeIntegration: true,
       // contextIsolation: false,
+      scrollBounce: true,
+      sandbox: false,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
@@ -251,6 +253,8 @@ const createLogin = async () => {
     webPreferences: {
       // nodeIntegration: true,
       // contextIsolation: false,
+      scrollBounce: true,
+      sandbox: false,
       preload: app.isPackaged
         ? path.join(__dirname, 'login_preload.js')
         : path.join(__dirname, '../../.erb/dll/login_preload.js'),

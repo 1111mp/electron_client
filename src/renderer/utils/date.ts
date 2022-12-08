@@ -1,4 +1,4 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 /** 判断两个日期是否是同一天 */
 export function isSameDay(currentTime: number, diffTime: number) {
@@ -6,8 +6,8 @@ export function isSameDay(currentTime: number, diffTime: number) {
     return false;
   }
 
-  const currentCreatedAt = moment(currentTime);
-  const diffCreatedAt = moment(diffTime);
+  const currentCreatedAt = dayjs(currentTime);
+  const diffCreatedAt = dayjs(diffTime);
 
   if (!currentCreatedAt.isValid() || !diffCreatedAt.isValid()) {
     return false;
@@ -24,7 +24,7 @@ export function showTime(msgDate: number | Date) {
   let startTime = nowDate.getTime();
   let endTime = msgDate.getTime();
   let dates = Math.abs(startTime - endTime) / (1000 * 60 * 60 * 24);
-  // let d = moment.duration(moment(nowDate, 'YYYYMMDD').diff(moment(msgDate, "YYYYMMDD")));
+  // let d = dayjs.duration(dayjs(nowDate, 'YYYYMMDD').diff(dayjs(msgDate, "YYYYMMDD")));
   // let dates = d.asDays();
   if (dates < 1) {
     //小于24小时
@@ -42,19 +42,19 @@ export function showTime(msgDate: number | Date) {
     if (msgDate.getDate() === yesterday.getDate()) {
       result = 'YESTERDAY';
     } else {
-      result = moment(msgDate).locale('en').format('M-D');
+      result = dayjs(msgDate).locale('en').format('M-D');
     }
   }
   // else if (dates <= 2) //前天
   // {
-  //  result = moment(msgDate).format("前天 HH:mm");
+  //  result = dayjs(msgDate).format("前天 HH:mm");
   // }
   else if (dates < 7) {
     //一周内
-    result = moment(msgDate).locale('en').format('M-D');
+    result = dayjs(msgDate).locale('en').format('M-D');
   } //显示日期
   else {
-    result = moment(msgDate).locale('en').format('YYYY-MM-DD');
+    result = dayjs(msgDate).locale('en').format('YYYY-MM-DD');
   }
   return result;
 }

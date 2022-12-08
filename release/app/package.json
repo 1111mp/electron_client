@@ -15,7 +15,7 @@
     "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts"
   },
   "dependencies": {
-    "better-sqlite3-multiple-ciphers": "^7.6.2",
+    "better-sqlite3-multiple-ciphers": "^8.0.1",
     "emoji-datasource-apple": "^14.0.0"
   }
 }

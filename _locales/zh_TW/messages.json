@@ -1,0 +1,68 @@
+{
+  "signIn": {
+    "message": "登录",
+    "description": "The text of the login button"
+  },
+  "signUp": {
+    "message": "注册",
+    "description": "The text of the sign up button"
+  },
+  "EmojiPicker--empty": {
+    "message": "没有找到符合条件的表情",
+    "description": "Shown in the emoji picker when a search yields 0 results."
+  },
+  "EmojiPicker--search-placeholder": {
+    "message": "搜索表情",
+    "description": "Shown as a placeholder inside the emoji picker search field."
+  },
+  "EmojiPicker--skin-tone": {
+    "message": "肤色 $tone$",
+    "description": "Shown as a tooltip over the emoji tone buttons.",
+    "placeholders": {
+      "status": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "EmojiPicker__button--recents": {
+    "message": "最近通话",
+    "description": "Label for recents emoji picker button"
+  },
+  "EmojiPicker__button--emoji": {
+    "message": "表情符号",
+    "description": "Label for emoji emoji picker button"
+  },
+  "EmojiPicker__button--animal": {
+    "message": "动物",
+    "description": "Label for animal emoji picker button"
+  },
+  "EmojiPicker__button--food": {
+    "message": "食物",
+    "description": "Label for food emoji picker button"
+  },
+  "EmojiPicker__button--activity": {
+    "message": "活动",
+    "description": "Label for activity emoji picker button"
+  },
+  "EmojiPicker__button--travel": {
+    "message": "旅行",
+    "description": "Label for travel emoji picker button"
+  },
+  "EmojiPicker__button--object": {
+    "message": "物品",
+    "description": "Label for object emoji picker button"
+  },
+  "EmojiPicker__button--symbol": {
+    "message": "符号",
+    "description": "Label for symbol emoji picker button"
+  },
+  "EmojiPicker__button--flag": {
+    "message": "旗帜",
+    "description": "Label for flag emoji picker button"
+  },
+  "sendMessageToContact": {
+    "message": "发送消息",
+    "description": "Shown when you are sent a contact and that contact has a signal account"
+  }
+}

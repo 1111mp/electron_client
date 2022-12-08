@@ -2,7 +2,6 @@
  * @NOTE: Prepend a `~` to css file paths that are in your node_modules
  *        See https://github.com/webpack-contrib/sass-loader#imports
  */
- /* @import '~antd/dist/antd.css'; */
  @import '../../../assets/font/iconfont.css';
  /* @import '../node_modules/draft-js/dist/Draft.css'; */
 

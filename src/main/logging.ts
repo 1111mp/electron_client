@@ -1,6 +1,5 @@
-import { join } from 'path';
 import log, { ElectronLog } from 'electron-log';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 class Logging {
   private static instance: Logging;
@@ -10,10 +9,9 @@ class Logging {
   constructor() {
     this.log = log;
     this.log.transports.file.resolvePath = (variables) => {
-      console.log(variables.libraryDefaultDir)
-      return join(
-        variables.libraryDefaultDir,
-        `${moment().format('YYYY-MM-DD')}.log`
+      console.log(variables.libraryDefaultDir);
+      return (
+        variables.libraryDefaultDir + `/${dayjs().format('YYYY-MM-DD')}.log`
       );
     };
   }
