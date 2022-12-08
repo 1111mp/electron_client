@@ -1,4 +1,4 @@
-import Logging from '../logging';
+import Logging from '../LogForRenderer';
 import { explodePromise } from './explodePromise';
 import { toLogFormat } from './errors';
 

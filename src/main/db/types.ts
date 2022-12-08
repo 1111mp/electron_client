@@ -1,4 +1,4 @@
-import { LogFunctions } from 'electron-log';
+import type { LogFunctions } from 'electron-log';
 
 export type DataInterface = {
   close: () => Promise<void>;

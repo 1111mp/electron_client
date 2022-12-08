@@ -6,7 +6,7 @@ export function toLogFormat(error: unknown): string {
   }
 
   if (has(error, 'message')) {
-    return get(error, 'message');
+    return get(error, 'message')!;
   }
 
   return String(error);

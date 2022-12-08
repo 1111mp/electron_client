@@ -1,5 +1,5 @@
 import { ipcRenderer as ipc } from 'electron';
-import Logging from '../logging';
+import Logging from '../LogForRenderer';
 import { compact, fromPairs, isFunction, map, toPairs } from 'lodash';
 import createTaskWithTimeout from '../utils/taskWithTimeout';
 import { ClientInterface, ClientJobType, ServerInterface } from './types';
