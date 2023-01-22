@@ -1,11 +1,15 @@
 import path from 'path';
 import { app, BrowserWindow, ipcMain, IpcMainEvent } from 'electron';
+import type { ElectronLog } from 'electron-log';
+
+import { strictAssert } from './assert';
 import { resolveHtmlPath } from './util';
 import { NativeThemeNotifier } from './NativeThemeNotifier';
 import { WindowName } from '../types';
 
 // todo save created window
 const windowsPool: Map<WindowName, BrowserWindow> = new Map();
+let logger: ElectronLog;
 
 /**
  * @description: setup for new window
@@ -14,8 +18,10 @@ const windowsPool: Map<WindowName, BrowserWindow> = new Map();
  */
 export function setupForNewWindow(
   nativeThemeNotifier: NativeThemeNotifier,
-  getBaseSearch: () => Windows.SearchType
+  getBaseSearch: () => Windows.SearchType,
+  log: ElectronLog
 ) {
+  logger = log;
   ipcMain.on('window:open', (event: IpcMainEvent, args: Windows.Args) => {
     const {
       name,
@@ -35,34 +41,31 @@ export function setupForNewWindow(
     // already created
     if (windowsPool.has(name)) return windowsPool.get(name)?.focus();
 
-    windowsPool.set(
-      name,
-      new BrowserWindow({
-        show: false,
-        width,
-        height,
-        minWidth,
-        minHeight,
-        title,
-        center,
-        frame,
-        resizable,
-        modal,
-        parent: modal
-          ? BrowserWindow.fromWebContents(event.sender) || undefined
-          : undefined,
-        minimizable: resizable,
-        maximizable: resizable,
-        titleBarStyle: process.platform === 'darwin' ? 'hidden' : 'default',
-        webPreferences: {
-          preload: app.isPackaged
-            ? path.join(__dirname, 'window_preload.js')
-            : path.join(__dirname, '../../.erb/dll/window_preload.js'),
-        },
-      })
-    );
+    const window = new BrowserWindow({
+      show: false,
+      width,
+      height,
+      minWidth,
+      minHeight,
+      title,
+      center,
+      frame,
+      resizable,
+      modal,
+      parent: modal
+        ? BrowserWindow.fromWebContents(event.sender) || undefined
+        : undefined,
+      minimizable: resizable,
+      maximizable: resizable,
+      titleBarStyle: process.platform === 'darwin' ? 'hidden' : 'default',
+      webPreferences: {
+        preload: app.isPackaged
+          ? path.join(__dirname, 'window_preload.js')
+          : path.join(__dirname, '../../.erb/dll/window_preload.js'),
+      },
+    });
 
-    const window = windowsPool.get(name)!;
+    windowsPool.set(name, window);
 
     window.loadURL(
       resolveHtmlPath({
@@ -81,9 +84,7 @@ export function setupForNewWindow(
       window.webContents.openDevTools({ mode: 'undocked' });
 
     window.on('ready-to-show', () => {
-      if (!window) {
-        throw new Error(`"window[${name}]" is not defined.`);
-      }
+      strictAssert(window !== undefined, `"window[${name}]" is not defined.`);
 
       window.show();
       window.focus();
@@ -106,7 +107,8 @@ export function setupForNewWindow(
       windowsPool.get(name)?.close();
       windowsPool.delete(name);
     } catch (err) {
-      console.log(`window[${name}]: close window failed.`);
+      strictAssert(logger !== undefined, 'Logger not initialized.');
+      logger.error(`window[${name}]: close window failed.`);
     }
   });
 
@@ -117,7 +119,8 @@ export function setupForNewWindow(
       try {
         windowsPool.get(name)?.maximize();
       } catch (_err) {
-        console.log(`window[${name}]: minimize window failed.`);
+        strictAssert(logger !== undefined, 'Logger not initialized.');
+        logger.error(`window[${name}]: minimize window failed.`);
       }
     });
 
@@ -126,7 +129,8 @@ export function setupForNewWindow(
       try {
         windowsPool.get(name)?.maximize();
       } catch (_err) {
-        console.log(`window[${name}]: maximize window failed.`);
+        strictAssert(logger !== undefined, 'Logger not initialized.');
+        logger.error(`window[${name}]: maximize window failed.`);
       }
     });
 
@@ -135,7 +139,8 @@ export function setupForNewWindow(
       try {
         windowsPool.get(name)?.unmaximize();
       } catch (_err) {
-        console.log(`window[${name}]: maximize window failed.`);
+        strictAssert(logger !== undefined, 'Logger not initialized.');
+        logger.error(`window[${name}]: maximize window failed.`);
       }
     });
   }

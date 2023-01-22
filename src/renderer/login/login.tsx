@@ -54,7 +54,7 @@ const Login: React.FC = () => {
           /** login 成功之后 更新数据库 user信息 */
           try {
             window.Context.sqlClient
-              .upsertUser({
+              .updateOrCreateUser({
                 token: res.token,
                 ...res.data,
               })
@@ -144,7 +144,7 @@ const Login: React.FC = () => {
         <button
           className="module-login-footer__button"
           onClick={() => {
-            window.Context.checkForUpdates();
+            // window.Context.checkForUpdates();
           }}
         >
           检查更新
@@ -152,7 +152,7 @@ const Login: React.FC = () => {
         <button
           className="module-login-footer__button"
           onClick={() => {
-            window.Context.comfirmUpdate();
+            // window.Context.comfirmUpdate();
           }}
         >
           确认

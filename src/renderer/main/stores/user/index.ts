@@ -18,7 +18,7 @@ export default class UserStore {
       () => this.user,
       (userInfo) => {
         // userInfo changed
-        window.Context.sqlClient.upsertUser(toJS(userInfo));
+        window.Context.sqlClient.updateOrCreateUser(toJS(userInfo));
       }
     );
   }

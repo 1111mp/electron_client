@@ -18,15 +18,14 @@ import { resolveHtmlPath } from './util';
 import checkForAsarUpdates from './increament';
 import packageJson from '../../package.json';
 import loadLocale from './locale';
-// import { initialize as initSqlite } from './db';
-// import { initialize as sqlChannels } from './db/channel';
 import { MainSQL } from './db/main';
-import * as sqlChannels from './sql_channel';
+import { initialize as SQLChannelsInitialize } from './SQLChannel';
 import { NativeThemeNotifier } from './NativeThemeNotifier';
-import { setupForNewWindow } from './window';
+import { setupForNewWindow } from './BasicWindow';
 import Logging from './logging';
 
 const { getLogger } = Logging();
+const logger = getLogger();
 
 class AppUpdater {
   constructor() {
@@ -52,7 +51,7 @@ class AppUpdater {
     ipcMain.on('checkForUpdates', async (e, arg) => {
       // autoUpdater.checkForUpdates();
 
-      await checkForAsarUpdates(getLogger());
+      await checkForAsarUpdates(logger);
     });
 
     autoUpdater.on('error', function (error) {
@@ -78,7 +77,7 @@ class AppUpdater {
     autoUpdater.on('update-not-available', async function (info) {
       loginWindow?.webContents.send('updateError', 'update-not-available');
       // 这时候可以检查是否有增量更新
-      await checkForAsarUpdates(getLogger());
+      await checkForAsarUpdates(logger);
     });
 
     // 8. 下载进度，包含进度百分比、下载速度、已下载字节、总字节等
@@ -204,7 +203,7 @@ const createWindow = async (callback: VoidFunction) => {
   if (isDebug) mainWindow.webContents.openDevTools({ mode: 'undocked' });
 
   mainWindow.on('ready-to-show', () => {
-    getLogger().info('main window is ready-to-show');
+    logger.info('main window is ready-to-show');
 
     if (!mainWindow) {
       return;
@@ -215,7 +214,7 @@ const createWindow = async (callback: VoidFunction) => {
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
-      getLogger().info('showing main window');
+      logger.info('showing main window');
       mainWindow.show();
       mainWindow.focus();
     }
@@ -272,7 +271,7 @@ const createLogin = async () => {
   loginWindow.webContents.openDevTools({ mode: 'undocked' });
 
   loginWindow.on('ready-to-show', () => {
-    getLogger().info('login window is ready-to-show');
+    logger.info('login window is ready-to-show');
 
     if (!loginWindow) {
       return;
@@ -281,7 +280,7 @@ const createLogin = async () => {
     if (process.env.START_MINIMIZED) {
       loginWindow.minimize();
     } else {
-      getLogger().info('showing login window');
+      logger.info('showing login window');
       loginWindow.show();
       loginWindow.focus();
     }
@@ -318,7 +317,7 @@ async function initializeSQL(
   const key = userInfo().username;
 
   if (!key) {
-    getLogger().info(
+    logger.info(
       'key/initialize: Generating new encryption key, since we did not find it on disk'
     );
   }
@@ -328,7 +327,7 @@ async function initializeSQL(
   sqlInitTimeStart = Date.now();
 
   try {
-    await sql.initialize({ configDir: userDataPath, key, logger: getLogger() });
+    await sql.initialize({ configDir: userDataPath, key, logger: logger });
   } catch (error: unknown) {
     if (error instanceof Error) {
       return { ok: false, error };
@@ -350,13 +349,13 @@ async function initializeSQL(
  */
 
 app.on('ready', async () => {
-  getLogger().info('app ready');
+  logger.info('app ready');
 
   const userDataPath = app.getPath('userData');
 
   if (!locale) {
     const appLocale = process.env.NODE_ENV === 'test' ? 'en' : app.getLocale();
-    getLogger().info(`locale: ${appLocale}`);
+    logger.info(`locale: ${appLocale}`);
     locale = loadLocale({ appLocale });
   }
 
@@ -371,7 +370,7 @@ app.on('ready', async () => {
       if (maybeTimeout !== 'timeout') return;
 
       /** 这里可以加载 loading 过渡 */
-      getLogger().info(
+      logger.info(
         'sql.initialize is taking more than three seconds; showing loading dialog'
       );
 
@@ -406,11 +405,11 @@ app.on('ready', async () => {
   console.log(ok);
 
   if (sqlError) {
-    getLogger().error('sql.initialize was unsuccessful; returning early');
+    logger.error('sql.initialize was unsuccessful; returning early');
     return;
   }
 
-  sqlChannels.initialize(sql);
+  SQLChannelsInitialize(sql);
 
   createLogin();
 });
@@ -425,7 +424,7 @@ app.on('activate', () => {
 });
 
 app.on('window-all-closed', async () => {
-  getLogger().info('main process handling window-all-closed');
+  logger.info('main process handling window-all-closed');
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
   if (process.platform !== 'darwin' || appShouldQuit) {
@@ -438,4 +437,4 @@ ipcMain.on('locale-data', (event) => {
   event.returnValue = locale.messages;
 });
 
-setupForNewWindow(nativeThemeNotifier, getBaseSearch);
+setupForNewWindow(nativeThemeNotifier, getBaseSearch, logger);

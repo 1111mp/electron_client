@@ -1,6 +1,6 @@
 import { LogFunctions } from 'electron-log';
 import { parentPort } from 'worker_threads';
-import db from './Server';
+import db from './server';
 import {
   WrappedWorkerRequest,
   WrappedWorkerLogEntry,
