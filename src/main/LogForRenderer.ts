@@ -29,7 +29,7 @@ class Logging {
     return this.logger;
   };
 
-  private send = (name: keyof Log, ...args: any[]) => {
+  private send = (name: keyof Log, ...args: unknown[]) => {
     ipcRenderer.send('app-log-event', name, args);
   };
 

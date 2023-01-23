@@ -1,3 +1,4 @@
+import SQL from 'better-sqlite3-multiple-ciphers';
 import type { LogFunctions } from 'electron-log';
 
 export type DataInterface = {
@@ -5,7 +6,7 @@ export type DataInterface = {
   removeDB: () => Promise<void>;
 
   // user
-  updateOrCreateUser(users: DB.UserAttributes): Promise<void>;
+  updateOrCreateUser(users: DB.UserAttributes): Promise<SQL.RunResult>;
   getUserInfo: () => Promise<DB.UserAttributes>;
 };
 

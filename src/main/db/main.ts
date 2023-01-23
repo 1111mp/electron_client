@@ -5,6 +5,8 @@ import { format } from 'util';
 import { strictAssert } from '../assert';
 import { ElectronLog, LogLevel } from 'electron-log';
 
+import type { ServerInterface } from './types';
+
 const MIN_TRACE_DURATION = 40;
 
 export type InitializeOptions = Readonly<{
@@ -12,6 +14,8 @@ export type InitializeOptions = Readonly<{
   key: string;
   logger: ElectronLog;
 }>;
+
+type Methods = keyof Omit<ServerInterface, 'close' | 'removeDB' | 'initialize'>;
 
 export type WorkerRequest = Readonly<
   | {
@@ -26,8 +30,8 @@ export type WorkerRequest = Readonly<
     }
   | {
       type: 'sqlCall';
-      method: string;
-      args: ReadonlyArray<any>;
+      method: Methods;
+      args: ReadonlyArray<unknown>;
     }
 >;
 
@@ -47,7 +51,7 @@ export type WrappedWorkerResponse =
       type: 'response';
       seq: number;
       error: string | undefined;
-      response: any;
+      response: unknown;
     }>
   | WrappedWorkerLogEntry;
 
@@ -69,7 +73,7 @@ export class MainSQL {
 
   private logger?: ElectronLog;
 
-  private onResponse = new Map<number, PromisePair<any>>();
+  private onResponse = new Map<number, PromisePair<unknown>>();
 
   constructor() {
     const scriptDir = app.isPackaged
@@ -129,13 +133,16 @@ export class MainSQL {
     await this.send({ type: 'removeDB' });
   }
 
-  public async sqlCall(method: string, args: ReadonlyArray<any>): Promise<any> {
+  public async sqlCall(
+    method: Methods,
+    args: ReadonlyArray<unknown>
+  ): Promise<unknown> {
     if (this.onReady) await this.onReady;
 
     if (!this.isReady) throw new Error('Not initialized');
 
     const { result, duration } = await this.send<{
-      result: any;
+      result: unknown;
       duration: number;
     }>({
       type: 'sqlCall',
@@ -155,9 +162,9 @@ export class MainSQL {
     const { seq } = this;
     this.seq += 1;
 
-    const result = new Promise<Response>((resolve, reject) => {
+    const result = new Promise((resolve, reject) => {
       this.onResponse.set(seq, { resolve, reject });
-    });
+    }) as Response;
 
     const wrappedRequest: WrappedWorkerRequest = {
       seq,

@@ -11,7 +11,7 @@ if (!parentPort) throw new Error('Must run as a worker thread');
 
 const port = parentPort;
 
-function respond(seq: number, error: Error | undefined, response?: any) {
+function respond(seq: number, error: Error | undefined, response?: unknown) {
   const wrappedResponse: WrappedWorkerResponse = {
     type: 'response',
     seq,
@@ -84,13 +84,13 @@ port.on('message', async ({ seq, request }: WrappedWorkerRequest) => {
     }
 
     if (request.type === 'sqlCall') {
-      const method = (db as any)[request.method];
+      const method = db[request.method];
       if (typeof method !== 'function') {
         throw new Error(`Invalid sql method: ${method}`);
       }
 
       const start = Date.now();
-      const result = await method.apply(db, request.args);
+      const result = await (method as Function).apply(db, request.args);
       const end = Date.now();
 
       respond(seq, undefined, { result, duration: end - start });

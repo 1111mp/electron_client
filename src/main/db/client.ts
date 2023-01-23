@@ -186,7 +186,7 @@ async function removeDB(): Promise<void> {
 }
 
 async function updateOrCreateUser(user: DB.UserAttributes) {
-  await channels.updateOrCreateUser(user);
+  return await channels.updateOrCreateUser(user);
 }
 
 async function getUserInfo() {

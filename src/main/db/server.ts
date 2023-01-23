@@ -31,7 +31,7 @@ type DatabaseQueryCache = Map<string, Statement<Array<unknown>>>;
 
 const statementCache = new WeakMap<Database, DatabaseQueryCache>();
 
-function prepare<T extends any[] | {}>(
+function prepare<T extends unknown[] | {}>(
   db: Database,
   query: string
 ): Statement<T> {
@@ -231,7 +231,7 @@ async function updateOrCreateUser(user: DB.UserAttributes) {
     `
   );
 
-  insertUser.run({ ...user, id: user_id_key });
+  return insertUser.run({ ...user, id: user_id_key });
 }
 
 async function getUserInfo() {

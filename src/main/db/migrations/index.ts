@@ -37,7 +37,6 @@ function updateToSchemaVersion1(
   logger.info('updateToSchemaVersion1: success!');
 }
 
-
 function updateToSchemaVersion2(
   currentVersion: number,
   db: Database,
@@ -65,7 +64,7 @@ function updateToSchemaVersion2(
     db.pragma('user_version = 2');
   })();
 
-  logger.info('updateToSchemaVersion1: success!');
+  logger.info('updateToSchemaVersion2: success!');
 }
 
 export const SCHEMA_VERSIONS = [updateToSchemaVersion1];

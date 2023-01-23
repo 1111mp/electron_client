@@ -14,13 +14,13 @@ try {
     loginSuccessed: (user_str: string) =>
       ipcRenderer.send('login-successed', user_str),
     closeLogin: () => ipcRenderer.send('close-login'),
-    updateAvailable: (fn: (info: any) => void) => {
-      ipcRenderer.on('updateAvailable', (_event, info: any) => {
+    updateAvailable: (fn: (info: unknown) => void) => {
+      ipcRenderer.on('updateAvailable', (_event, info: unknown) => {
         fn(info);
       });
     },
-    updateError: (fn: (info: any) => void) => {
-      ipcRenderer.on('updateAvailable', (_event, info: any) => {
+    updateError: (fn: (info: unknown) => void) => {
+      ipcRenderer.on('updateAvailable', (_event, info: unknown) => {
         fn(info);
       });
     },

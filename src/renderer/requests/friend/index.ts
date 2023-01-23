@@ -15,7 +15,7 @@ export function queryAll() {
 
 /**
  * @description: 好友操作接口
- * @param {required 1 | 2 | 3 | 4} type 好友操作类型	1：添加好友	2：删除好友 3：同意 4：拒绝
+ * @param {required} 1 | 2 | 3 | 4 type 好友操作类型	1：添加好友	2：删除好友 3：同意 4：拒绝
  * @param {number} friendId 好友的userId
  * @param {string} remark 备注信息（加好友时）
  * @param {jsonstring} ext 扩展字段（加好友时）
