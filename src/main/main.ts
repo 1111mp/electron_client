@@ -15,7 +15,6 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import checkForAsarUpdates from './increament';
 import packageJson from '../../package.json';
 import loadLocale from './locale';
 import { MainSQL } from './db/main';
@@ -30,69 +29,8 @@ const logger = getLogger();
 class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
-    autoUpdater.setFeedURL({
-      provider: 'generic',
-      channel: 'latest-mac',
-      url: 'http://127.0.0.1:3000/upload/electron/full/1.0.0/macos/',
-    });
     autoUpdater.logger = log;
-
-    // autoUpdater.checkForUpdates();
-    // autoUpdater.on('update-downloaded', () => {
-    //   autoUpdater.quitAndInstall();
-    // });
-
-    // autoUpdater.checkForUpdatesAndNotify();
-
-    // 是否自动更新，如果为true，当可以更新时(update-available)自动执行更新下载。
-    autoUpdater.autoDownload = false;
-
-    // 1. 在渲染进程里触发获取更新，开始进行更新流程。 (根据具体需求)
-    ipcMain.on('checkForUpdates', async (e, arg) => {
-      // autoUpdater.checkForUpdates();
-
-      await checkForAsarUpdates(logger);
-    });
-
-    autoUpdater.on('error', function (error) {
-      loginWindow?.webContents.send('updateError', JSON.stringify(error));
-    });
-
-    // 2. 开始检查是否有更新
-    autoUpdater.on('checking-for-update', function () {
-      loginWindow?.webContents.send('updateError', 'checking-for-update');
-    });
-
-    // 3. 有更新时触发
-    autoUpdater.on('update-available', function (info) {
-      loginWindow?.webContents.send('updateAvailable', info);
-    });
-
-    // 7. 收到确认更新提示，执行下载
-    ipcMain.on('comfirmUpdate', () => {
-      autoUpdater.downloadUpdate();
-    });
-
-    // 没有可用更新
-    autoUpdater.on('update-not-available', async function (info) {
-      loginWindow?.webContents.send('updateError', 'update-not-available');
-      // 这时候可以检查是否有增量更新
-      await checkForAsarUpdates(logger);
-    });
-
-    // 8. 下载进度，包含进度百分比、下载速度、已下载字节、总字节等
-    autoUpdater.on('download-progress', function (progressObj) {
-      loginWindow?.webContents.send('updateError', progressObj);
-    });
-
-    // 10. 下载完成，告诉渲染进程，是否立即执行更新安装操作
-    autoUpdater.on('update-downloaded', function () {
-      // mainWindow.webContents.send('updateDownloaded');
-      // 12. 立即更新安装
-      // ipcMain.on('updateNow', (e, arg) => {
-      autoUpdater.quitAndInstall();
-      // });
-    });
+    autoUpdater.checkForUpdatesAndNotify();
   }
 }
 
