@@ -1,11 +1,11 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, {
+  AxiosRequestConfig,
+  InternalAxiosRequestConfig,
+  AxiosResponse,
+} from 'axios';
 import Config from 'Renderer/config';
 
-interface RequestConfig extends AxiosRequestConfig {
-  responseEncoding?: string;
-}
-
-const DEFAULT_API_CONFIG: RequestConfig = {
+const DEFAULT_API_CONFIG: AxiosRequestConfig = {
   method: 'GET',
   headers: {},
   responseType: 'json',
@@ -17,14 +17,15 @@ const DEFAULT_API_CONFIG: RequestConfig = {
 axios.defaults.baseURL = Config.serverUrl;
 
 axios.interceptors.request.use(
-  (config: AxiosRequestConfig) => {
-    if (!config.url) return Promise.resolve({});
+  (config: InternalAxiosRequestConfig) => {
+    if (!config.url) return Promise.resolve(config);
 
     if (!/login|register/.test(config.url)) {
-      const { token, userId } = (window as any).UserInfo;
-      config.headers!.token = token; // getToken
-      config.headers!.userid = userId; // getUserId
+      const { token, userId } = window.UserInfo;
+      config.headers.token = token; // getToken
+      config.headers.userid = userId; // getUserId
     }
+
     return config;
   },
   (error) => {
@@ -33,7 +34,7 @@ axios.interceptors.request.use(
 );
 
 axios.interceptors.response.use(
-  (response: AxiosResponse<IAnyObject>) => {
+  (response: AxiosResponse) => {
     return response;
   },
   (error) => {
