@@ -8,6 +8,8 @@ const MINUTE = SECOND * 60;
 const log = Logging().getLogger();
 
 type TaskType = {
+  id: string;
+  startedAt: number | undefined;
   suspend(): void;
   resume(): void;
 };
@@ -31,6 +33,22 @@ export function resumeTasksWithTimeout(): void {
   }
 }
 
+export function reportLongRunningTasks(): void {
+  const now = Date.now();
+  for (const task of tasks) {
+    if (task.startedAt === undefined) {
+      continue;
+    }
+
+    const duration = Math.max(0, now - task.startedAt);
+    if (duration > MINUTE) {
+      log.warn(
+        `TaskWithTimeout: ${task.id} has been running for ${duration}ms`
+      );
+    }
+  }
+}
+
 export default function createTaskWithTimeout<T, Args extends Array<unknown>>(
   task: (...args: Args) => Promise<T>,
   id: string,
@@ -47,13 +65,20 @@ export default function createTaskWithTimeout<T, Args extends Array<unknown>>(
     const { promise: timerPromise, reject } = explodePromise<never>();
 
     const startTimer = () => {
-      startTimer();
+      stopTimer();
 
-      if (complete) return;
+      if (complete) {
+        return;
+      }
 
+      entry.startedAt = Date.now();
       timer = setTimeout(() => {
-        if (complete) return;
-
+        if (complete) {
+          log.warn(
+            `TaskWithTimeout: ${id} task timed out, but was already complete`
+          );
+          return;
+        }
         complete = true;
         tasks.delete(entry);
 
@@ -62,11 +87,22 @@ export default function createTaskWithTimeout<T, Args extends Array<unknown>>(
       }, timeout);
     };
 
-    const stopTimer = () => {};
+    const stopTimer = () => {
+      timer && clearTimeout(timer);
+      timer = undefined;
+    };
 
     const entry: TaskType = {
-      suspend: stopTimer,
-      resume: startTimer,
+      id,
+      startedAt: undefined,
+      suspend: () => {
+        log.warn(`TaskWithTimeout: ${id} task suspended`);
+        stopTimer();
+      },
+      resume: () => {
+        log.warn(`TaskWithTimeout: ${id} task resumed`);
+        startTimer();
+      },
     };
 
     tasks.add(entry);

@@ -34,8 +34,7 @@ export class NativeThemeListener {
 
   public theme_setting(theme: Theme): void {
     this.theme = theme;
-    this.update();
-
+    window.Context.sqlClient.setUserTheme(theme);
     window.Context.themeSetting(theme);
   }
 

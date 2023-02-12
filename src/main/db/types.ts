@@ -1,3 +1,4 @@
+import { Theme } from 'App/types';
 import SQL from 'better-sqlite3-multiple-ciphers';
 import type { LogFunctions } from 'electron-log';
 
@@ -8,6 +9,7 @@ export type DataInterface = {
   // user
   updateOrCreateUser(users: DB.UserAttributes): Promise<SQL.RunResult>;
   getUserInfo: () => Promise<DB.UserAttributes>;
+  setUserTheme: (theme: Theme) => Promise<unknown>;
 };
 
 export type ClientInterface = DataInterface & {};
@@ -20,15 +22,4 @@ export type ServerInterface = DataInterface & {
     key: string;
     logger: Omit<LogFunctions, 'log'>;
   }) => Promise<void>;
-};
-
-export type ClientJobType = {
-  fnName: string;
-  start: number;
-  resolve?: (value: unknown) => void;
-  reject?: (error: Error) => void;
-
-  // Only in DEBUG mode
-  complete?: boolean;
-  args?: ReadonlyArray<unknown>;
 };

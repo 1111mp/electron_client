@@ -11,8 +11,8 @@ const config: Config = {
   // electron only hash history
   isBorwserHistory: false,
 
-  serverUrl: 'http://192.168.0.3:3000/api',
-  // serverUrl: 'http://127.0.0.1:3000/api',
+  // serverUrl: 'http://192.168.0.3:3000/api',
+  serverUrl: 'http://127.0.0.1:3000/api/v1',
 };
 
 export default config;

@@ -7,7 +7,10 @@ import { Theme, WindowName } from '../../types';
     const localeMessages = ipcRenderer.sendSync('locale-data');
 
     let UserInfo = await sqlClient.getUserInfo();
-    ipcRenderer.send('native-theme:init', UserInfo.theme);
+    ipcRenderer.send(
+      'native-theme:init',
+      UserInfo.theme ? UserInfo.theme : Theme.system
+    );
 
     // exposeInMainWorld don't support class
     contextBridge.exposeInMainWorld('Context', {

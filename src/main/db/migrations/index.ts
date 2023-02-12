@@ -25,7 +25,7 @@ function updateToSchemaVersion1(
         token STRING,
         avatar STRING DEFAULT NULL,
         email STRING DEFAULT NULL,
-        theme STRING,
+        theme STRING DEFAULT NULL,
         regisTime STRING,
         updateTime STRING
       );

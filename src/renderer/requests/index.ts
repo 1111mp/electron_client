@@ -18,7 +18,7 @@ axios.defaults.baseURL = Config.serverUrl;
 
 axios.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    if (!config.url) return Promise.resolve(config);
+    if (!config.url) return config;
 
     if (!/login|register/.test(config.url)) {
       const { token, userId } = window.UserInfo;

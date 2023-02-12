@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { AxiosError } from 'axios';
 import request from 'Renderer/requests';
 import { useI18n } from 'Renderer/utils/i18n';
+import { Theme } from 'App/types';
 
 const Login: React.FC = () => {
   const [type, setType] = useState<1 | 2>(1); // 1 sign in   2 sign up
@@ -45,18 +46,25 @@ const Login: React.FC = () => {
 
   const submit = async () => {
     if (!account || !pwd || aerror || perror) return;
-    request(type === 1 ? '/user/login' : '/user/register', {
-      method: 'GET',
+    request(type === 1 ? '/users/login' : '/users/create', {
+      method: 'POST',
       data: { account, pwd },
     })
       .then(async (res: any) => {
-        if (res.code === 200) {
+        if (res.statusCode === 200) {
           /** login 成功之后 更新数据库 user信息 */
+          const { id, account, avatar, email, regisTime, updateTime } =
+            res.data;
           try {
             window.Context.sqlClient
               .updateOrCreateUser({
                 token: res.token,
-                ...res.data,
+                userId: id,
+                account,
+                avatar,
+                email,
+                regisTime,
+                updateTime,
               })
               .then(() => {
                 window.Context.loginSuccessed(

@@ -4,14 +4,6 @@ export default class UserStore {
   user: DB.UserAttributes = window.Context.getUserInfo();
 
   constructor() {
-    window.ThemeContext.nativeThemeListener.subscribe((theme) => {
-      theme !== void 0 &&
-        (this.user = {
-          ...this.user,
-          theme,
-        });
-    });
-
     makeAutoObservable(this, {}, { autoBind: true });
 
     reaction(

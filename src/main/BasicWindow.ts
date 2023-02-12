@@ -59,6 +59,7 @@ export function setupForNewWindow(
       maximizable: resizable,
       titleBarStyle: process.platform === 'darwin' ? 'hidden' : 'default',
       webPreferences: {
+        sandbox: false,
         preload: app.isPackaged
           ? path.join(__dirname, 'window_preload.js')
           : path.join(__dirname, '../../.erb/dll/window_preload.js'),

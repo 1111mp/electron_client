@@ -9,6 +9,7 @@ import type { Database, Statement } from 'better-sqlite3';
 import type { LogFunctions } from 'electron-log';
 import { ServerInterface } from './types';
 import { getSchemaVersion, getUserVersion, setUserVersion } from './util';
+import { Theme } from 'App/types';
 
 const user_id_key = 1;
 
@@ -19,6 +20,7 @@ const dataInterface: ServerInterface = {
   //user
   updateOrCreateUser,
   getUserInfo,
+  setUserTheme,
 
   // Server-only
 
@@ -203,47 +205,38 @@ function getInstance(): Database {
 /********************************* user ************************************/
 async function updateOrCreateUser(user: DB.UserAttributes) {
   const db = getInstance();
+  const columns = { id: user_id_key, ...user };
+  const keys = Object.keys(columns);
 
-  const insertUser = prepare(
-    db,
+  const insertUser = db.prepare(
     `
     INSERT OR REPLACE INTO users (
-      id,
-      userId,
-      account,
-      token,
-      avatar,
-      email,
-      theme,
-      regisTime,
-      updateTime
+      ${keys.join(',')}
     ) VALUES (
-      $id,
-      $userId,
-      $account,
-      $token,
-      $avatar,
-      $email,
-      $theme,
-      $regisTime,
-      $updateTime
+      ${keys.map((key) => `$${key}`).join(',')}
     );
     `
   );
 
-  return insertUser.run({ ...user, id: user_id_key });
+  return insertUser.run(columns);
 }
 
 async function getUserInfo() {
   const db = getInstance();
 
-  const user = db
-    .prepare(
-      `
+  const user = prepare(
+    db,
+    `
       SELECT * FROM users WHERE id = $id;
       `
-    )
-    .get({ id: user_id_key });
+  ).get({ id: user_id_key });
 
   return user as DB.UserAttributes;
+}
+
+async function setUserTheme(theme: Theme) {
+  const db = getInstance();
+  const update = db.prepare(`UPDATE users SET theme = $theme WHERE id = $id`);
+
+  return update.run({ id: user_id_key, theme });
 }

@@ -27,6 +27,7 @@ export class NativeThemeNotifier {
     });
 
     ipcMain.on('native-theme:get_user', (event) => {
+      console.log(this.theme);
       event.returnValue = this.theme;
     });
 
@@ -46,7 +47,7 @@ export class NativeThemeNotifier {
     });
   }
 
-  public addWindow(window: BrowserWindow): void {
+  public addWindow(window: BrowserWindow) {
     if (this.listeners.has(window)) {
       return;
     }
@@ -59,7 +60,7 @@ export class NativeThemeNotifier {
   }
 
   // TODO The value of theme setting is system. just change app theme, not to change value of setting.
-  private notifyListeners(): void {
+  private notifyListeners() {
     for (const window of this.listeners) {
       window.webContents.send('native-theme:changed');
     }
