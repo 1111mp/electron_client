@@ -13,5 +13,14 @@ declare global {
       regisTime: string;
       updateTime: string;
     }
+
+    interface SenderInfo {
+      id: number;
+      account: string;
+      avatar: string | null;
+      email: string | null;
+      regisTime: string;
+      updateTime: string;
+    }
   }
 }

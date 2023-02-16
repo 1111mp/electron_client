@@ -21,7 +21,7 @@ axios.interceptors.request.use(
     if (!config.url) return config;
 
     if (!/login|register/.test(config.url)) {
-      const { token, userId } = window.UserInfo;
+      const { token, userId } = window.Context.getUserInfo();
       config.headers.token = token; // getToken
       config.headers.userid = userId; // getUserId
     }

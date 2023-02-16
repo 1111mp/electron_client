@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-// import { ipcRenderer } from 'electron';
-import { AxiosError } from 'axios';
 import request from 'Renderer/requests';
 import { useI18n } from 'Renderer/utils/i18n';
-import { Theme } from 'App/types';
+
+import type { AxiosError } from 'axios';
 
 const Login: React.FC = () => {
   const [type, setType] = useState<1 | 2>(1); // 1 sign in   2 sign up
