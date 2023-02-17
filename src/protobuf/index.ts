@@ -1,4 +1,10 @@
-import { AckMessage, Notify, MessageText, MessageImage } from './proto';
+import {
+  AckMessage,
+  Notify,
+  MessageTextForSender,
+  MessageTextForReceived,
+  MessageImage,
+} from './proto';
 
 export function setAckToProto(resp: ModuleIM.Core.AckResponse) {
   const message = new AckMessage(resp);
@@ -19,12 +25,13 @@ export function getNotifyFromProto(buffer: Uint8Array) {
 }
 
 export function setMessageTextToProto(messageText: ModuleIM.Core.MessageText) {
-  const message = new MessageText(messageText);
-  return MessageText.encode(message).finish();
+  const message = new MessageTextForSender(messageText);
+  console.log(message);
+  return MessageTextForSender.encode(message).finish();
 }
 
 export function getMessageTextFromProto(buffer: Uint8Array) {
-  return MessageText.decode(buffer);
+  return MessageTextForReceived.decode(buffer);
 }
 
 export function setMessageImageToProto(

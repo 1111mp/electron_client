@@ -5,6 +5,7 @@ import { Avatar } from 'antd';
 import classNames from 'classnames';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { WindowName, WindowUrl } from 'App/types';
+import { useTargetStore } from '../../stores';
 
 export const Menus: any[] = [
   {
@@ -23,11 +24,14 @@ export const Menu: React.ComponentType = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const { sendMesssageText } = useTargetStore('clientStore');
+
   const openSetting = () => {
-    window.Context.windowOpen({
-      name: WindowName.Setting,
-      url: WindowUrl.Setting,
-    });
+    // window.Context.windowOpen({
+    //   name: WindowName.Setting,
+    //   url: WindowUrl.Setting,
+    // });
+    sendMesssageText();
   };
 
   const menuHandler = (path: string) => {

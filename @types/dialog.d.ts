@@ -1,4 +1,4 @@
-declare namespace IDialog {
+export namespace IDialog {
   type type = 'modal' | 'alert' | 'confirm' | 'error' | 'network';
 
   interface props {

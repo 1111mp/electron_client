@@ -1,105 +1,78 @@
-declare namespace ModuleIM {
-  namespace Core {
-    interface AckResponse {
-      statusCode: HttpStatus;
-      message?: string;
-    }
+import { ModuleIMCommon } from 'App/renderer/socket/enums';
 
-    type MessageBasic = {
-      id: string;
-      session: Common.Session;
-      sender: DB.SenderInfo;
-      receiver: number; // userId or groupId
-      status: Common.MsgStatus;
-      timer: string;
-      ext?: string; // reserved field
-    };
+declare global {
+  namespace ModuleIM {
+    namespace Core {
+      interface AckResponse {
+        statusCode: HttpStatus;
+        message?: string;
+      }
 
-    type MessageText = MessageBasic & {
-      type: Common.MsgType.Text;
-      text: string;
-    };
+      type MessageBasic = {
+        id: string;
+        session: ModuleIMCommon.Session;
+        sender: number;
+        receiver: number; // userId or groupId
+        status: ModuleIMCommon.MsgStatus;
+        timer: string;
+        ext?: string; // reserved field
+      };
 
-    type MessageImage = MessageBasic & {
-      type: Common.MsgType.Image;
-      image: string;
-    };
+      type MessageBasicForReceived = {
+        id: string;
+        session: ModuleIMCommon.Session;
+        sender: DB.SenderInfo;
+        receiver: number; // userId or groupId
+        status: ModuleIMCommon.MsgStatus;
+        timer: string;
+        ext?: string; // reserved field
+      };
 
-    type MessageAll = MessageText | MessageImage;
+      type MessageText = MessageBasic & {
+        type: ModuleIMCommon.MsgType.Text;
+        text: string;
+      };
 
-    type MessageRead = {
-      id: string;
-      session: Common.Session;
-      sender: number;
-      receiver: number; // userId or groupId
-      status: Common.MsgStatus;
-    };
+      type MessageTextForReceived = MessageBasicForReceived & {
+        type: ModuleIMCommon.MsgType.Text;
+        text: string;
+      };
 
-    type Notify = {
-      id: string;
-      type: Common.Notifys;
-      sender: DB.SenderInfo;
-      receiver: number;
-      status: Common.NotifyStatus;
-      timer: string;
-      remark?: string;
-      ext?: string;
-    };
+      type MessageImage = MessageBasic & {
+        type: ModuleIMCommon.MsgType.Image;
+        image: string;
+      };
 
-    type Group = {
-      id: number;
-      name: string;
-      avatar?: string;
-      type: Common.GroupType;
-      creator: number;
-      createdAt?: string;
-      updatedAt?: string;
-    };
-  }
+      type MessageAll = MessageText | MessageImage;
 
-  namespace Common {
-    const enum GroupType {
-      Basic = 1, // 200
-      Big, // 2000
-    }
+      type MessageRead = {
+        id: string;
+        session: ModuleIMCommon.Session;
+        sender: number;
+        receiver: number; // userId or groupId
+        status: ModuleIMCommon.MsgStatus;
+      };
 
-    const enum MessageEventNames {
-      Message = 'on-message',
-      MessageText = 'on-message:text',
-      MessageImage = 'on-message:image',
-      Notify = 'on-notify',
-      Read = 'on-message:read',
-    }
+      type Notify = {
+        id: string;
+        type: ModuleIMCommon.Notifys;
+        sender: DB.SenderInfo;
+        receiver: number;
+        status: ModuleIMCommon.NotifyStatus;
+        timer: string;
+        remark?: string;
+        ext?: string;
+      };
 
-    const enum Notifys {
-      AddFriend = 1,
-      DelFriend,
-    }
-
-    const enum NotifyStatus {
-      Initial = 1,
-      Received,
-      Readed,
-      Fulfilled,
-      Rejected,
-    }
-
-    const enum Session {
-      Single = 1,
-      Group,
-    }
-
-    const enum MsgType {
-      Text = 'text',
-      Image = 'image',
-      Video = 'video',
-      Audio = 'audio',
-    }
-
-    const enum MsgStatus {
-      Initial = 1,
-      Received,
-      Readed,
+      type Group = {
+        id: number;
+        name: string;
+        avatar?: string;
+        type: ModuleIMCommon.GroupType;
+        creator: number;
+        createdAt?: string;
+        updatedAt?: string;
+      };
     }
   }
 }

@@ -1,8 +1,9 @@
-import { Message, Type, Field, OneOf } from 'protobufjs/light';
+import { ModuleIMCommon } from 'App/renderer/socket/enums';
+import { Message, Type, Field } from 'protobufjs/light';
 
-@Type.d('SuperAckMessage')
+@Type.d()
 export class AckMessage extends Message<AckMessage> {
-  @Field.d(1, 'int32', 'required', HttpStatus.OK)
+  @Field.d(1, 'int32', 'required')
   public statusCode: HttpStatus;
 
   @Field.d(2, 'string', 'optional')
@@ -71,7 +72,7 @@ export class Notify extends Message<Notify> {
   public id: string;
 
   @Field.d(2, Notifys, 'required')
-  public type: ModuleIM.Common.Notifys;
+  public type: ModuleIMCommon.Notifys;
 
   @Field.d(3, Sender)
   public sender: DB.SenderInfo;
@@ -80,7 +81,7 @@ export class Notify extends Message<Notify> {
   public receiver: number;
 
   @Field.d(5, NotifyStatus, 'required')
-  public status: ModuleIM.Common.NotifyStatus;
+  public status: ModuleIMCommon.NotifyStatus;
 
   @Field.d(6, 'string', 'required')
   public timer: string;
@@ -93,32 +94,62 @@ export class Notify extends Message<Notify> {
 }
 
 @Type.d()
-export class MessageText extends Message<MessageText> {
+export class MessageTextForSender extends Message<MessageTextForSender> {
   @Field.d(1, 'string', 'required')
   public id: string;
 
   @Field.d(2, Session, 'required')
-  public session: ModuleIM.Common.Session;
+  public session: ModuleIMCommon.Session;
 
-  @Field.d(3, Sender)
+  @Field.d(3, 'int32', 'required')
+  public sender: number;
+
+  @Field.d(4, 'int32', 'required')
+  public receiver: number;
+
+  @Field.d(5, 'string', 'required')
+  public type: ModuleIMCommon.MsgType.Text;
+
+  @Field.d(6, 'string', 'required')
+  public text: string;
+
+  @Field.d(7, MsgStatus, 'required')
+  public status: ModuleIMCommon.MsgStatus;
+
+  @Field.d(8, 'string', 'required')
+  public timer: string;
+
+  @Field.d(9, 'string', 'optional')
+  public ext?: string;
+}
+
+@Type.d()
+export class MessageTextForReceived extends Message<MessageTextForReceived> {
+  @Field.d(1, 'string', 'required')
+  public id: string;
+
+  @Field.d(2, Session, 'required')
+  public session: ModuleIMCommon.Session;
+
+  @Field.d(3, Sender, 'required')
   public sender: DB.SenderInfo;
 
   @Field.d(4, 'int32', 'required')
   public receiver: number;
 
-  @Field.d(5, MsgType.Text, 'required')
-  public type: ModuleIM.Common.MsgType.Text;
+  @Field.d(5, 'string', 'required')
+  public type: ModuleIMCommon.MsgType.Text;
 
   @Field.d(6, 'string', 'required')
   public text: string;
 
-  @Field.d(7, MsgStatus)
-  public status: ModuleIM.Common.MsgStatus;
+  @Field.d(7, MsgStatus, 'required')
+  public status: ModuleIMCommon.MsgStatus;
 
   @Field.d(8, 'string', 'required')
   public timer: string;
 
-  @Field.d(9, 'string')
+  @Field.d(9, 'string', 'optional')
   public ext?: string;
 }
 
@@ -128,22 +159,22 @@ export class MessageImage extends Message<MessageImage> {
   public id: string;
 
   @Field.d(2, Session, 'required')
-  public session: ModuleIM.Common.Session;
+  public session: ModuleIMCommon.Session;
 
-  @Field.d(3, Sender)
-  public sender: DB.SenderInfo;
+  @Field.d(3, 'int32', 'required')
+  public sender: number;
 
   @Field.d(4, 'int32', 'required')
   public receiver: number;
 
-  @Field.d(5, MsgType.Image, 'required')
-  public type: ModuleIM.Common.MsgType.Image;
+  @Field.d(5, 'string', 'required')
+  public type: ModuleIMCommon.MsgType.Image;
 
   @Field.d(6, 'string', 'required')
   public image: string;
 
   @Field.d(7, MsgStatus)
-  public status: ModuleIM.Common.MsgStatus;
+  public status: ModuleIMCommon.MsgStatus;
 
   @Field.d(8, 'string', 'required')
   public timer: string;
@@ -158,7 +189,7 @@ export class MessageRead extends Message<MessageRead> {
   public id: string;
 
   @Field.d(2, Session, 'required')
-  public session: ModuleIM.Common.Session;
+  public session: ModuleIMCommon.Session;
 
   @Field.d(3, 'int32', 'required')
   public sender: number;
@@ -167,5 +198,5 @@ export class MessageRead extends Message<MessageRead> {
   public receiver: number;
 
   @Field.d(5, MsgStatus)
-  public status: ModuleIM.Common.MsgStatus;
+  public status: ModuleIMCommon.MsgStatus;
 }

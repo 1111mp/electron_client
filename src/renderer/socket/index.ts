@@ -10,24 +10,25 @@ import {
 } from 'App/protobuf';
 
 import type { Socket, ManagerOptions, SocketOptions } from 'socket.io-client';
+import { ModuleIMCommon } from './enums';
 
-type NormalCallback = (resp: ModuleIM.Core.AckResponse) => void;
+type AckCallback = (resp: ArrayBuffer) => void;
 type ProtoCallback = (resp: Uint8Array) => void;
 type EventType = (buffer: Uint8Array, cb: ProtoCallback) => void;
 
 type ListenEvents = {
-  [ModuleIM.Common.MessageEventNames.Notify]: EventType;
-  [ModuleIM.Common.MessageEventNames.MessageText]: EventType;
-  [ModuleIM.Common.MessageEventNames.MessageImage]: EventType;
+  [ModuleIMCommon.MessageEventNames.Notify]: EventType;
+  [ModuleIMCommon.MessageEventNames.MessageText]: EventType;
+  [ModuleIMCommon.MessageEventNames.MessageImage]: EventType;
 };
 type EmitEvents = {
-  [ModuleIM.Common.MessageEventNames.MessageText]: (
+  [ModuleIMCommon.MessageEventNames.MessageText]: (
     buffer: Uint8Array,
-    cb: ProtoCallback
+    cb: AckCallback
   ) => void;
-  [ModuleIM.Common.MessageEventNames.MessageImage]: (
+  [ModuleIMCommon.MessageEventNames.MessageImage]: (
     buffer: Uint8Array,
-    cb: ProtoCallback
+    cb: AckCallback
   ) => void;
 };
 
@@ -37,7 +38,7 @@ type IMSocketOptions = {
   onConnectError?: (err: Error) => void;
   onDisconnect?: (reason: Socket.DisconnectReason) => void;
   onNotify?: (notify: ModuleIM.Core.Notify) => void;
-  onMessageText?: (msg: ModuleIM.Core.MessageText) => void;
+  onMessageText?: (msg: ModuleIM.Core.MessageTextForReceived) => void;
   onMessageImage?: (msg: ModuleIM.Core.MessageImage) => void;
 };
 
@@ -56,7 +57,8 @@ class IMSocket {
     private readonly url: string,
     private readonly options: IMSocketOptions
   ) {
-    this.io = SocketIO(this.url, options.optionsForSocket);
+    console.log(url);
+    this.io = SocketIO(url, options.optionsForSocket);
 
     this.io.on('connect', () => {
       this.options.onConnect && this.options.onConnect();
@@ -90,15 +92,15 @@ class IMSocket {
   // initialize handler
   private initialize() {
     // for notify
-    this.io.on(ModuleIM.Common.MessageEventNames.Notify, this.onNotify);
+    this.io.on(ModuleIMCommon.MessageEventNames.Notify, this.onNotify);
     // for text message
     this.io.on(
-      ModuleIM.Common.MessageEventNames.MessageText,
+      ModuleIMCommon.MessageEventNames.MessageText,
       this.onMessageText
     );
     // for image message
     this.io.on(
-      ModuleIM.Common.MessageEventNames.MessageImage,
+      ModuleIMCommon.MessageEventNames.MessageImage,
       this.onMessageImage
     );
   }
@@ -152,7 +154,7 @@ class IMSocket {
    */
   public sendMessageText(msg: ModuleIM.Core.MessageText) {
     const buffer = setMessageTextToProto(msg);
-    return this.send(ModuleIM.Common.MessageEventNames.MessageText, buffer);
+    return this.send(ModuleIMCommon.MessageEventNames.MessageText, buffer);
   }
 
   /**
@@ -162,13 +164,13 @@ class IMSocket {
    */
   public sendMessageImage(msg: ModuleIM.Core.MessageImage) {
     const buffer = setMessageImageToProto(msg);
-    return this.send(ModuleIM.Common.MessageEventNames.MessageText, buffer);
+    return this.send(ModuleIMCommon.MessageEventNames.MessageText, buffer);
   }
 
   private send(
     evtName:
-      | ModuleIM.Common.MessageEventNames.MessageText
-      | ModuleIM.Common.MessageEventNames.MessageImage,
+      | ModuleIMCommon.MessageEventNames.MessageText
+      | ModuleIMCommon.MessageEventNames.MessageImage,
     buffer: Uint8Array,
     timer: number = 6000 // milliseconds
   ): Promise<ModuleIM.Core.AckResponse> {
@@ -180,14 +182,14 @@ class IMSocket {
             message: 'timeout',
           });
         }
-        const resp = getAckFromProto(respBuffer);
+        const resp = getAckFromProto(new Uint8Array(respBuffer));
 
-        resolve(resp);
+        resolve(resp.toJSON() as ModuleIM.Core.AckResponse);
       });
     });
   }
 }
 
-export default function (url: string, options: IMSocketOptions) {
+export function getIMSocketInstance(url: string, options: IMSocketOptions) {
   return IMSocket.getInstance(url, options);
 }
