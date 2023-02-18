@@ -43,6 +43,11 @@ declare global {
         image: string;
       };
 
+      type MessageImageForReceived = MessageBasicForReceived & {
+        type: ModuleIMCommon.MsgType.Image;
+        image: string;
+      };
+
       type MessageAll = MessageText | MessageImage;
 
       type MessageRead = {

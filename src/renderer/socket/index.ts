@@ -16,21 +16,11 @@ type AckCallback = (resp: ArrayBuffer) => void;
 type ProtoCallback = (resp: Uint8Array) => void;
 type EventType = (buffer: Uint8Array, cb: ProtoCallback) => void;
 
-type ListenEvents = {
-  [ModuleIMCommon.MessageEventNames.Notify]: EventType;
-  [ModuleIMCommon.MessageEventNames.MessageText]: EventType;
-  [ModuleIMCommon.MessageEventNames.MessageImage]: EventType;
-};
-type EmitEvents = {
-  [ModuleIMCommon.MessageEventNames.MessageText]: (
-    buffer: Uint8Array,
-    cb: AckCallback
-  ) => void;
-  [ModuleIMCommon.MessageEventNames.MessageImage]: (
-    buffer: Uint8Array,
-    cb: AckCallback
-  ) => void;
-};
+type ListenEvents = Record<ModuleIMCommon.MessageEventNames, EventType>;
+type EmitEvents = Record<
+  ModuleIMCommon.MessageEventNames,
+  (buffer: Uint8Array, cb: AckCallback) => void
+>;
 
 type IMSocketOptions = {
   optionsForSocket: Partial<ManagerOptions & SocketOptions>;
@@ -39,7 +29,7 @@ type IMSocketOptions = {
   onDisconnect?: (reason: Socket.DisconnectReason) => void;
   onNotify?: (notify: ModuleIM.Core.Notify) => void;
   onMessageText?: (msg: ModuleIM.Core.MessageTextForReceived) => void;
-  onMessageImage?: (msg: ModuleIM.Core.MessageImage) => void;
+  onMessageImage?: (msg: ModuleIM.Core.MessageImageForReceived) => void;
 };
 
 class IMSocket {
@@ -57,7 +47,6 @@ class IMSocket {
     private readonly url: string,
     private readonly options: IMSocketOptions
   ) {
-    console.log(url);
     this.io = SocketIO(url, options.optionsForSocket);
 
     this.io.on('connect', () => {
@@ -168,9 +157,7 @@ class IMSocket {
   }
 
   private send(
-    evtName:
-      | ModuleIMCommon.MessageEventNames.MessageText
-      | ModuleIMCommon.MessageEventNames.MessageImage,
+    evtName: ModuleIMCommon.MessageEventNames,
     buffer: Uint8Array,
     timer: number = 6000 // milliseconds
   ): Promise<ModuleIM.Core.AckResponse> {

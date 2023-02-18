@@ -3,7 +3,8 @@ import {
   Notify,
   MessageTextForSender,
   MessageTextForReceived,
-  MessageImage,
+  MessageImageForSender,
+  MessageImageForReceived,
 } from './proto';
 
 export function setAckToProto(resp: ModuleIM.Core.AckResponse) {
@@ -37,10 +38,10 @@ export function getMessageTextFromProto(buffer: Uint8Array) {
 export function setMessageImageToProto(
   messageImage: ModuleIM.Core.MessageImage
 ) {
-  const message = new MessageImage(messageImage);
-  return MessageImage.encode(message).finish();
+  const message = new MessageImageForSender(messageImage);
+  return MessageImageForSender.encode(message).finish();
 }
 
 export function getMessageImageFromProto(buffer: Uint8Array) {
-  return MessageImage.decode(buffer);
+  return MessageImageForReceived.decode(buffer);
 }

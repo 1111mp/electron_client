@@ -154,7 +154,7 @@ export class MessageTextForReceived extends Message<MessageTextForReceived> {
 }
 
 @Type.d()
-export class MessageImage extends Message<MessageImage> {
+export class MessageImageForSender extends Message<MessageImageForSender> {
   @Field.d(1, 'string', 'required')
   public id: string;
 
@@ -163,6 +163,36 @@ export class MessageImage extends Message<MessageImage> {
 
   @Field.d(3, 'int32', 'required')
   public sender: number;
+
+  @Field.d(4, 'int32', 'required')
+  public receiver: number;
+
+  @Field.d(5, 'string', 'required')
+  public type: ModuleIMCommon.MsgType.Image;
+
+  @Field.d(6, 'string', 'required')
+  public image: string;
+
+  @Field.d(7, MsgStatus)
+  public status: ModuleIMCommon.MsgStatus;
+
+  @Field.d(8, 'string', 'required')
+  public timer: string;
+
+  @Field.d(9, 'string')
+  public ext?: string;
+}
+
+@Type.d()
+export class MessageImageForReceived extends Message<MessageImageForReceived> {
+  @Field.d(1, 'string', 'required')
+  public id: string;
+
+  @Field.d(2, Session, 'required')
+  public session: ModuleIMCommon.Session;
+
+  @Field.d(3, Sender, 'required')
+  public sender: DB.SenderInfo;
 
   @Field.d(4, 'int32', 'required')
   public receiver: number;
