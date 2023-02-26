@@ -1,5 +1,5 @@
 import 'webpack-dev-server';
-import path, { join } from 'path';
+import { resolve, join } from 'path';
 import fs from 'fs-extra';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const port = process.env.PORT || 1212;
-const manifest = path.resolve(webpackPaths.dllPath, 'renderer.json');
+const manifest = resolve(webpackPaths.dllPath, 'renderer.json');
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const requiredByDLLConfig = module.parent!.filename.includes(
   'webpack.config.renderer.dev.dll'
@@ -47,9 +47,9 @@ const configuration: webpack.Configuration = {
   target: ['web', 'electron-renderer'],
 
   entry: {
-    main: path.join(webpackPaths.srcRendererPath, 'main/index.tsx'),
-    login: path.join(webpackPaths.srcRendererPath, 'login/index.tsx'),
-    window: path.join(webpackPaths.srcRendererPath, 'window/index.tsx'),
+    login: join(webpackPaths.srcRendererPath, 'login/index.tsx'),
+    main: join(webpackPaths.srcRendererPath, 'main/index.tsx'),
+    window: join(webpackPaths.srcRendererPath, 'window/index.tsx'),
   },
 
   output: {
@@ -64,7 +64,7 @@ const configuration: webpack.Configuration = {
   module: {
     rules: [
       {
-        test: /\.s?css$/,
+        test: /\.s?(c|a)ss$/,
         use: [
           'style-loader',
           {
@@ -82,7 +82,7 @@ const configuration: webpack.Configuration = {
             loader: 'sass-resources-loader',
             options: {
               resources: [
-                path.join(webpackPaths.srcRendererPath, 'styles/mixin.scss'),
+                join(webpackPaths.srcRendererPath, 'styles/mixin.scss'),
               ],
             },
           },
@@ -104,7 +104,7 @@ const configuration: webpack.Configuration = {
             loader: 'sass-resources-loader',
             options: {
               resources: [
-                path.join(webpackPaths.srcRendererPath, 'styles/mixin.scss'),
+                join(webpackPaths.srcRendererPath, 'styles/mixin.scss'),
               ],
             },
           },
@@ -159,23 +159,8 @@ const configuration: webpack.Configuration = {
     new ReactRefreshWebpackPlugin(),
 
     new HtmlWebpackPlugin({
-      filename: path.join('main.html'),
-      template: path.join(webpackPaths.srcRendererPath, 'main/index.ejs'),
-      minify: {
-        collapseWhitespace: true,
-        removeAttributeQuotes: true,
-        removeComments: true,
-      },
-      chunks: ['main'],
-      isBrowser: false,
-      env: process.env.NODE_ENV,
-      isDevelopment: process.env.NODE_ENV !== 'production',
-      nodeModules: webpackPaths.appNodeModulesPath,
-    }),
-
-    new HtmlWebpackPlugin({
-      filename: path.join('login.html'),
-      template: path.join(webpackPaths.srcRendererPath, 'login/index.ejs'),
+      filename: join('login.html'),
+      template: join(webpackPaths.srcRendererPath, 'login/index.ejs'),
       minify: {
         collapseWhitespace: true,
         removeAttributeQuotes: true,
@@ -189,8 +174,23 @@ const configuration: webpack.Configuration = {
     }),
 
     new HtmlWebpackPlugin({
-      filename: path.join('window.html'),
-      template: path.join(webpackPaths.srcRendererPath, 'window/index.ejs'),
+      filename: join('main.html'),
+      template: join(webpackPaths.srcRendererPath, 'main/index.ejs'),
+      minify: {
+        collapseWhitespace: true,
+        removeAttributeQuotes: true,
+        removeComments: true,
+      },
+      chunks: ['main'],
+      isBrowser: false,
+      env: process.env.NODE_ENV,
+      isDevelopment: process.env.NODE_ENV !== 'production',
+      nodeModules: webpackPaths.appNodeModulesPath,
+    }),
+
+    new HtmlWebpackPlugin({
+      filename: join('window.html'),
+      template: join(webpackPaths.srcRendererPath, 'window/index.ejs'),
       minify: {
         collapseWhitespace: true,
         removeAttributeQuotes: true,

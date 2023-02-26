@@ -4,12 +4,12 @@ import SQL from 'better-sqlite3-multiple-ciphers';
 import { isString } from 'lodash';
 import { updateSchema } from './migrations';
 import { consoleLogger } from '../utils/consoleLogger';
+import { getSchemaVersion, getUserVersion, setUserVersion } from './util';
 
 import type { Database, Statement } from 'better-sqlite3';
 import type { LogFunctions } from 'electron-log';
-import { ServerInterface } from './types';
-import { getSchemaVersion, getUserVersion, setUserVersion } from './util';
-import { Theme } from 'App/types';
+import type { ServerInterface } from './types';
+import type { Theme } from 'App/types';
 
 const user_id_key = 1;
 

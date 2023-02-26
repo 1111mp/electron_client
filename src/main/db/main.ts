@@ -3,8 +3,8 @@ import { Worker } from 'worker_threads';
 import { app } from 'electron';
 import { format } from 'util';
 import { strictAssert } from '../assert';
-import { ElectronLog, LogLevel } from 'electron-log';
 
+import type { ElectronLog, LogLevel } from 'electron-log';
 import type { ServerInterface } from './types';
 
 const MIN_TRACE_DURATION = 40;
