@@ -12,11 +12,10 @@ interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
 }
 
 export default class MenuBuilder {
-  mainWindow: BrowserWindow;
-
-  constructor(mainWindow: BrowserWindow) {
-    this.mainWindow = mainWindow;
-  }
+  constructor(
+    private readonly mainWindow: BrowserWindow,
+    private readonly i18n: I18n.I18nFn
+  ) {}
 
   buildMenu(): Menu {
     if (
@@ -57,7 +56,7 @@ export default class MenuBuilder {
       label: 'Electron',
       submenu: [
         {
-          label: 'About ElectronReact',
+          label: this.i18n('About ElectronReact') as string,
           selector: 'orderFrontStandardAboutPanel:',
         },
         { type: 'separator' },

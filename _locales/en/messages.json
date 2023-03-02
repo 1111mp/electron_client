@@ -1,4 +1,8 @@
 {
+  "About ElectronReact":{
+    "message": "About ElectronReact",
+    "description": "The text of the login button"
+  },
   "signIn": {
     "message": "Sign in",
     "description": "The text of the login button"

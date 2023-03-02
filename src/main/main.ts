@@ -10,7 +10,7 @@
  */
 import path from 'path';
 import { userInfo } from 'os';
-import { app, BrowserWindow, shell, ipcMain, protocol } from 'electron';
+import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -23,9 +23,6 @@ import { NativeThemeNotifier } from './NativeThemeNotifier';
 import { setupForNewWindow } from './BasicWindow';
 import Logging from './logging';
 
-const { getLogger } = Logging();
-const logger = getLogger();
-
 class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -37,6 +34,8 @@ class AppUpdater {
 let sqlInitTimeStart = 0;
 let sqlInitTimeEnd = 0;
 
+const { getLogger } = Logging();
+const logger = getLogger();
 const sql = new MainSQL();
 
 const nativeThemeNotifier = new NativeThemeNotifier();
@@ -48,12 +47,6 @@ let loginWindow: BrowserWindow | null = null;
 let locale: I18n.Locale;
 
 let appShouldQuit: boolean = false;
-
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
-});
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -156,13 +149,15 @@ const createWindow = async (callback: VoidFunction) => {
       mainWindow.show();
       mainWindow.focus();
     }
+
+    setupForNewWindow(nativeThemeNotifier, getBaseSearch, logger);
   });
 
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
+  const menuBuilder = new MenuBuilder(mainWindow, locale.i18n);
   menuBuilder.buildMenu();
 
   // Open urls in the user's browser
@@ -170,10 +165,6 @@ const createWindow = async (callback: VoidFunction) => {
     shell.openExternal(edata.url);
     return { action: 'deny' };
   });
-
-  // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  new AppUpdater();
 };
 
 // login window
@@ -205,8 +196,7 @@ const createLogin = async () => {
 
   loginWindow.loadURL(resolveHtmlPath({ html: 'login.html', search }));
 
-  // if (isDebug)
-  loginWindow.webContents.openDevTools({ mode: 'undocked' });
+  if (isDebug) loginWindow.webContents.openDevTools({ mode: 'undocked' });
 
   loginWindow.on('ready-to-show', () => {
     logger.info('login window is ready-to-show');
@@ -229,7 +219,7 @@ const createLogin = async () => {
   });
 
   // login successed
-  ipcMain.once('login-successed', async (_event: unknown, userInfo: string) => {
+  ipcMain.once('login-successed', async (_event, userInfo: string) => {
     global.UserInfo = {
       ...JSON.parse(userInfo),
     };
@@ -246,6 +236,7 @@ const createLogin = async () => {
     }
   });
 
+  // Remove this if your app does not use auto updates
   new AppUpdater();
 };
 
@@ -259,8 +250,6 @@ async function initializeSQL(
       'key/initialize: Generating new encryption key, since we did not find it on disk'
     );
   }
-
-  console.log(key);
 
   sqlInitTimeStart = Date.now();
 
@@ -285,73 +274,6 @@ async function initializeSQL(
 /**
  * Add event listeners...
  */
-
-app.on('ready', async () => {
-  logger.info('app ready');
-
-  const userDataPath = app.getPath('userData');
-
-  if (!locale) {
-    const appLocale = process.env.NODE_ENV === 'test' ? 'en' : app.getLocale();
-    logger.info(`locale: ${appLocale}`);
-    locale = loadLocale({ appLocale });
-  }
-
-  const sqlInitPromise = initializeSQL(userDataPath);
-
-  const timeout = new Promise((resolve) =>
-    setTimeout(resolve, 3000, 'timeout')
-  );
-
-  Promise.race([sqlInitPromise, timeout])
-    .then((maybeTimeout) => {
-      if (maybeTimeout !== 'timeout') return;
-
-      /** 这里可以加载 loading 过渡 */
-      logger.info(
-        'sql.initialize is taking more than three seconds; showing loading dialog'
-      );
-
-      // loadingWindow = new BrowserWindow({
-      //   show: false,
-      //   width: 300,
-      //   height: 265,
-      //   resizable: false,
-      //   frame: false,
-      //   backgroundColor: '#3a76f0',
-      //   webPreferences: {
-      //     nodeIntegration: false,
-      //     preload: path.join(__dirname, 'loading_preload.js'),
-      //   },
-      //   icon: windowIcon,
-      // });
-
-      // loadingWindow.once('ready-to-show', async () => {
-      //   loadingWindow.show();
-      //   // Wait for sql initialization to complete
-      //   await sqlInitPromise;
-      //   loadingWindow.destroy();
-      //   loadingWindow = null;
-      // });
-
-      // loadingWindow.loadURL(prepareURL([__dirname, 'loading.html']));
-    })
-    .catch((err) => console.error(err));
-
-  const { ok, error: sqlError } = await sqlInitPromise;
-
-  console.log(ok);
-
-  if (sqlError) {
-    logger.error('sql.initialize was unsuccessful; returning early');
-    return;
-  }
-
-  SQLChannelsInitialize(sql);
-
-  createLogin();
-});
-
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
@@ -371,8 +293,76 @@ app.on('window-all-closed', async () => {
   }
 });
 
-ipcMain.on('locale-data', (event) => {
-  event.returnValue = locale.messages;
-});
+app
+  .whenReady()
+  .then(async () => {
+    logger.info('app ready');
 
-setupForNewWindow(nativeThemeNotifier, getBaseSearch, logger);
+    const userDataPath = app.getPath('userData');
+
+    if (!locale) {
+      const appLocale =
+        process.env.NODE_ENV === 'test' ? 'en' : app.getLocale();
+      logger.info(`locale: ${appLocale}`);
+      locale = loadLocale({ appLocale });
+    }
+
+    ipcMain.on('locale-data', (event) => {
+      event.returnValue = locale.messages;
+    });
+
+    const sqlInitPromise = initializeSQL(userDataPath);
+
+    const timeout = new Promise((resolve) =>
+      setTimeout(resolve, 3000, 'timeout')
+    );
+
+    Promise.race([sqlInitPromise, timeout])
+      .then((maybeTimeout) => {
+        if (maybeTimeout !== 'timeout') return;
+
+        /** 这里可以加载 loading 过渡 */
+        logger.info(
+          'sql.initialize is taking more than three seconds; showing loading dialog'
+        );
+
+        // loadingWindow = new BrowserWindow({
+        //   show: false,
+        //   width: 300,
+        //   height: 265,
+        //   resizable: false,
+        //   frame: false,
+        //   backgroundColor: '#3a76f0',
+        //   webPreferences: {
+        //     nodeIntegration: false,
+        //     preload: path.join(__dirname, 'loading_preload.js'),
+        //   },
+        //   icon: windowIcon,
+        // });
+
+        // loadingWindow.once('ready-to-show', async () => {
+        //   loadingWindow.show();
+        //   // Wait for sql initialization to complete
+        //   await sqlInitPromise;
+        //   loadingWindow.destroy();
+        //   loadingWindow = null;
+        // });
+
+        // loadingWindow.loadURL(prepareURL([__dirname, 'loading.html']));
+      })
+      .catch((err) => console.error(err));
+
+    const { ok, error: sqlError } = await sqlInitPromise;
+
+    console.log(ok);
+
+    if (sqlError) {
+      logger.error('sql.initialize was unsuccessful; returning early');
+      return;
+    }
+
+    SQLChannelsInitialize(sql);
+
+    createLogin();
+  })
+  .catch(console.log);

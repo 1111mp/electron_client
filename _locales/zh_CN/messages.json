@@ -1,4 +1,8 @@
 {
+  "About ElectronReact":{
+    "message": "关于 ElectronReact",
+    "description": "The text of the login button"
+  },
   "signIn": {
     "message": "登录",
     "description": "The text of the login button"

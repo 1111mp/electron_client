@@ -1,5 +1,4 @@
 import { platform, arch } from 'os';
-import { join } from 'path';
 import AdmZip from 'adm-zip';
 import fs from 'fs-extra';
 import { app } from 'electron';
@@ -89,7 +88,10 @@ async function checkForAsarUpdates(log: ElectronLog) {
           fs.removeSync(updatePath);
 
           fs.unlinkSync(app.getAppPath());
-          fs.renameSync(`${resourcesPath}update.asar`, `${resourcesPath}app.asar`);
+          fs.renameSync(
+            `${resourcesPath}update.asar`,
+            `${resourcesPath}app.asar`
+          );
 
           setTimeout(() => {
             app.relaunch();

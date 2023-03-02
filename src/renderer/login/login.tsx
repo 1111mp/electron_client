@@ -49,33 +49,28 @@ const Login: React.FC = () => {
       method: 'POST',
       data: { account, pwd },
     })
-      .then(async (res: any) => {
+      .then(async (res) => {
         if (res.statusCode === 200) {
           /** login 成功之后 更新数据库 user信息 */
           const { id, account, avatar, email, regisTime, updateTime } =
             res.data;
           try {
-            window.Context.sqlClient
-              .updateOrCreateUser({
+            await window.Context.sqlClient.updateOrCreateUser({
+              token: res.token,
+              userId: id,
+              account,
+              avatar,
+              email,
+              regisTime,
+              updateTime,
+            });
+
+            window.Context.loginSuccessed(
+              JSON.stringify({
                 token: res.token,
-                userId: id,
-                account,
-                avatar,
-                email,
-                regisTime,
-                updateTime,
+                ...res.data,
               })
-              .then(() => {
-                window.Context.loginSuccessed(
-                  JSON.stringify({
-                    token: res.token,
-                    ...res.data,
-                  })
-                );
-              })
-              .catch((error: any) => {
-                console.log(error);
-              });
+            );
           } catch (error) {
             console.log(error);
           }
@@ -98,7 +93,7 @@ const Login: React.FC = () => {
     return () => {
       document.removeEventListener('keydown', handler);
     };
-  }, [submit]);
+  }, []);
 
   const checkType = () => {
     setType(type === 1 ? 2 : 1);

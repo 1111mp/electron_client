@@ -34,7 +34,7 @@ export class MemberRepository {
   }
 
   getMembers(omit?: ConversationType): Array<ConversationType> {
-    console.log(this.members)
+    console.log(this.members);
     if (omit) {
       return this.members.filter(({ id }) => id !== omit.id);
     }
@@ -58,7 +58,7 @@ export class MemberRepository {
     const results = this.fuse.search(`${pattern}`);
 
     if (omit) {
-      return results.filter(({ id }) => id !== omit.id);
+      return results.filter(({ item }) => item.id !== omit.id);
     }
 
     return results;

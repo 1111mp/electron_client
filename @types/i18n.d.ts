@@ -27,7 +27,7 @@ declare namespace I18n {
   type I18nFn = {
     (
       key: string,
-      substitutions: (string | number)[] | I18n.ReplacementValuesType
+      substitutions?: (string | number)[] | I18n.ReplacementValuesType
     ): string | number;
     getLocale(): string;
   };

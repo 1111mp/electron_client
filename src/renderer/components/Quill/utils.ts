@@ -169,7 +169,7 @@ export const matchBlotTextPartitions = (
   return [leftMatch, rightMatch];
 };
 
-export const getDeltaToRestartMention = (ops: Array<DeltaOperation>): Delta => {
+export const getDeltaToRestartMention = (ops: Array<Op>): Delta => {
   const changes = ops.reduce((acc, op): Array<Op> => {
     if (op.insert && typeof op.insert === 'string') {
       acc.push({ retain: op.insert.length });
@@ -213,7 +213,7 @@ export const getDeltaToRemoveStaleMentions = (
   return new Delta(newOps);
 };
 
-export const getTextFromOps = (ops: Array<DeltaOperation>): string =>
+export const getTextFromOps = (ops: Array<Op>): string =>
   ops
     .reduce((acc, op) => {
       if (typeof op.insert === 'string') {

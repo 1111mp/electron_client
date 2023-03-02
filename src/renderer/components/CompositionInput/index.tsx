@@ -382,7 +382,7 @@ export const CompositionInput: React.ComponentType<Props> = (props) => {
     }
 
     const contents = quill.getContents(0, selection.index - 1);
-    const restartDelta = getDeltaToRestartMention(contents.ops!);
+    const restartDelta = getDeltaToRestartMention(contents.ops);
 
     quill.updateContents(restartDelta as unknown as DeltaStatic);
     quill.setSelection(selection.index, 0);
