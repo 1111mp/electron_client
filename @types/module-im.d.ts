@@ -9,46 +9,16 @@ declare global {
       }
 
       type MessageBasic = {
-        id: string;
-        session: ModuleIMCommon.Session;
-        sender: number;
-        receiver: number; // userId or groupId
-        status: ModuleIMCommon.MsgStatus;
-        timer: string;
-        ext?: string; // reserved field
-      };
-
-      type MessageBasicForReceived = {
-        id: string;
-        session: ModuleIMCommon.Session;
+        id: bigint;
+        msgId: string;
+        type: ModuleIMCommon.MsgType;
         sender: DB.SenderInfo;
+        groupId?: number;
         receiver: number; // userId or groupId
-        status: ModuleIMCommon.MsgStatus;
+        content: string;
         timer: string;
         ext?: string; // reserved field
       };
-
-      type MessageText = MessageBasic & {
-        type: ModuleIMCommon.MsgType.Text;
-        text: string;
-      };
-
-      type MessageTextForReceived = MessageBasicForReceived & {
-        type: ModuleIMCommon.MsgType.Text;
-        text: string;
-      };
-
-      type MessageImage = MessageBasic & {
-        type: ModuleIMCommon.MsgType.Image;
-        image: string;
-      };
-
-      type MessageImageForReceived = MessageBasicForReceived & {
-        type: ModuleIMCommon.MsgType.Image;
-        image: string;
-      };
-
-      type MessageAll = MessageText | MessageImage;
 
       type MessageRead = {
         id: string;

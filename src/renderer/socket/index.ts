@@ -1,11 +1,9 @@
 import { io as SocketIO } from 'socket.io-client';
 import {
   setAckToProto,
-  setMessageImageToProto,
-  setMessageTextToProto,
+  setMessageToProto,
   getAckFromProto,
-  getMessageImageFromProto,
-  getMessageTextFromProto,
+  getMessageFromProto,
   getNotifyFromProto,
 } from 'App/protobuf';
 
@@ -28,8 +26,7 @@ type IMSocketOptions = {
   onConnectError?: (err: Error) => void;
   onDisconnect?: (reason: Socket.DisconnectReason) => void;
   onNotify?: (notify: ModuleIM.Core.Notify) => void;
-  onMessageText?: (msg: ModuleIM.Core.MessageTextForReceived) => void;
-  onMessageImage?: (msg: ModuleIM.Core.MessageImageForReceived) => void;
+  onMessage?: (msg: ModuleIM.Core.MessageBasic) => void;
 };
 
 class IMSocket {
@@ -82,16 +79,8 @@ class IMSocket {
   private initialize() {
     // for notify
     this.io.on(ModuleIMCommon.MessageEventNames.Notify, this.onNotify);
-    // for text message
-    this.io.on(
-      ModuleIMCommon.MessageEventNames.MessageText,
-      this.onMessageText
-    );
-    // for image message
-    this.io.on(
-      ModuleIMCommon.MessageEventNames.MessageImage,
-      this.onMessageImage
-    );
+    // for message
+    this.io.on(ModuleIMCommon.MessageEventNames.Message, this.onMessageText);
   }
 
   // event: on-notify
@@ -108,25 +97,11 @@ class IMSocket {
     callback(respBuffer);
   };
 
-  // event: on-message:text
+  // event: on-message
   private onMessageText: EventType = (buffer, callback) => {
-    const message = getMessageTextFromProto(buffer);
+    const message = getMessageFromProto(buffer);
 
-    this.options.onMessageText && this.options.onMessageText(message);
-
-    const respBuffer = setAckToProto({
-      statusCode: HttpStatus.OK,
-      message: 'Successfully.',
-    });
-
-    callback(respBuffer);
-  };
-
-  // event: on-message:image
-  private onMessageImage: EventType = (buffer, callback) => {
-    const message = getMessageImageFromProto(buffer);
-
-    this.options.onMessageImage && this.options.onMessageImage(message);
+    this.options.onMessage && this.options.onMessage(message);
 
     const respBuffer = setAckToProto({
       statusCode: HttpStatus.OK,
@@ -138,22 +113,14 @@ class IMSocket {
 
   /**
    * @description: Send a text message
-   * @param msg ModuleIM.Core.MessageText
+   * @param msg Omit<ModuleIM.Core.MessageBasic, 'sender'> & { sender: number }
    * @return Promise<ModuleIM.Core.AckResponse>
    */
-  public sendMessageText(msg: ModuleIM.Core.MessageText) {
-    const buffer = setMessageTextToProto(msg);
-    return this.send(ModuleIMCommon.MessageEventNames.MessageText, buffer);
-  }
-
-  /**
-   * @description: Send a image message
-   * @param msg ModuleIM.Core.MessageImage
-   * @return Promise<ModuleIM.Core.AckResponse>
-   */
-  public sendMessageImage(msg: ModuleIM.Core.MessageImage) {
-    const buffer = setMessageImageToProto(msg);
-    return this.send(ModuleIMCommon.MessageEventNames.MessageText, buffer);
+  public sendMessage(
+    msg: Omit<ModuleIM.Core.MessageBasic, 'sender'> & { sender: number }
+  ) {
+    const buffer = setMessageToProto(msg);
+    return this.send(ModuleIMCommon.MessageEventNames.Message, buffer);
   }
 
   private send(

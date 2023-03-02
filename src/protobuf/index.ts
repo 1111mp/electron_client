@@ -1,10 +1,8 @@
 import {
   AckMessage,
   Notify,
-  MessageTextForSender,
-  MessageTextForReceived,
-  MessageImageForSender,
-  MessageImageForReceived,
+  MessageForSender,
+  MessageForReceived,
 } from './proto';
 
 export function setAckToProto(resp: ModuleIM.Core.AckResponse) {
@@ -22,26 +20,18 @@ export function setNotifyToProto(notify: ModuleIM.Core.Notify) {
 }
 
 export function getNotifyFromProto(buffer: Uint8Array) {
-  return Notify.decode(buffer);
+  return Notify.decode(buffer).toJSON() as ModuleIM.Core.Notify;
 }
 
-export function setMessageTextToProto(messageText: ModuleIM.Core.MessageText) {
-  const message = new MessageTextForSender(messageText);
-  console.log(message);
-  return MessageTextForSender.encode(message).finish();
-}
-
-export function getMessageTextFromProto(buffer: Uint8Array) {
-  return MessageTextForReceived.decode(buffer);
-}
-
-export function setMessageImageToProto(
-  messageImage: ModuleIM.Core.MessageImage
+export function setMessageToProto(
+  messageText: Omit<ModuleIM.Core.MessageBasic, 'sender'> & { sender: number }
 ) {
-  const message = new MessageImageForSender(messageImage);
-  return MessageImageForSender.encode(message).finish();
+  const message = new MessageForSender(messageText);
+  return MessageForSender.encode(message).finish();
 }
 
-export function getMessageImageFromProto(buffer: Uint8Array) {
-  return MessageImageForReceived.decode(buffer);
+export function getMessageFromProto(buffer: Uint8Array) {
+  return MessageForReceived.decode(
+    buffer
+  ).toJSON() as ModuleIM.Core.MessageBasic;
 }
