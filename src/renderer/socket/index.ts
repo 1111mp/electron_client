@@ -9,6 +9,7 @@ import {
 
 import type { Socket, ManagerOptions, SocketOptions } from 'socket.io-client';
 import { ModuleIMCommon } from './enums';
+import { HttpStatus } from 'App/types';
 
 type AckCallback = (resp: ArrayBuffer) => void;
 type ProtoCallback = (resp: Uint8Array) => void;
@@ -99,7 +100,7 @@ class IMSocket {
 
   // event: on-message
   private onMessage: EventType = (buffer, callback) => {
-    const message = getMessageFromProto(buffer);
+    const message = getMessageFromProto(new Uint8Array(buffer));
 
     this.options.onMessage && this.options.onMessage(message);
 

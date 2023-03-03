@@ -1,5 +1,5 @@
-import { ModuleIMCommon } from 'App/renderer/socket/enums';
 import { Message, Type, Field } from 'protobufjs/light';
+import { ModuleIMCommon } from 'App/renderer/socket/enums';
 
 @Type.d()
 export class AckMessage extends Message<AckMessage> {
@@ -11,8 +11,8 @@ export class AckMessage extends Message<AckMessage> {
 }
 
 class Sender extends Message<Sender> {
-  @Field.d(1, 'string', 'required')
-  public id: string;
+  @Field.d(1, 'int32', 'required')
+  public id: number;
 
   @Field.d(2, 'string', 'required')
   public account: string;
@@ -119,7 +119,7 @@ export class MessageForSender extends Message<MessageForSender> {
   @Field.d(8, 'string', 'required')
   public timer: string;
 
-  @Field.d(9, 'string')
+  @Field.d(9, 'string', 'optional')
   public ext?: string;
 }
 
@@ -131,7 +131,7 @@ export class MessageForReceived extends Message<MessageForReceived> {
   @Field.d(2, 'string', 'required')
   public msgId: string;
 
-  @Field.d(3, 'int32', 'required')
+  @Field.d(3, Sender)
   public sender: DB.SenderInfo;
 
   @Field.d(4, 'int32', 'optional')
@@ -149,7 +149,7 @@ export class MessageForReceived extends Message<MessageForReceived> {
   @Field.d(8, 'string', 'required')
   public timer: string;
 
-  @Field.d(9, 'string')
+  @Field.d(9, 'string', 'optional')
   public ext?: string;
 }
 

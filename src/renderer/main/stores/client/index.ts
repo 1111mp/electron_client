@@ -20,15 +20,17 @@ export default class ClientStore {
         // https://socket.io/zh-CN/docs/v4/client-options/#extraheaders
         extraHeaders: { userid: `${userId}`, authorization: token },
       },
+      onMessage: this.onMessage,
     });
-    makeAutoObservable(this);
+    
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   setMaximized = (flag: boolean): void => {
     this.isMaximized = flag;
   };
 
-  sendMesssage = () => {
+  public sendMesssage() {
     const { userId } = window.Context.getUserInfo();
     this.socket
       .sendMessage({
@@ -42,5 +44,9 @@ export default class ClientStore {
       .then((res) => {
         console.log(res);
       });
-  };
+  }
+
+  onMessage(msg: ModuleIM.Core.MessageBasic) {
+    console.log(msg);
+  }
 }
