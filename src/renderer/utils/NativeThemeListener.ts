@@ -1,7 +1,7 @@
 import { applyTheme } from './theme';
 import { Theme } from 'App/types';
 
-export type Callback = (change?: Theme) => void;
+export type Callback = (theme: Theme) => void;
 export type SystemThemeHolder = { Context: ContextType; systemTheme: Theme };
 
 export class NativeThemeListener {
@@ -12,12 +12,17 @@ export class NativeThemeListener {
 
   constructor(private readonly holder: SystemThemeHolder) {
     this.theme = window.Context.getUserTheme(); // theme of userInfo
+
     this.update();
 
     // initialize themeChangedListener
     window.Context.themeChangedListener(() => {
+      const theme =
+        this.theme === Theme.system
+          ? window.Context.getSystemTheme()
+          : this.theme;
       for (const fn of this.subscribers) {
-        fn();
+        fn(theme);
       }
     });
 
@@ -59,7 +64,7 @@ export function InitNativeThemeListener() {
     nativeThemeListener: new NativeThemeListener(window),
   };
 
-  window.ThemeContext.nativeThemeListener.subscribe(() => {
-    applyTheme();
+  window.ThemeContext.nativeThemeListener.subscribe((theme: Theme) => {
+    applyTheme(theme);
   });
 }

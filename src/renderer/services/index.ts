@@ -42,40 +42,46 @@ axios.interceptors.response.use(
   }
 );
 
-export default function request(
-  api: string,
-  config: AxiosRequestConfig = {}
-): Promise<any> {
-  return new Promise((resolve, reject) => {
-    config.url = api;
-    config.method = config.method || DEFAULT_API_CONFIG.method;
+export default function request(module: string = '') {
+  return function <T = any>(
+    api: string,
+    config: AxiosRequestConfig = {}
+  ): Promise<{
+    statusCode: HttpStatus;
+    data: T;
+    token?: string;
+  }> {
+    return new Promise((resolve, reject) => {
+      config.url = `/${module}${api}`;
+      config.method = config.method || DEFAULT_API_CONFIG.method;
 
-    config[config.method?.toLowerCase() === 'get' ? 'params' : 'data'] =
-      config.data;
+      config[config.method?.toLowerCase() === 'get' ? 'params' : 'data'] =
+        config.data;
 
-    config.headers = {
-      ...DEFAULT_API_CONFIG.headers,
-      ...config.headers,
-    };
+      config.headers = {
+        ...DEFAULT_API_CONFIG.headers,
+        ...config.headers,
+      };
 
-    axios({
-      ...DEFAULT_API_CONFIG,
-      ...config,
-    })
-      .then((resp) => {
-        const { status, data = {} } = resp;
-        if (status !== 200) {
-          return reject({
-            status: data.status || status,
-            message: data.msg || '出错了,请稍后再试！',
-            data,
-            api,
-          });
-        }
-        return resolve(data);
+      axios({
+        ...DEFAULT_API_CONFIG,
+        ...config,
       })
-      .catch((error) => reject(error));
-  });
+        .then((resp) => {
+          const { status, data = {} } = resp;
+          if (status !== 200) {
+            return reject({
+              statusCode: data.status || status,
+              message: data.msg || '出错了,请稍后再试！',
+              data,
+              api,
+            });
+          }
+          return resolve(data);
+        })
+        .catch((error) => reject(error));
+    });
+  };
 }
 
 type Values = {

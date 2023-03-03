@@ -7,13 +7,14 @@
     width: 100%;
     height: 24px;
     margin: 0;
+    user-select: none;
     -webkit-user-select: none;
     -webkit-app-region: drag;
   }
 
   &-search {
-    @include flex($align:center);
-    width: 100%;
+    @include flex($align: center);
+    width: calc(100% - 32px);
     margin: 0;
     padding: 0 16px 12px;
 
@@ -21,57 +22,10 @@
       flex: 1;
       height: 28px;
       border-radius: 6px;
-
-      @include light-theme() {
-        border-color: $color-gray-02;
-        background-color: $color-input-bkg;
-
-        .ant-input-prefix {
-          color: $color-input-placeholder;
-        }
-
-        input {
-          color: $color-gray-90;
-          background-color: $color-input-bkg;
-
-          &::placeholder {
-            color: $color-input-placeholder !important;
-          }
-        }
-      }
-
-      @include dark-theme() {
-        border-color: $color-gray-80;
-        background-color: $color-gray-95;
-
-        .ant-input-prefix {
-          color: $color-gray-25;
-        }
-
-        input {
-          color: $color-gray-05;
-          background-color: $color-gray-95;
-        }
-
-        .ant-input-clear-icon {
-          color: $color-gray-25;
-        }
-      }
-
-      input {
-        &::placeholder {
-          font-size: 12px;
-          color: $color-gray-45;
-        }
-      }
-
-      &:hover {
-        border-color: $ultramarine-ui-light;
-      }
     }
 
     &__btn {
-      @include flex($justify:center, $align:center);
+      @include flex($justify: center, $align: center);
       margin: 0;
       margin-left: 12px;
       width: 26px;
@@ -94,50 +48,6 @@
 
         &:hover {
           background-color: $color-gray-90;
-        }
-      }
-
-      .iconadd1 {
-        @include light-theme() {
-          color: $color-gray-90;
-        }
-
-        @include dark-theme() {
-          color: $color-gray-45;
-        }
-      }
-    }
-
-    &__menu {
-      padding: 0 12px;
-      font-size: 12px;
-
-      @include light-theme() {
-        color: $color-gray-60;
-      }
-
-      @include dark-theme() {
-        color: rgba(255,255,255,0.65);
-      }
-    }
-  }
-}
-
-.ant-dropdown {
-  @include light-theme() {
-    .ant-dropdown-menu {
-      background-color: $color-white;
-    }
-  }
-
-  @include dark-theme() {
-    .ant-dropdown-menu {
-      background-color: #1f1f1f;
-      box-shadow: 0 3px 6px -4px rgba(0,0,0,0.48), 0 6px 16px 0 rgba(0,0,0,0.32), 0 9px 28px 8px rgba(0,0,0,0.2);
-
-      &-item {
-        &:hover {
-          background-color: rgba(255,255,255,0.08);
         }
       }
     }

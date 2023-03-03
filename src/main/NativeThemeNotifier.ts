@@ -27,7 +27,6 @@ export class NativeThemeNotifier {
     });
 
     ipcMain.on('native-theme:get_user', (event) => {
-      console.log(this.theme);
       event.returnValue = this.theme;
     });
 

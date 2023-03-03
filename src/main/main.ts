@@ -91,10 +91,6 @@ function getBaseSearch(): Windows.SearchType {
 }
 
 const createWindow = async (callback: VoidFunction) => {
-  if (isDebug) {
-    await installExtensions();
-  }
-
   mainWindow = new BrowserWindow({
     show: false,
     width: 1040,
@@ -105,6 +101,7 @@ const createWindow = async (callback: VoidFunction) => {
     frame: false,
     title: 'mainWindow', // 用来标识 mainWindow
     icon: getAssetPath('icon.png'),
+    backgroundColor: '#121212',
     titleBarStyle: process.platform === 'darwin' ? 'hidden' : 'default',
     trafficLightPosition: {
       x: 4,
@@ -169,6 +166,10 @@ const createWindow = async (callback: VoidFunction) => {
 
 // login window
 const createLogin = async () => {
+  if (isDebug) {
+    await installExtensions();
+  }
+
   loginWindow = new BrowserWindow({
     show: false,
     width: 280,
@@ -308,7 +309,7 @@ app
     }
 
     ipcMain.on('locale-data', (event) => {
-      event.returnValue = locale.messages;
+      event.returnValue = { locale: locale.name, message: locale.messages };
     });
 
     const sqlInitPromise = initializeSQL(userDataPath);

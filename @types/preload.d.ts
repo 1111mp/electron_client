@@ -15,6 +15,7 @@ declare global {
     getUserInfo: () => DB.UserAttributes;
     updateUserInfo: (userInfo: DB.UserAttributes) => unknown;
 
+    locale: string;
     localeMessages: I18n.Message;
     sqlClient: ClientInterface;
 

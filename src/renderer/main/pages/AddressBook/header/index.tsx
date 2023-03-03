@@ -1,8 +1,13 @@
 import './styles.scss';
 
 import { memo } from 'react';
-import { Menu, Input, Dropdown } from 'antd';
-import SearchOutlined from '@ant-design/icons/SearchOutlined';
+import { Input, Dropdown } from 'antd';
+import {
+  SearchOutlined,
+  UserAddOutlined,
+  TeamOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 
 // import { openWeb } from 'app/utils/rendererapi';
 // import { get } from 'lodash';
@@ -19,35 +24,32 @@ const Header: React.FC = memo(() => {
     // });
   };
 
-  const renderOverlay = () => {
-    return (
-      <Menu>
-        <Menu.Item key="friend">
-          <p className="module-header-search__menu" onClick={addFriend}>
-            添加朋友
-          </p>
-        </Menu.Item>
-        <Menu.Item key="group">
-          <p className="module-header-search__menu">发起群聊</p>
-        </Menu.Item>
-      </Menu>
-    );
-  };
-
   return (
     <div className="module-header">
       <p className="module-header-placeholder"></p>
       <div className="module-header-search">
         <Input
           className="search_input"
-          placeholder="搜索"
+          placeholder="search"
           size="small"
           allowClear={true}
           prefix={<SearchOutlined />}
         />
-        <Dropdown trigger={['click']} overlay={renderOverlay}>
+        <Dropdown
+          menu={{
+            items: [
+              { icon: <UserAddOutlined />, label: '添加朋友', key: 'friend' },
+              {
+                icon: <TeamOutlined />,
+                label: '发起群聊',
+                key: 'group',
+              },
+            ],
+          }}
+          trigger={['click']}
+        >
           <p className="module-header-search__btn">
-            <span className="iconfont iconadd1"></span>
+            <PlusOutlined />
           </p>
         </Dropdown>
       </div>

@@ -4,7 +4,7 @@ import { Theme, WindowName } from '../../types';
 
 (async function () {
   try {
-    const localeMessages = ipcRenderer.sendSync('locale-data');
+    const { locale, message } = ipcRenderer.sendSync('locale-data');
 
     let UserInfo = await sqlClient.getUserInfo();
     ipcRenderer.send(
@@ -46,7 +46,9 @@ import { Theme, WindowName } from '../../types';
         });
       },
 
-      localeMessages,
+      locale,
+      localeMessages: message,
+
       sqlClient,
     });
   } catch (err) {

@@ -7,8 +7,8 @@ import { createStore } from './stores';
 import { applyTheme } from 'Renderer/utils/theme';
 import initMode from 'Renderer/utils/mode_check';
 import { InitNativeThemeListener } from 'Renderer/utils/NativeThemeListener';
+import { Theme } from 'App/types';
 
-import './main.css';
 import 'Renderer/styles/app.css';
 import 'Renderer/styles/app.module.scss';
 
@@ -43,9 +43,20 @@ function preloadComponent() {
 }
 
 function appInit() {
-  return Promise.all([createStore(), initMode()]).then((res) => {
+  return Promise.all([
+    createStore(),
+    initMode(),
+    import(
+      `antd/lib/locale/${
+        window.Context.locale === 'en'
+          ? 'en_US'
+          : window.Context.locale.replace('-', '_')
+      }.js`
+    ).then((res) => res.default),
+  ]).then((res) => {
     return {
       stores: res[0],
+      localeForAntd: res[2],
     };
   });
 }
@@ -54,10 +65,15 @@ function appInit() {
   const loadAsyncComponents = preloadComponent();
   InitNativeThemeListener();
 
-  const { stores } = await appInit();
+  const theme =
+    window.systemTheme === Theme.system
+      ? window.Context.getSystemTheme()
+      : window.systemTheme;
 
-  // init theme
-  applyTheme();
+  // initial to set theme
+  applyTheme(theme);
+
+  const { stores, localeForAntd } = await appInit();
 
   let statusCode = 200;
 
@@ -70,5 +86,12 @@ function appInit() {
   }
 
   const root = createRoot(document.getElementById('root')!);
-  root.render(<Root stores={stores} statusCode={statusCode} />);
+  root.render(
+    <Root
+      theme={theme}
+      localeForAntd={localeForAntd}
+      stores={stores}
+      statusCode={statusCode}
+    />
+  );
 })();

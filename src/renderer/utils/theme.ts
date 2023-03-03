@@ -1,11 +1,6 @@
 import { Theme } from 'App/types';
 
-export function applyTheme() {
-  const theme =
-    window.systemTheme === Theme.system
-      ? window.Context.getSystemTheme()
-      : window.systemTheme;
-
+export function applyTheme(theme: Theme) {
   if (window.document.body.classList.contains(`${theme}-theme`)) return;
 
   window.document.body.classList.remove('dark-theme');

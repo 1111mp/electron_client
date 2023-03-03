@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import request from 'Renderer/requests';
+import request from 'App/renderer/services';
 import { useI18n } from 'Renderer/utils/i18n';
 
 import type { AxiosError } from 'axios';
@@ -45,7 +45,7 @@ const Login: React.FC = () => {
 
   const submit = async () => {
     if (!account || !pwd || aerror || perror) return;
-    request(type === 1 ? '/users/login' : '/users/create', {
+    request('users')(type === 1 ? '/login' : '/create', {
       method: 'POST',
       data: { account, pwd },
     })
@@ -56,7 +56,7 @@ const Login: React.FC = () => {
             res.data;
           try {
             await window.Context.sqlClient.updateOrCreateUser({
-              token: res.token,
+              token: res.token!,
               userId: id,
               account,
               avatar,
@@ -67,7 +67,7 @@ const Login: React.FC = () => {
 
             window.Context.loginSuccessed(
               JSON.stringify({
-                token: res.token,
+                token: res.token!,
                 ...res.data,
               })
             );
@@ -93,7 +93,7 @@ const Login: React.FC = () => {
     return () => {
       document.removeEventListener('keydown', handler);
     };
-  }, []);
+  }, [submit]);
 
   const checkType = () => {
     setType(type === 1 ? 2 : 1);

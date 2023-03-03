@@ -3,13 +3,15 @@ import sqlClient from '../db/client';
 import type { Theme, WindowName } from 'App/types';
 
 try {
-  const localeMessages = ipcRenderer.sendSync('locale-data');
+  const { locale, message } = ipcRenderer.sendSync('locale-data');
 
   contextBridge.exposeInMainWorld('Context', {
     platform: process.platform,
     NODE_ENV: process.env.NODE_ENV,
 
-    localeMessages,
+    locale,
+    localeMessages: message,
+
     sqlClient,
 
     windowOpen: (args: Windows.Args) => ipcRenderer.send('window:open', args),

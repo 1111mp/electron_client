@@ -29,7 +29,6 @@ input[type="search"]::-webkit-search-decoration{-webkit-appearance:none;}
 select[size],select[multiple],select[size][multiple]{border:1px solid #AAA;padding:0;}
 article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block;}
 audio,canvas,video,progress{display:inline-block;}
-body{background:#fff;}
 input::-webkit-input-speech-button {display: none}
 button,input,textarea{
 -webkit-tap-highlight-color: rgba(0,0,0,0);
@@ -79,4 +78,12 @@ body {
 
 *::before {
   transition: all .3s;
+}
+
+body.light-theme {
+  background-color: #ffffff;
+}
+
+body.dark-theme {
+  background-color: #121212;
 }
