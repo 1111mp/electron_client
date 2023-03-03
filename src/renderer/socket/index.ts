@@ -80,7 +80,7 @@ class IMSocket {
     // for notify
     this.io.on(ModuleIMCommon.MessageEventNames.Notify, this.onNotify);
     // for message
-    this.io.on(ModuleIMCommon.MessageEventNames.Message, this.onMessageText);
+    this.io.on(ModuleIMCommon.MessageEventNames.Message, this.onMessage);
   }
 
   // event: on-notify
@@ -98,7 +98,7 @@ class IMSocket {
   };
 
   // event: on-message
-  private onMessageText: EventType = (buffer, callback) => {
+  private onMessage: EventType = (buffer, callback) => {
     const message = getMessageFromProto(buffer);
 
     this.options.onMessage && this.options.onMessage(message);
@@ -138,7 +138,7 @@ class IMSocket {
         }
         const resp = getAckFromProto(new Uint8Array(respBuffer));
 
-        resolve(resp.toJSON() as ModuleIM.Core.AckResponse);
+        resolve(resp);
       });
     });
   }

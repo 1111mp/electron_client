@@ -11,7 +11,7 @@ export function setAckToProto(resp: ModuleIM.Core.AckResponse) {
 }
 
 export function getAckFromProto(buffer: Uint8Array) {
-  return AckMessage.decode(buffer);
+  return AckMessage.decode(buffer).toJSON() as ModuleIM.Core.AckResponse;
 }
 
 export function setNotifyToProto(notify: ModuleIM.Core.Notify) {
@@ -24,9 +24,9 @@ export function getNotifyFromProto(buffer: Uint8Array) {
 }
 
 export function setMessageToProto(
-  messageText: Omit<ModuleIM.Core.MessageBasic, 'sender'> & { sender: number }
+  msg: Omit<ModuleIM.Core.MessageBasic, 'sender'> & { sender: number }
 ) {
-  const message = new MessageForSender(messageText);
+  const message = new MessageForSender(msg);
   return MessageForSender.encode(message).finish();
 }
 

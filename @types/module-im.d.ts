@@ -9,7 +9,7 @@ declare global {
       }
 
       type MessageBasic = {
-        id: bigint;
+        id?: bigint;
         msgId: string;
         type: ModuleIMCommon.MsgType;
         sender: DB.SenderInfo;

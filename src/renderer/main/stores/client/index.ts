@@ -28,18 +28,16 @@ export default class ClientStore {
     this.isMaximized = flag;
   };
 
-  sendMesssageText = () => {
+  sendMesssage = () => {
     const { userId } = window.Context.getUserInfo();
     this.socket
-      .sendMessageText({
-        id: uuidv4(),
+      .sendMessage({
+        msgId: uuidv4(),
         type: ModuleIMCommon.MsgType.Text,
-        session: ModuleIMCommon.Session.Single,
         sender: userId,
         receiver: 10009, // userId or groupId
-        status: ModuleIMCommon.MsgStatus.Initial,
         timer: `${Date.now()}`,
-        text: 'Hello World.',
+        content: 'Hello World.',
       })
       .then((res) => {
         console.log(res);

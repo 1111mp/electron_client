@@ -95,13 +95,13 @@ export class Notify extends Message<Notify> {
 
 @Type.d()
 export class MessageForSender extends Message<MessageForSender> {
-  @Field.d(1, 'int64', 'required')
-  public id: bigint;
+  @Field.d(1, 'int64', 'optional')
+  public id?: bigint;
 
   @Field.d(2, 'string', 'required')
   public msgId: string;
 
-  @Field.d(3, Sender)
+  @Field.d(3, 'int32', 'required')
   public sender: number;
 
   @Field.d(4, 'int32', 'optional')

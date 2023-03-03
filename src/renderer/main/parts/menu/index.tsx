@@ -24,14 +24,14 @@ export const Menu: React.ComponentType = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { sendMesssageText } = useTargetStore('clientStore');
+  const { sendMesssage } = useTargetStore('clientStore');
 
   const openSetting = () => {
     // window.Context.windowOpen({
     //   name: WindowName.Setting,
     //   url: WindowUrl.Setting,
     // });
-    sendMesssageText();
+    sendMesssage();
   };
 
   const menuHandler = (path: string) => {
