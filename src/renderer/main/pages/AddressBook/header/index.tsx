@@ -8,20 +8,18 @@ import {
   TeamOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
+import { WindowName, WindowUrl } from 'App/types';
 
-// import { openWeb } from 'app/utils/rendererapi';
-// import { get } from 'lodash';
-// import { ADDFRIEND } from 'app/config';
+import type { MenuProps } from 'antd';
 
 const Header: React.FC = memo(() => {
-  const addFriend = () => {
-    // openWeb({
-    //   ...ADDFRIEND,
-    //   url: `/addfriend?header=${
-    //     get(window, 'platform') === 'darwin' ? false : true
-    //   }&title=添加朋友&min=false`,
-    //   modal: true,
-    // });
+  const addFriend: MenuProps['onClick'] = ({ key }) => {
+    if (key === 'friend') {
+      window.Context.windowOpen({
+        name: WindowName.Search,
+        url: WindowUrl.Search,
+      });
+    }
   };
 
   return (
@@ -45,6 +43,7 @@ const Header: React.FC = memo(() => {
                 key: 'group',
               },
             ],
+            onClick: addFriend,
           }}
           trigger={['click']}
         >

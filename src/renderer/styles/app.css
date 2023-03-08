@@ -72,18 +72,18 @@ body {
 	height: 100%;
 }
 
-* {
-  transition: background .3s, color .3s, border .3s, border-color .3s;
-}
-
-*::before {
-  transition: all .3s;
-}
-
 body.light-theme {
   background-color: #ffffff;
 }
 
 body.dark-theme {
   background-color: #121212;
+}
+
+#window-drag-wrapper {
+  width: 100%;
+  height: 36px;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
 }

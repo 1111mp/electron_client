@@ -4,10 +4,13 @@ import { createRoot } from 'react-dom/client';
 import { matchRoutes } from 'react-router-dom';
 import Root from './root';
 import { routerConfig } from './routes';
+import initMode from 'Renderer/utils/mode_check';
 import Config from 'Renderer/config';
 import { InitNativeThemeListener } from 'Renderer/utils/NativeThemeListener';
 
 import 'Renderer/styles/app.css';
+import { Theme } from 'App/types';
+import { applyTheme } from '../utils/theme';
 
 function getPathname() {
   return Config.isBorwserHistory
@@ -39,9 +42,36 @@ function preloadComponent() {
   };
 }
 
+function appInit() {
+  return Promise.all([
+    initMode(),
+    import(
+      `antd/lib/locale/${
+        window.Context.locale === 'en'
+          ? 'en_US'
+          : window.Context.locale.replace('-', '_')
+      }.js`
+    ).then((res) => res.default),
+  ]).then((res) => {
+    return {
+      localeForAntd: res[1],
+    };
+  });
+}
+
 (async () => {
   const loadAsyncComponents = preloadComponent();
   InitNativeThemeListener();
+
+  const theme =
+    window.systemTheme === Theme.system
+      ? window.Context.getSystemTheme()
+      : window.systemTheme;
+
+  // initial to set theme
+  applyTheme(theme);
+
+  const { localeForAntd } = await appInit();
 
   let statusCode = 200;
 
@@ -54,5 +84,7 @@ function preloadComponent() {
   }
 
   const root = createRoot(document.getElementById('root')!);
-  root.render(<Root statusCode={statusCode} />);
+  root.render(
+    <Root statusCode={statusCode} theme={theme} localeForAntd={localeForAntd} />
+  );
 })();

@@ -4,7 +4,7 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { Menu } from 'Renderer/main/parts/menu';
 
 const IndexPage: React.ComponentType = () => {
-  const location = useLocation();
+  const { pathname } = useLocation();
 
   return (
     <div className="module-index_page">
@@ -12,7 +12,7 @@ const IndexPage: React.ComponentType = () => {
       <div className="module-index_page-routes">
         <Outlet />
       </div>
-      {location.pathname === '/' ? <Navigate to="/index" /> : null}
+      {pathname === '/' ? <Navigate to="/index" /> : null}
     </div>
   );
 };

@@ -1,6 +1,5 @@
 import './styles.scss';
 
-import * as React from 'react';
 import { useLocation, Outlet } from 'react-router-dom';
 import RoomList from '../roomList';
 import { Empty } from 'Components/Empty';

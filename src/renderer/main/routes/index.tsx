@@ -6,9 +6,6 @@ import {
   Navigate,
 } from 'react-router-dom';
 import loadable from '@loadable/component';
-// https://github.com/CJY0208/react-activation/issues/18
-// must add id for KeepAlive
-import { KeepAlive } from 'react-activation';
 
 const IndexPage = loadable(() => import('Renderer/main/pages/IndexPage'));
 const HomePage = loadable(() => import('Renderer/main/pages/Home'));
@@ -32,11 +29,7 @@ export const routerConfig: RouteObject[] = [
       },
       {
         path: '/addressbook',
-        element: (
-          <KeepAlive name="addressbook" id="addressbook">
-            <AddressBook />
-          </KeepAlive>
-        ),
+        element: <AddressBook />,
       },
     ],
   },

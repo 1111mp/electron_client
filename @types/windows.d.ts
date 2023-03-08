@@ -20,7 +20,8 @@ declare global {
           name: WindowName.Setting;
           url: WindowUrl.Setting;
         }
-      | { name: WindowName.Info; url: WindowUrl.Info };
+      | { name: WindowName.Info; url: WindowUrl.Info }
+      | { name: WindowName.Search; url: WindowUrl.Search };
 
     type Args = Info & Base;
 
