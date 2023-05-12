@@ -1,4 +1,4 @@
-import { createContext, lazy, useContext } from 'react';
+import { createContext, Suspense, lazy, useContext } from 'react';
 import {
   RouteObject,
   useRoutes,
@@ -14,21 +14,37 @@ const AddressBook = lazy(() => import('Renderer/main/pages/AddressBook'));
 export const routerConfig: RouteObject[] = [
   {
     path: '/',
-    element: <IndexPage />,
+    element: (
+      <Suspense>
+        <IndexPage />
+      </Suspense>
+    ),
     children: [
       {
         path: '/index',
-        element: <HomePage />,
+        element: (
+          <Suspense>
+            <HomePage />
+          </Suspense>
+        ),
         children: [
           {
             path: '/index/chat/*',
-            element: <ChatPage />,
+            element: (
+              <Suspense>
+                <ChatPage />
+              </Suspense>
+            ),
           },
         ],
       },
       {
         path: '/addressbook',
-        element: <AddressBook />,
+        element: (
+          <Suspense>
+            <AddressBook />
+          </Suspense>
+        ),
       },
     ],
   },
