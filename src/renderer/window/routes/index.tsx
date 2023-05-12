@@ -1,28 +1,17 @@
-import { Suspense, lazy } from 'react';
-import { RouteObject, useRoutes } from 'react-router-dom';
+import { RouteObject, createHashRouter } from 'react-router-dom';
 
-const Setting = lazy(() => import('Renderer/window/pages/Setting'));
-const Search = lazy(() => import('Renderer/window/pages/Search'));
+import Setting from 'Renderer/window/pages/Setting';
+import Search from 'Renderer/window/pages/Search';
 
 export const routerConfig: RouteObject[] = [
   {
-    path: '/setting/*',
-    element: (
-      <Suspense>
-        <Setting />
-      </Suspense>
-    ),
+    path: '/setting',
+    element: <Setting />,
   },
   {
-    path: '/search/*',
-    element: (
-      <Suspense>
-        <Search />
-      </Suspense>
-    ),
+    path: '/search',
+    element: <Search />,
   },
 ];
 
-export function RouterComponent() {
-  return useRoutes(routerConfig);
-}
+export const router = createHashRouter(routerConfig);

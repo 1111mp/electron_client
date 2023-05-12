@@ -1,11 +1,11 @@
-import { HashRouter } from 'react-router-dom';
+import { RouterProvider } from 'react-router-dom';
 import { AppStoresProvider } from './stores';
-import { RouterComponent } from './routes';
 import { I18nAndTheme } from 'Renderer/utils/i18n';
 
 import type { RootStore } from './stores';
 import type { Theme } from 'App/types';
 import type { ConfigProviderProps } from 'antd/es/config-provider';
+import { router } from './routes';
 
 type Props = {
   theme: Theme;
@@ -21,9 +21,7 @@ const Root: React.ComponentType<Props> = ({ theme, localeForAntd, stores }) => {
         localeForAntd={localeForAntd}
         messages={window.Context.localeMessages}
       >
-        <HashRouter>
-          <RouterComponent />
-        </HashRouter>
+        <RouterProvider router={router} />
       </I18nAndTheme>
     </AppStoresProvider>
   );

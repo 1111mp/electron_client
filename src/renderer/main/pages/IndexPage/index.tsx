@@ -1,18 +1,17 @@
 import './styles.scss';
 
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { Menu } from 'Renderer/main/parts/menu';
+import { Outlet } from 'react-router-dom';
+import RoomList from '../roomList';
 
-const IndexPage: React.ComponentType = () => {
-  const { pathname } = useLocation();
-
+const IndexPage: React.FC = () => {
   return (
     <div className="module-index_page">
-      <Menu />
-      <div className="module-index_page-routes">
+      <div className="module-index_page-sider">
+        <RoomList />
+      </div>
+      <div className="module-index_page-content">
         <Outlet />
       </div>
-      {pathname === '/' ? <Navigate to="/index" /> : null}
     </div>
   );
 };

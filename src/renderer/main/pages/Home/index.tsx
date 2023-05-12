@@ -1,21 +1,18 @@
 import './styles.scss';
 
-import { useLocation, Outlet } from 'react-router-dom';
-import RoomList from '../roomList';
-import { Empty } from 'Components/Empty';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Menu } from 'Renderer/main/parts/menu';
 
-const Home: React.ComponentType = () => {
-  const location = useLocation();
+const Home: React.FC = () => {
+  const { pathname } = useLocation();
 
   return (
     <div className="module-home">
-      <div className="module-home-sider">
-        <RoomList />
-      </div>
-      <div className="module-home-content">
-        {location.pathname === '/index' ? <Empty /> : null}
+      <Menu />
+      <div className="module-home-routes">
         <Outlet />
       </div>
+      {pathname === '/' ? <Navigate to="/index" /> : null}
     </div>
   );
 };

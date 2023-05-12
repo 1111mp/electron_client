@@ -12,7 +12,7 @@ const RoomList: React.FC = observer(() => {
 
   const checkRoom = (event: React.MouseEvent) => {
     event.stopPropagation();
-    navigate('/index/chat');
+    navigate('/index/room/10007');
   };
 
   const emptyAreaHandler = useCallback(

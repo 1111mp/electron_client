@@ -1,5 +1,5 @@
-import { HashRouter } from 'react-router-dom';
-import { RouterComponent } from './routes';
+import { RouterProvider } from 'react-router-dom';
+import { router } from './routes';
 import { I18nAndTheme } from 'Renderer/utils/i18n';
 import { ConfigProviderProps } from 'antd/es/config-provider';
 
@@ -17,9 +17,7 @@ const Root: React.ComponentType<Props> = ({ theme, localeForAntd }) => {
       localeForAntd={localeForAntd}
       messages={window.Context.localeMessages}
     >
-      <HashRouter>
-        <RouterComponent />
-      </HashRouter>
+      <RouterProvider router={router} />
     </I18nAndTheme>
   );
 };

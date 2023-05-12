@@ -1,58 +1,46 @@
-import { createContext, Suspense, lazy, useContext } from 'react';
+import { createContext, useContext } from 'react';
 import {
   RouteObject,
-  useRoutes,
   useLocation,
   Navigate,
+  createHashRouter,
 } from 'react-router-dom';
 
-const IndexPage = lazy(() => import('Renderer/main/pages/IndexPage'));
-const HomePage = lazy(() => import('Renderer/main/pages/Home'));
-const ChatPage = lazy(() => import('Renderer/main/pages/ChatPage'));
-const AddressBook = lazy(() => import('Renderer/main/pages/AddressBook'));
+import Home from 'Renderer/main/pages/Home';
+import IndexPage from 'Renderer/main/pages/IndexPage';
+import Room from 'Renderer/main/pages/Room';
+import AddressBook from 'Renderer/main/pages/AddressBook';
+import { Empty } from 'App/renderer/components/Empty';
 
 export const routerConfig: RouteObject[] = [
   {
     path: '/',
-    element: (
-      <Suspense>
-        <IndexPage />
-      </Suspense>
-    ),
+    element: <Home />,
+
     children: [
       {
-        path: '/index',
-        element: (
-          <Suspense>
-            <HomePage />
-          </Suspense>
-        ),
+        path: 'index',
+        element: <IndexPage />,
         children: [
           {
-            path: '/index/chat/*',
-            element: (
-              <Suspense>
-                <ChatPage />
-              </Suspense>
-            ),
+            index: true,
+            element: <Empty />,
+          },
+          {
+            path: 'room/:roomId',
+            element: <Room />,
           },
         ],
       },
       {
-        path: '/addressbook',
-        element: (
-          <Suspense>
-            <AddressBook />
-          </Suspense>
-        ),
+        path: 'addressbook',
+        element: <AddressBook />,
       },
     ],
   },
 ];
 
-export function RouterComponent() {
-  return useRoutes(routerConfig);
-}
+export const router = createHashRouter(routerConfig);
 
 // TODO permission
 type Auths = string[] | 403 | null;

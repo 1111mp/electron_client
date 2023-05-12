@@ -9,6 +9,7 @@ import { Button, Drawer } from 'antd';
 import EllipsisOutlined from '@ant-design/icons/EllipsisOutlined';
 import MsgsContainer from './msgsContainer';
 import { Transmitter } from './transmitter';
+import { useParams } from 'react-router-dom';
 
 function getData(): any[] {
   let res: any[] = [];
@@ -81,9 +82,13 @@ type ScrollInfoRef = {
   loading?: boolean;
 };
 
-const ChatPage: React.ComponentType<IAnyObject> = () => {
+const Room: React.FC<IAnyObject> = () => {
   const [messages, setMessages] = useState<any[]>([]);
   const [visible, setVisible] = useState<boolean>(false);
+
+  const { roomId } = useParams();
+
+  console.log(roomId);
 
   const scrollRef = useRef();
   const infoRef = useRef<ScrollInfoRef>({
@@ -144,7 +149,7 @@ const ChatPage: React.ComponentType<IAnyObject> = () => {
     <div className="module-chat_interface">
       <header className="module-chat_interface-header">
         <p className="module-chat_interface-header--title">张逸凡</p>
-        <Button type="link" onClick={() => setVisible(true)}>
+        <Button type="link" size='small' onClick={() => setVisible(true)}>
           <EllipsisOutlined style={{ fontSize: '20px' }} />
         </Button>
       </header>
@@ -190,4 +195,4 @@ const ChatPage: React.ComponentType<IAnyObject> = () => {
   );
 };
 
-export default ChatPage;
+export default Room;
