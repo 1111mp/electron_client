@@ -5,7 +5,7 @@
   overflow: hidden;
 
   &-actions {
-    width: 100%;
+    width: calc(100% - 40px);
     margin: 0;
     padding: 4px 20px 6px;
     @include flex($align:center);
@@ -44,7 +44,7 @@
   &-textarea {
     @include flex($direction:column);
     flex: 1;
-    width: 100%;
+    width: calc(100% - 40px);
     padding: 0 20px;
     margin-bottom: 12px;
     overflow: hidden;

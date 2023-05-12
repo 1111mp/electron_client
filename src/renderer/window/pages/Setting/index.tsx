@@ -3,8 +3,8 @@ import './styles.scss';
 import { Divider, Radio, RadioGroupProps } from 'antd';
 import { Theme } from 'App/types';
 
-const Setting: React.ComponentType = () => {
-  const onThemeSettin: RadioGroupProps['onChange'] = (evt) => {
+const Setting: React.FC = () => {
+  const onThemeSetting: RadioGroupProps['onChange'] = (evt) => {
     const theme = evt.target.value as Theme;
 
     window.ThemeContext.nativeThemeListener.theme_setting(theme);
@@ -17,7 +17,10 @@ const Setting: React.ComponentType = () => {
         <Divider orientation="left" style={{ marginTop: 0 }}>
           主题
         </Divider>
-        <Radio.Group onChange={onThemeSettin} defaultValue={window.systemTheme}>
+        <Radio.Group
+          onChange={onThemeSetting}
+          defaultValue={window.systemTheme}
+        >
           <Radio value={Theme.system}>跟随系统</Radio>
           <Radio value={Theme.light}>亮色</Radio>
           <Radio value={Theme.dark}>暗黑</Radio>

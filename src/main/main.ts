@@ -31,6 +31,8 @@ class AppUpdater {
   }
 }
 
+let UserInfo: DB.UserAttributes;
+
 let sqlInitTimeStart = 0;
 let sqlInitTimeEnd = 0;
 
@@ -91,6 +93,8 @@ function getBaseSearch(): Windows.SearchType {
 }
 
 const createWindow = async (callback: VoidFunction) => {
+  ipcMain.on('get-user-info', (evt) => (evt.returnValue = UserInfo));
+
   mainWindow = new BrowserWindow({
     show: false,
     width: 1040,
@@ -202,9 +206,7 @@ const createLogin = async () => {
   loginWindow.on('ready-to-show', () => {
     logger.info('login window is ready-to-show');
 
-    if (!loginWindow) {
-      return;
-    }
+    if (!loginWindow) return;
 
     if (process.env.START_MINIMIZED) {
       loginWindow.minimize();
@@ -220,15 +222,16 @@ const createLogin = async () => {
   });
 
   // login successed
-  ipcMain.once('login-successed', async (_event, userInfo: string) => {
-    global.UserInfo = {
-      ...JSON.parse(userInfo),
-    };
+  ipcMain.once(
+    'login-successed',
+    async (_event, userInfo: DB.UserAttributes) => {
+      UserInfo = { ...userInfo };
 
-    createWindow(() => {
-      if (loginWindow) loginWindow.close();
-    });
-  });
+      createWindow(() => {
+        loginWindow && loginWindow.close();
+      });
+    }
+  );
 
   ipcMain.once('close-login', () => {
     if (loginWindow) {

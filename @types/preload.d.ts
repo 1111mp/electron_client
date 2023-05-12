@@ -27,7 +27,7 @@ declare global {
     themeSettingListener: (fn: ThemeSettingListenerFN) => void;
 
     // for login window
-    loginSuccessed: (user_str: string) => void;
+    loginSuccessed: (userInfo: DB.UserAttributes) => void;
     closeLogin: () => void;
 
     // for other window

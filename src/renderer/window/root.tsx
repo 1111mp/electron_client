@@ -6,18 +6,11 @@ import { ConfigProviderProps } from 'antd/es/config-provider';
 import type { Theme } from 'App/types';
 
 type Props = {
-  statusCode: number;
   theme: Theme;
   localeForAntd: ConfigProviderProps['locale'];
 };
 
-const Root: React.ComponentType<Props> = ({
-  statusCode,
-  theme,
-  localeForAntd,
-}) => {
-  console.log(statusCode);
-
+const Root: React.ComponentType<Props> = ({ theme, localeForAntd }) => {
   return (
     <I18nAndTheme
       theme={theme}

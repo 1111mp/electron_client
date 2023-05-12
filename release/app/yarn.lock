@@ -7,10 +7,10 @@ base64-js@^1.3.1:
   resolved "https://registry.npmjs.org/base64-js/-/base64-js-1.5.1.tgz"
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
 
-better-sqlite3-multiple-ciphers@^8.1.0:
-  version "8.1.0"
-  resolved "https://registry.npmjs.org/better-sqlite3-multiple-ciphers/-/better-sqlite3-multiple-ciphers-8.1.0.tgz#e915823a3444affc45bb7a07017b60e14255bd36"
-  integrity sha512-NXaAv8aZ+OQZtjFeJfY44/twbTIhKfAZHkK/56PKfoOnXA+XmDAiy/9wNOTCeO0eR9S/NjtJ8Ki4jks6Xf83vw==
+better-sqlite3-multiple-ciphers@^8.3.0:
+  version "8.3.0"
+  resolved "https://registry.npmmirror.com/better-sqlite3-multiple-ciphers/-/better-sqlite3-multiple-ciphers-8.3.0.tgz#e2e555a92cda8c152c1444683318f75be5c72455"
+  integrity sha512-q56v+L/U/e0/hXIGh/nzkuKeEDVlHOoU1mrCrPYpfQP9LmSSDYbNBxC7bSVnHB+S9/HGod92mRII6M+ZnoWRVA==
   dependencies:
     bindings "^1.5.0"
     prebuild-install "^7.1.0"

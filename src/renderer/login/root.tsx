@@ -3,7 +3,7 @@ import { I18n } from 'Renderer/utils/i18n';
 
 const { localeMessages } = window.Context;
 
-const Root: React.ComponentType = () => {
+const Root: React.FC = () => {
   return (
     <I18n messages={localeMessages}>
       <Login />

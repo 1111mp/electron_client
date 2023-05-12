@@ -178,9 +178,9 @@ const ChatPage: React.ComponentType<IAnyObject> = () => {
         placement="right"
         closable={false}
         onClose={() => setVisible(false)}
-        visible={visible}
+        open={visible}
         getContainer={false}
-        style={{ position: 'absolute' }}
+        rootStyle={{ position: 'absolute' }}
       >
         <p>Some contents...</p>
         <p>Some contents...</p>

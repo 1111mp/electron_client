@@ -3,7 +3,6 @@ import { configure } from 'mobx';
 import Config from 'Renderer/config';
 import ClientStore from './client';
 import UserStore from './user';
-import { Theme } from 'App/types';
 
 Config.isDev &&
   import('mobx-logger').then((logger) => {

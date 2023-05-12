@@ -1,14 +1,18 @@
 import './Picker.scss';
 
-import * as React from 'react';
+import {
+  forwardRef,
+  memo,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+} from 'react';
 
 import classNames from 'classnames';
-import {
-  AutoSizer,
-  Grid,
-  GridCellRenderer,
-  SectionRenderedParams,
-} from 'react-virtualized';
+import AutoSizer from 'react-virtualized/dist/es/AutoSizer';
+import Grid from 'react-virtualized/dist/es/Grid';
 import {
   chunk,
   debounce,
@@ -22,6 +26,11 @@ import { Emoji } from './Emoji';
 import { dataByCategory, search } from './lib';
 import { useRestoreFocus } from 'Renderer/utils/hooks';
 import { useI18n } from 'Renderer/utils/i18n';
+
+import type {
+  GridCellRenderer,
+  SectionRenderedParams,
+} from 'react-virtualized';
 
 export type EmojiPickDataType = { skinTone?: number; shortName: string };
 
@@ -58,8 +67,8 @@ const categories = [
   'flag',
 ];
 
-export const EmojiPicker = React.memo(
-  React.forwardRef<HTMLDivElement, Props>(
+export const EmojiPicker = memo(
+  forwardRef<HTMLDivElement, Props>(
     (
       {
         // i18n,
@@ -74,21 +83,19 @@ export const EmojiPicker = React.memo(
       }: Props,
       ref
     ) => {
-      const focusRef = React.useRef<HTMLButtonElement>(null);
-      const [firstRecent] = React.useState(recentEmojis);
-      const [selectedCategory, setSelectedCategory] = React.useState(
-        categories[0]
-      );
-      const [searchMode, setSearchMode] = React.useState(false);
-      const [searchText, setSearchText] = React.useState('');
-      const [scrollToRow, setScrollToRow] = React.useState(0);
-      const [selectedTone, setSelectedTone] = React.useState(
+      const [firstRecent] = useState(recentEmojis);
+      const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+      const [searchMode, setSearchMode] = useState(false);
+      const [searchText, setSearchText] = useState('');
+      const [scrollToRow, setScrollToRow] = useState(0);
+      const [selectedTone, setSelectedTone] = useState(
         disableSkinTones ? 0 : skinTone
       );
 
+      const focusRef = useRef<HTMLButtonElement>(null);
       const i18n = useI18n();
 
-      const handleToggleSearch = React.useCallback(
+      const handleToggleSearch = useCallback(
         (e: React.MouseEvent) => {
           e.stopPropagation();
           setSearchText('');
@@ -98,7 +105,7 @@ export const EmojiPicker = React.memo(
         [setSearchText, setSearchMode]
       );
 
-      const debounceSearchChange = React.useMemo(
+      const debounceSearchChange = useMemo(
         () =>
           debounce((query: string) => {
             setSearchText(query);
@@ -107,14 +114,14 @@ export const EmojiPicker = React.memo(
         [setSearchText, setScrollToRow]
       );
 
-      const handleSearchChange = React.useCallback(
+      const handleSearchChange = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
           debounceSearchChange(e.currentTarget.value);
         },
         [debounceSearchChange]
       );
 
-      const handlePickTone = React.useCallback(
+      const handlePickTone = useCallback(
         (e: React.MouseEvent<HTMLButtonElement>) => {
           const { tone = '0' } = e.currentTarget.dataset;
           const parsedTone = parseInt(tone, 10);
@@ -126,7 +133,7 @@ export const EmojiPicker = React.memo(
         [onSetSkinTone]
       );
 
-      const handlePickEmoji = React.useCallback(
+      const handlePickEmoji = useCallback(
         (
           e:
             | React.MouseEvent<HTMLButtonElement>
@@ -151,7 +158,7 @@ export const EmojiPicker = React.memo(
       );
 
       // Handle escape key
-      React.useEffect(() => {
+      useEffect(() => {
         const handler = (event: KeyboardEvent) => {
           if (searchMode && event.key === 'Escape') {
             setSearchText('');
@@ -193,7 +200,7 @@ export const EmojiPicker = React.memo(
 
       const [, ...renderableCategories] = categories;
 
-      const emojiGrid = React.useMemo(() => {
+      const emojiGrid = useMemo(() => {
         if (searchText) {
           return chunk(
             search(searchText).map((e) => e.short_name),
@@ -211,7 +218,7 @@ export const EmojiPicker = React.memo(
         return [...chunk(firstRecent, COL_COUNT), ...chunks];
       }, [firstRecent, renderableCategories, searchText]);
 
-      const catRowEnds = React.useMemo(() => {
+      const catRowEnds = useMemo(() => {
         const rowEnds: Array<number> = [
           Math.ceil(firstRecent.length / COL_COUNT) - 1,
         ];
@@ -226,18 +233,18 @@ export const EmojiPicker = React.memo(
         return rowEnds;
       }, [firstRecent.length, renderableCategories]);
 
-      const catToRowOffsets = React.useMemo(() => {
+      const catToRowOffsets = useMemo(() => {
         const offsets = initial(catRowEnds).map((i) => i + 1);
 
         return zipObject(categories, [0, ...offsets]);
       }, [catRowEnds]);
 
-      const catOffsetEntries = React.useMemo(
+      const catOffsetEntries = useMemo(
         () => Object.entries(catToRowOffsets),
         [catToRowOffsets]
       );
 
-      const handleSelectCategory = React.useCallback(
+      const handleSelectCategory = useCallback(
         (e: React.MouseEvent<HTMLButtonElement>) => {
           e.stopPropagation();
           const { category } = e.currentTarget.dataset;
@@ -249,7 +256,7 @@ export const EmojiPicker = React.memo(
         [catToRowOffsets, setSelectedCategory, setScrollToRow]
       );
 
-      const cellRenderer = React.useCallback<GridCellRenderer>(
+      const cellRenderer = useCallback<GridCellRenderer>(
         ({ key, style: cellStyle, rowIndex, columnIndex }) => {
           const shortName = emojiGrid[rowIndex][columnIndex];
 
@@ -275,7 +282,7 @@ export const EmojiPicker = React.memo(
         [emojiGrid, handlePickEmoji, selectedTone]
       );
 
-      const getRowHeight = React.useCallback(
+      const getRowHeight = useCallback(
         ({ index }: { index: number }) => {
           if (searchText) {
             return 34;
@@ -290,7 +297,7 @@ export const EmojiPicker = React.memo(
         [catRowEnds, searchText]
       );
 
-      const onSectionRendered = React.useMemo(
+      const onSectionRendered = useMemo(
         () =>
           debounce(({ rowStartIndex }: SectionRenderedParams) => {
             const [cat] =

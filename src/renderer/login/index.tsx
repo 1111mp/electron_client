@@ -9,6 +9,6 @@ import Root from './root';
   //   applyTheme(theme);
   // });
 
-  const root = createRoot(document.getElementById('root')!);
+  const root = createRoot(document.getElementById('root') as HTMLElement);
   root.render(<Root />);
 })();

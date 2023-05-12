@@ -1,12 +1,6 @@
 import { ipcMain, nativeTheme, BrowserWindow } from 'electron';
 import { Theme } from '../types';
 
-// enum Theme {
-//   system = 'system',
-//   light = 'light',
-//   dark = 'dark',
-// }
-
 function getTheme(): Exclude<Theme, 'system'> {
   return nativeTheme.shouldUseDarkColors ? Theme.dark : Theme.light;
 }

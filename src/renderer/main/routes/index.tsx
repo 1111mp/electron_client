@@ -1,16 +1,15 @@
-import { createContext, useContext } from 'react';
+import { createContext, lazy, useContext } from 'react';
 import {
   RouteObject,
   useRoutes,
   useLocation,
   Navigate,
 } from 'react-router-dom';
-import loadable from '@loadable/component';
 
-const IndexPage = loadable(() => import('Renderer/main/pages/IndexPage'));
-const HomePage = loadable(() => import('Renderer/main/pages/Home'));
-const ChatPage = loadable(() => import('Renderer/main/pages/ChatPage'));
-const AddressBook = loadable(() => import('Renderer/main/pages/AddressBook'));
+const IndexPage = lazy(() => import('Renderer/main/pages/IndexPage'));
+const HomePage = lazy(() => import('Renderer/main/pages/Home'));
+const ChatPage = lazy(() => import('Renderer/main/pages/ChatPage'));
+const AddressBook = lazy(() => import('Renderer/main/pages/AddressBook'));
 
 export const routerConfig: RouteObject[] = [
   {

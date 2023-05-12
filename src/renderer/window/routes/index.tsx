@@ -1,8 +1,8 @@
+import { lazy } from 'react';
 import { RouteObject, useRoutes } from 'react-router-dom';
-import loadable from '@loadable/component';
 
-const Setting = loadable(() => import('Renderer/window/pages/Setting'));
-const Search = loadable(() => import('Renderer/window/pages/Search'));
+const Setting = lazy(() => import('Renderer/window/pages/Setting'));
+const Search = lazy(() => import('Renderer/window/pages/Search'));
 
 export const routerConfig: RouteObject[] = [
   {

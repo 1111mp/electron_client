@@ -13,8 +13,8 @@ try {
 
     sqlClient,
 
-    loginSuccessed: (user_str: string) =>
-      ipcRenderer.send('login-successed', user_str),
+    loginSuccessed: (userInfo: DB.UserAttributes) =>
+      ipcRenderer.send('login-successed', userInfo),
     closeLogin: () => ipcRenderer.send('close-login'),
     checkForUpdates: () => {
       ipcRenderer.send('checkForUpdates');

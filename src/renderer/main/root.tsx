@@ -11,17 +11,9 @@ type Props = {
   theme: Theme;
   localeForAntd: ConfigProviderProps['locale'];
   stores: RootStore;
-  statusCode: number;
 };
 
-const Root: React.ComponentType<Props> = ({
-  theme,
-  localeForAntd,
-  stores,
-  statusCode,
-}) => {
-  console.log(statusCode);
-
+const Root: React.ComponentType<Props> = ({ theme, localeForAntd, stores }) => {
   return (
     <AppStoresProvider stores={stores}>
       <I18nAndTheme

@@ -11,8 +11,6 @@ export default class ClientStore {
 
   constructor() {
     const { userId, token } = window.Context.getUserInfo();
-    console.log(userId);
-    console.log(token);
     this.socket = getIMSocketInstance(Config.imSocketUrl, {
       optionsForSocket: {
         path: '/socket/v1/IM/',
@@ -22,7 +20,7 @@ export default class ClientStore {
       },
       onMessage: this.onMessage,
     });
-    
+
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
@@ -37,7 +35,7 @@ export default class ClientStore {
         msgId: uuidv4(),
         type: ModuleIMCommon.MsgType.Text,
         sender: userId,
-        receiver: 10009, // userId or groupId
+        receiver: 10007, // userId or groupId
         timer: `${Date.now()}`,
         content: 'Hello World.',
       })
