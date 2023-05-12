@@ -101,7 +101,7 @@ function getFormLength(form: FormData): Promise<number> {
       host,
       port,
       method: 'POST',
-      path: '/api/electron/fullUpload',
+      path: '/api/v1/electron/full',
       headers: form.getHeaders(),
     });
 
@@ -190,7 +190,7 @@ function getFormLength(form: FormData): Promise<number> {
       host,
       port,
       method: 'POST',
-      path: '/api/electron/asarUpload',
+      path: '/api/v1/electron/asar',
       headers: form.getHeaders(),
     });
 
