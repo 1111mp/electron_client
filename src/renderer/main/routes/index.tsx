@@ -16,7 +16,6 @@ export const routerConfig: RouteObject[] = [
   {
     path: '/',
     element: <Home />,
-
     children: [
       {
         path: 'index',

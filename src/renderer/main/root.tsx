@@ -1,11 +1,11 @@
 import { RouterProvider } from 'react-router-dom';
 import { AppStoresProvider } from './stores';
 import { I18nAndTheme } from 'Renderer/utils/i18n';
+import { router } from './routes';
 
 import type { RootStore } from './stores';
 import type { Theme } from 'App/types';
 import type { ConfigProviderProps } from 'antd/es/config-provider';
-import { router } from './routes';
 
 type Props = {
   theme: Theme;
@@ -13,7 +13,7 @@ type Props = {
   stores: RootStore;
 };
 
-const Root: React.ComponentType<Props> = ({ theme, localeForAntd, stores }) => {
+const Root: React.FC<Props> = ({ theme, localeForAntd, stores }) => {
   return (
     <AppStoresProvider stores={stores}>
       <I18nAndTheme

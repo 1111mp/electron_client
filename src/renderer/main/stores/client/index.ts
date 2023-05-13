@@ -35,9 +35,9 @@ export default class ClientStore {
         msgId: uuidv4(),
         type: ModuleIMCommon.MsgType.Text,
         sender: userId,
-        receiver: 10007, // userId or groupId
+        receiver: 10009, // userId or groupId
         timer: `${Date.now()}`,
-        content: 'Hello World.',
+        content: '在每一个需要使用变量的component组件中都需要单独烦，非常的不人性化。',
       })
       .then((res) => {
         console.log(res);

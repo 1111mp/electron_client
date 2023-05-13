@@ -1,181 +1,218 @@
 import './styles.scss';
 
-import { useState, useEffect, useRef } from 'react';
-// @ts-ignore
-import ReactIScroll from 'react-iscroll';
-// @ts-ignore
-import iScroll from 'iscroll/build/iscroll-probe';
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Button, Drawer } from 'antd';
 import EllipsisOutlined from '@ant-design/icons/EllipsisOutlined';
-import MsgsContainer from './msgsContainer';
 import { Transmitter } from './transmitter';
-import { useParams } from 'react-router-dom';
+import AutoSizer from 'react-virtualized/dist/es/AutoSizer';
+import List from 'react-virtualized/dist/es/List';
+import {
+  CellMeasurer,
+  CellMeasurerCache,
+} from 'react-virtualized/dist/es/CellMeasurer';
+import { Message, Positions } from './Message';
+import { ModuleIMCommon } from 'App/renderer/socket/enums';
 
-function getData(): any[] {
-  let res: any[] = [];
-  for (let i = 0; i < 15; i++) {
-    if (i === 0) {
-      res.push({
-        msgId: i,
-        msgType: 0,
-        system: '我是系统消息' + i,
-        time: 1598493522375,
-        user: {
-          avatar: 'https://img2-npl.bao.163.com/avatar/default/054/200',
-          name: '玩家954792',
-          userId: 1811763,
-        },
-      });
-    } else if (i === 1) {
-      res.push({
-        msgId: i,
-        msgType: 0,
-        content:
-          '在每一个需要使用变量的component组件中都需要单独引入index.styl文件，不仅进行了多次重复性的操作，而且文件名称一旦发生改变，维护更新非常麻烦，非常的不人性化。' +
-          i,
-        time: 1598493522375,
-        user: {
-          avatar: 'https://img2-npl.bao.163.com/avatar/default/054/200',
-          name: '玩家954792',
-          userId: 1,
-        },
-      });
-    } else if (i === 5) {
-      res.push({
-        msgId: i,
-        msgType: 1,
-        content: '需要使用变量的component组件中都需要单独引入',
-        image: {
-          url: 'http://touxiangkong.com/uploads/allimg/20203301301/2020/3/Vzuiy2.jpg',
-          width: 400,
-          height: 400,
-        },
-        time: 1598493522375,
-        user: {
-          avatar: 'https://img2-npl.bao.163.com/avatar/default/054/200',
-          name: '玩家954792',
-          userId: 1,
-        },
-      });
-    } else {
-      res.push({
-        msgId: i,
-        msgType: 0,
-        content:
-          '在每一个需要使用变量的component组件中都需要单独引入index.styl文件，不仅进行了多次重复性的操作，而且文件名称一旦发生改变，维护更新非常麻烦，非常的不人性化。' +
-          i,
-        time: 1598493522375,
-        user: {
-          avatar: 'https://img2-npl.bao.163.com/avatar/default/054/200',
-          name: '玩家954792',
-          userId: 1811763,
-        },
-      });
-    }
-  }
-  return res;
-}
-
-type ScrollInfoRef = {
-  maxScrollY?: number;
-  y?: number;
-  loading?: boolean;
-};
+const cache = new CellMeasurerCache({
+  defaultHeight: 50,
+  fixedWidth: true,
+});
 
 const Room: React.FC<IAnyObject> = () => {
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<ModuleIM.Core.MessageBasic[]>([
+    {
+      id: BigInt(33),
+      msgId: '4f4c4924-8807-42be-9390-f5b0133b4051',
+      type: ModuleIMCommon.MsgType.Text,
+      sender: {
+        id: 10007,
+        account: '17621398254',
+        avatar: null,
+        email: null,
+        regisTime: 'string',
+        updateTime: 'string',
+      },
+      receiver: 10009,
+      content: '在每一个需要使用变量的component组件中都需要单独引引io入index',
+      timer: '1678854360721',
+    },
+    {
+      id: BigInt(34),
+      msgId: '4f4c4924-8807-42be-9390-f5b0133b4051',
+      type: ModuleIMCommon.MsgType.Text,
+      sender: {
+        id: 10009,
+        account: '17601254993',
+        avatar: null,
+        email: null,
+        regisTime: 'string',
+        updateTime: 'string',
+      },
+      receiver: 10007,
+      content:
+        '在每一个需要使用变量的component组件中都需要单独引引io入index.styl文件，不仅进行了多次重复性的操作，而且文件名称一旦发生改变，维护更新非常麻烦，非常的不人性化。',
+      timer: '1678854360722',
+    },
+    {
+      id: BigInt(38),
+      msgId: 'c4ae7b69-702b-4999-97f4-a07c555a4646',
+      type: ModuleIMCommon.MsgType.Text,
+      sender: {
+        id: 10007,
+        account: '17621398254',
+        avatar: null,
+        email: null,
+        regisTime: 'string',
+        updateTime: 'string',
+      },
+      receiver: 10009,
+      content: 'Hello World.',
+      timer: '1683966763244',
+    },
+    {
+      id: BigInt(39),
+      msgId: 'bc70ec01-df9b-46de-be22-ab8444a3168a',
+      type: ModuleIMCommon.MsgType.Text,
+      sender: {
+        id: 10007,
+        account: '17621398254',
+        avatar: null,
+        email: null,
+        regisTime: 'string',
+        updateTime: 'string',
+      },
+      receiver: 10009,
+      content:
+        '在每一个需要使用变量的component组件中都需要单独引引io入index.styl文件，不仅进行了多次重复性的操作，而且文件名称一旦发生改变，维护更新非常麻烦，非常的不人性化。',
+      timer: '1683966796148',
+    },
+    {
+      id: BigInt(50),
+      msgId: '2980530a-8f72-4454-a600-1fb910ee9fb8',
+      type: ModuleIMCommon.MsgType.Image,
+      sender: {
+        id: 10007,
+        account: '17621398254',
+        avatar: null,
+        email: null,
+        regisTime: 'string',
+        updateTime: 'string',
+      },
+      receiver: 10009,
+      content:
+        'http://touxiangkong.com/uploads/allimg/20203301301/2020/3/Vzuiy2.jpg',
+      timer: '1683966885425',
+    },
+    {
+      id: BigInt(40),
+      msgId: '2980530a-8f72-4454-a600-1fb910ee9fb8',
+      type: ModuleIMCommon.MsgType.Text,
+      sender: {
+        id: 10007,
+        account: '17621398254',
+        avatar: null,
+        email: null,
+        regisTime: 'string',
+        updateTime: 'string',
+      },
+      receiver: 10009,
+      content:
+        '在每一个需要使用变量的component组件中都需要单独引入index.styl文件，不仅进行了多次重复性的操作，而且文件名称一旦发生改变，维护更新非常麻烦，非常的不人性化。',
+      timer: '1683966885425',
+    },
+    {
+      id: BigInt(41),
+      msgId: '3b04e4b2-eb70-4624-b7fb-7ba7a0c01092',
+      type: ModuleIMCommon.MsgType.Text,
+      sender: {
+        id: 10007,
+        account: '17621398254',
+        avatar: null,
+        email: null,
+        regisTime: 'string',
+        updateTime: 'string',
+      },
+      receiver: 10009,
+      content:
+        '在每一个需要使用变量的component组件中都需要单独烦，非常的不人性化。',
+      timer: '1683966893762',
+    },
+  ]);
   const [visible, setVisible] = useState<boolean>(false);
 
   const { roomId } = useParams();
 
   console.log(roomId);
 
-  const scrollRef = useRef();
-  const infoRef = useRef<ScrollInfoRef>({
-    maxScrollY: 0,
-    y: 0,
-    loading: false,
-  });
-
-  const loadMore = () => {
-    console.log('loadMore');
-    setTimeout(() => {
-      setMessages(getData().concat(messages));
-      infoRef.current.loading = false;
-    }, 2000);
-  };
-
-  const onScrollHandler = (iScrollInstance: any) => {
-    const { y, maxScrollY } = iScrollInstance;
-    if (y > -50 && !infoRef.current.loading) {
-      infoRef.current = {
-        maxScrollY,
-        y,
-        loading: true,
-      };
-      loadMore();
-    }
-  };
-
-  const scrollTo = (x: number = 0, y: number = 0, time: number = 500) => {
-    const instance = getIScrollInstance();
-    instance && instance.scrollTo(x, y, time);
-  };
-
-  const getIScrollInstance: iScroll = () => {
-    const iscroll: IAnyObject = scrollRef.current || {};
-    return iscroll.getIScroll && iscroll.getIScroll.call(iscroll);
-  };
-
   useEffect(() => {
-    setTimeout(() => {
-      setMessages(getData());
-    }, 1000);
+    return () => {
+      cache && cache.clearAll();
+    };
   }, []);
 
-  useEffect(() => {
-    const instance = getIScrollInstance();
-    if (instance) {
-      const { maxScrollY } = instance;
-      scrollTo(
-        0,
-        maxScrollY - infoRef.current.maxScrollY! + infoRef.current.y!,
-        0
-      );
-    }
-  }, [messages]);
+  useEffect(() => {}, [messages]);
+
+  console.log(cache);
 
   return (
-    <div className="module-chat_interface">
-      <header className="module-chat_interface-header">
-        <p className="module-chat_interface-header--title">张逸凡</p>
-        <Button type="link" size='small' onClick={() => setVisible(true)}>
+    <div className="module-room">
+      <header className="module-room-header">
+        <p className="module-room-header--title">张逸凡</p>
+        <Button type="link" size="small" onClick={() => setVisible(true)}>
           <EllipsisOutlined style={{ fontSize: '20px' }} />
         </Button>
       </header>
-      <ReactIScroll
-        ref={scrollRef}
-        iScroll={iScroll}
-        options={{
-          probeType: 2,
-          // disablePointer: true,
-          mouseWheel: true,
-          scrollbars: 'custom',
-          freeScroll: true,
-          fadeScrollbars: true,
-          interactiveScrollbars: true,
-          shrinkScrollbars: 'scale',
-          preventDefaultException: {
-            className: /message-content|message-wrapper|message-container/,
-          },
-        }}
-        onScrollEnd={onScrollHandler}
-      >
-        <div className="module-chat_interface--scroll">
-          <MsgsContainer messages={messages} />
-        </div>
-      </ReactIScroll>
-      <footer className="module-chat_interface--footer">
+      <div className="module-room-scroll">
+        <AutoSizer>
+          {({ width, height }) => (
+            <List
+              width={width}
+              height={height}
+              rowCount={messages.length}
+              rowHeight={cache.rowHeight}
+              deferredMeasurementCache={cache}
+              // scrollToIndex={messages.length}
+              overscanRowCount={10}
+              rowRenderer={({ index, key, style, parent }) => {
+                const message = messages[index];
+
+                const previousMessage = messages[index - 1] || {};
+                // const nextMessage = messages[index - 1] || {};
+                const messageProps = {
+                  // ...message,
+                  // chatType: 'p2p',
+                  currentMessage: message,
+                  previousMessage,
+                  // nextMessage,
+                  position:
+                    message.sender.id === 10009
+                      ? Positions.Right
+                      : Positions.Left,
+                };
+
+                return (
+                  <CellMeasurer
+                    cache={cache}
+                    columnIndex={0}
+                    key={key}
+                    parent={parent}
+                    rowIndex={index}
+                  >
+                    {({ measure, registerChild }) => (
+                      // @ts-ignore
+                      <div ref={registerChild} style={style}>
+                        <Message measure={measure} {...messageProps} />
+                      </div>
+                    )}
+                  </CellMeasurer>
+                );
+              }}
+            />
+          )}
+        </AutoSizer>
+      </div>
+      <footer className="module-room--footer">
         <Transmitter onPickEmoji={() => {}} />
       </footer>
       <Drawer

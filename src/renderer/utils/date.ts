@@ -1,13 +1,13 @@
 import dayjs from 'dayjs';
 
 /** 判断两个日期是否是同一天 */
-export function isSameDay(currentTime: number, diffTime: number) {
+export function isSameDay(currentTime: string, diffTime: string) {
   if (!diffTime) {
     return false;
   }
 
-  const currentCreatedAt = dayjs(currentTime);
-  const diffCreatedAt = dayjs(diffTime);
+  const currentCreatedAt = dayjs(parseInt(currentTime));
+  const diffCreatedAt = dayjs(parseInt(diffTime));
 
   if (!currentCreatedAt.isValid() || !diffCreatedAt.isValid()) {
     return false;
@@ -17,44 +17,28 @@ export function isSameDay(currentTime: number, diffTime: number) {
 }
 
 /** 时间格式化 */
-export function showTime(msgDate: number | Date) {
-  msgDate = new Date(msgDate);
-  let nowDate = new Date();
-  let result = '';
-  let startTime = nowDate.getTime();
-  let endTime = msgDate.getTime();
-  let dates = Math.abs(startTime - endTime) / (1000 * 60 * 60 * 24);
-  // let d = dayjs.duration(dayjs(nowDate, 'YYYYMMDD').diff(dayjs(msgDate, "YYYYMMDD")));
-  // let dates = d.asDays();
-  if (dates < 1) {
-    //小于24小时
-    if (nowDate.getDate() === msgDate.getDate()) {
-      //同一天,显示时间
-      result = 'TODAY';
-    } else {
-      result = 'YESTERDAY';
-    }
-  } else if (dates < 2) {
-    //昨天
-    let yesterday = new Date(
-      new Date(new Date().toLocaleDateString()).getTime() - 1
-    );
-    if (msgDate.getDate() === yesterday.getDate()) {
-      result = 'YESTERDAY';
-    } else {
-      result = dayjs(msgDate).locale('en').format('M-D');
-    }
+export function showTime(timer: string) {
+  const date = dayjs(parseInt(timer)).locale('zh-cn');
+  const nowDate = dayjs();
+  const diffDay = nowDate.diff(date, 'day');
+
+  if (diffDay < 1) {
+    // 小于24小时
+    return nowDate.isSame(date, 'day')
+      ? date.format('HH:mm')
+      : date.format('[昨天] HH:mm');
   }
-  // else if (dates <= 2) //前天
-  // {
-  //  result = dayjs(msgDate).format("前天 HH:mm");
-  // }
-  else if (dates < 7) {
-    //一周内
-    result = dayjs(msgDate).locale('en').format('M-D');
-  } //显示日期
-  else {
-    result = dayjs(msgDate).locale('en').format('YYYY-MM-DD');
+
+  if (diffDay < 2) {
+    // 昨天
+    return date.isSame(nowDate.subtract(1, 'day'))
+      ? date.format('[昨天] HH:mm')
+      : date.format('dddd HH:mm');
   }
-  return result;
+
+  if (diffDay < 7) {
+    return date.format('dddd HH:mm');
+  }
+
+  return date.format('YYYY-MM-DD');
 }
