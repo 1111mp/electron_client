@@ -2,9 +2,19 @@ import './styles.scss';
 
 import { useState, useCallback } from 'react';
 import classNames from 'classnames';
-import { AutoSizer, List, ListRowProps } from 'react-virtualized';
+import _AutoSizer from 'react-virtualized/dist/es/AutoSizer';
+import _List from 'react-virtualized/dist/es/List';
 import Header from './header';
 import Row from './row';
+
+import type {
+  AutoSizerProps,
+  ListProps,
+  ListRowProps,
+} from 'react-virtualized';
+
+const AutoSizer = _AutoSizer as unknown as React.FC<AutoSizerProps>;
+const List = _List as unknown as React.FC<ListProps>;
 
 export type Props = {};
 

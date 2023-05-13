@@ -5,19 +5,29 @@ import { useParams } from 'react-router-dom';
 import { Button, Drawer } from 'antd';
 import EllipsisOutlined from '@ant-design/icons/EllipsisOutlined';
 import { Transmitter } from './transmitter';
-import AutoSizer from 'react-virtualized/dist/es/AutoSizer';
-import List from 'react-virtualized/dist/es/List';
+import _AutoSizer from 'react-virtualized/dist/es/AutoSizer';
+import _List from 'react-virtualized/dist/es/List';
 import {
-  CellMeasurer,
+  CellMeasurer as _CellMeasurer,
   CellMeasurerCache,
 } from 'react-virtualized/dist/es/CellMeasurer';
 import { Message, Positions } from './Message';
 import { ModuleIMCommon } from 'App/renderer/socket/enums';
 
+import type {
+  AutoSizerProps,
+  ListProps,
+  CellMeasurerProps,
+} from 'react-virtualized';
+
 const cache = new CellMeasurerCache({
   defaultHeight: 50,
   fixedWidth: true,
 });
+
+const AutoSizer = _AutoSizer as unknown as React.FC<AutoSizerProps>;
+const List = _List as unknown as React.FC<ListProps>;
+const CellMeasurer = _CellMeasurer as unknown as React.FC<CellMeasurerProps>;
 
 const Room: React.FC<IAnyObject> = () => {
   const [messages, setMessages] = useState<ModuleIM.Core.MessageBasic[]>([

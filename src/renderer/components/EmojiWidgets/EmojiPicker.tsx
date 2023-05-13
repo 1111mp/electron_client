@@ -11,8 +11,8 @@ import {
 } from 'react';
 
 import classNames from 'classnames';
-import AutoSizer from 'react-virtualized/dist/es/AutoSizer';
-import Grid from 'react-virtualized/dist/es/Grid';
+import _AutoSizer from 'react-virtualized/dist/es/AutoSizer';
+import _Grid from 'react-virtualized/dist/es/Grid';
 import {
   chunk,
   debounce,
@@ -28,6 +28,8 @@ import { useRestoreFocus } from 'Renderer/utils/hooks';
 import { useI18n } from 'Renderer/utils/i18n';
 
 import type {
+  AutoSizerProps,
+  GridProps,
   GridCellRenderer,
   SectionRenderedParams,
 } from 'react-virtualized';
@@ -46,6 +48,9 @@ export type OwnProps = {
 };
 
 export type Props = OwnProps & Pick<React.HTMLProps<HTMLDivElement>, 'style'>;
+
+const AutoSizer = _AutoSizer as unknown as React.FC<AutoSizerProps>;
+const Grid = _Grid as unknown as React.FC<GridProps>;
 
 function focusOnRender(el: HTMLElement | null) {
   if (el) {
