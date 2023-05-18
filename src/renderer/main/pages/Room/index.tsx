@@ -35,7 +35,8 @@ const Room: React.FC<IAnyObject> = () => {
       id: BigInt(33),
       msgId: '4f4c4924-8807-42be-9390-f5b0133b4051',
       type: ModuleIMCommon.MsgType.Text,
-      sender: {
+      sender: 10007,
+      senderInfo: {
         id: 10007,
         account: '17621398254',
         avatar: null,
@@ -44,14 +45,20 @@ const Room: React.FC<IAnyObject> = () => {
         updateTime: 'string',
       },
       receiver: 10009,
-      content: '在每一个需要使用变量的component组件中都需要单独引引io入index',
+      content: `
+      \u{231A}: ⌚ default 😀 emoji presentation character (Emoji_Presentation)
+      \u{2194}\u{FE0F}: ↔️ default text presentation character rendered as emoji
+      \u{1F469}: 👩 emoji modifier base (Emoji_Modifier_Base)
+      \u{1F469}\u{1F3FF}: 👩🏿 emoji modifier base followed by a modifier
+      `,
       timer: '1678854360721',
     },
     {
       id: BigInt(34),
       msgId: '4f4c4924-8807-42be-9390-f5b0133b4051',
       type: ModuleIMCommon.MsgType.Text,
-      sender: {
+      sender: 10007,
+      senderInfo: {
         id: 10009,
         account: '17601254993',
         avatar: null,
@@ -61,14 +68,15 @@ const Room: React.FC<IAnyObject> = () => {
       },
       receiver: 10007,
       content:
-        '在每一个需要使用变量的component组件中都需要单独引引io入index.styl文件，不仅进行了多次重复性的操作，而且文件名称一旦发生改变，维护更新非常麻烦，非常的不人性化。',
+        '在每一个需要使用变量的component组件中都需要😀单独引引io入index.styl文件，不仅进行了多次重复性的操作，而且文件名称一旦发生改变，维护更新非常麻烦，非常的不人性化。',
       timer: '1678854360722',
     },
     {
       id: BigInt(38),
       msgId: 'c4ae7b69-702b-4999-97f4-a07c555a4646',
       type: ModuleIMCommon.MsgType.Text,
-      sender: {
+      sender: 10007,
+      senderInfo: {
         id: 10007,
         account: '17621398254',
         avatar: null,
@@ -84,7 +92,8 @@ const Room: React.FC<IAnyObject> = () => {
       id: BigInt(39),
       msgId: 'bc70ec01-df9b-46de-be22-ab8444a3168a',
       type: ModuleIMCommon.MsgType.Text,
-      sender: {
+      sender: 10007,
+      senderInfo: {
         id: 10007,
         account: '17621398254',
         avatar: null,
@@ -101,7 +110,8 @@ const Room: React.FC<IAnyObject> = () => {
       id: BigInt(50),
       msgId: '2980530a-8f72-4454-a600-1fb910ee9fb8',
       type: ModuleIMCommon.MsgType.Image,
-      sender: {
+      sender: 10007,
+      senderInfo: {
         id: 10007,
         account: '17621398254',
         avatar: null,
@@ -118,7 +128,8 @@ const Room: React.FC<IAnyObject> = () => {
       id: BigInt(40),
       msgId: '2980530a-8f72-4454-a600-1fb910ee9fb8',
       type: ModuleIMCommon.MsgType.Text,
-      sender: {
+      sender: 10007,
+      senderInfo: {
         id: 10007,
         account: '17621398254',
         avatar: null,
@@ -135,7 +146,8 @@ const Room: React.FC<IAnyObject> = () => {
       id: BigInt(41),
       msgId: '3b04e4b2-eb70-4624-b7fb-7ba7a0c01092',
       type: ModuleIMCommon.MsgType.Text,
-      sender: {
+      sender: 10007,
+      senderInfo: {
         id: 10007,
         account: '17621398254',
         avatar: null,
@@ -162,8 +174,6 @@ const Room: React.FC<IAnyObject> = () => {
   }, []);
 
   useEffect(() => {}, [messages]);
-
-  console.log(cache);
 
   return (
     <div className="module-room">
@@ -196,7 +206,7 @@ const Room: React.FC<IAnyObject> = () => {
                   previousMessage,
                   // nextMessage,
                   position:
-                    message.sender.id === 10009
+                    message.sender === 10009
                       ? Positions.Right
                       : Positions.Left,
                 };
@@ -223,7 +233,7 @@ const Room: React.FC<IAnyObject> = () => {
         </AutoSizer>
       </div>
       <footer className="module-room--footer">
-        <Transmitter onPickEmoji={() => {}} />
+        <Transmitter />
       </footer>
       <Drawer
         title="Basic Drawer"

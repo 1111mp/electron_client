@@ -17,6 +17,7 @@ function updateToSchemaVersion1(
   logger.info('updateToSchemaVersion1: starting...');
 
   db.transaction(() => {
+    // table users
     db.exec(`
       CREATE TABLE users(
         id INTEGER PRIMARY KEY,
@@ -29,6 +30,79 @@ function updateToSchemaVersion1(
         regisTime STRING,
         updateTime STRING
       );
+    `);
+
+    // table infos (to save user info)
+    db.exec(`
+      CREATE TABLE infos(
+        id INTEGER PRIMARY KEY,
+        account STRING NOT NULL,
+        avatar STRING DEFAULT NULL,
+        email STRING DEFAULT NULL,
+        regisTime STRING,
+        updateTime STRING,
+      )
+    `);
+
+    // table friends
+    db.exec(`
+      CREATE TABLE friends(
+        userId INTEGER PRIMARY KEY,
+        remark STRING,
+        astrolabe BOOLEAN DEFAULT FALSE,
+        block BOOLEAN DEFAULT FALSE,
+        createdAt STRING,
+        updatedAt STRING,
+      )
+    `);
+
+    // table groups
+    db.exec(`
+      CREATE TABLE groups(
+        id INTEGER PRIMARY KEY,
+        name STRING,
+        avatar STRING DEFAULT NULL,
+        type INTEGER NOT NULL,
+        creator INTEGER NOT NULL,
+        createdAt STRING,
+        updatedAt STRING,
+      )
+    `);
+
+    // table members
+    db.exec(`
+      CREATE TABLE members(
+        groupId INTEGER NOT NULL,
+        userId INTEGER NOT NULL,
+      )
+    `);
+
+    // table messages
+    db.exec(`
+      CREATE TABLE messages(
+        id BIGINT PRIMARY KEY,
+        msgId STRING NOT NULL,
+        type STRING NOT NULL,
+        groupId INTEGER DEFAULT NULL,
+        sender INTEGER NOT NULL,
+        receiver INTEGER NOT NULL,
+        content TEXT,
+        timer TEXT NOT NULL,
+        ext TEXT,
+      )
+    `);
+
+    // table rooms
+    db.exec(`
+      CREATE TABLE rooms(
+        owner INTEGER PRIMARY KEY,
+        type STRING NOT NULL,
+        groupId INTEGER DEFAULT NULL,
+        sender INTEGER NOT NULL,
+        receiver INTEGER NOT NULL,
+        content TEXT,
+        timer TEXT NOT NULL
+      )
     `);
 
     db.pragma('user_version = 1');

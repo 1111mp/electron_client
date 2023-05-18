@@ -155,6 +155,8 @@ export const EmojiPicker = memo(
             if (shortName) {
               e.stopPropagation();
               e.preventDefault();
+              console.log(selectedTone);
+              console.log(shortName);
               onPickEmoji({ skinTone: selectedTone, shortName });
             }
           }

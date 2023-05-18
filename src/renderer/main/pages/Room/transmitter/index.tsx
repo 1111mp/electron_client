@@ -9,52 +9,54 @@ import {
 } from 'Components/EmojiWidgets/EmojiButton';
 import { EmojiPickDataType } from 'Components/EmojiWidgets/EmojiPicker';
 
-type Props = Pick<EmojiButtonProps, 'onPickEmoji'>;
+type Props = {};
 
-export const Transmitter: React.ComponentType<Props> = memo(
-  ({ onPickEmoji }) => {
-    // const editorRef = React.useRef<Editor>(null);
-    const inputApiRef = useRef<InputApi | undefined>();
+export const Transmitter: React.ComponentType<Props> = memo(({}) => {
+  // const editorRef = React.useRef<Editor>(null);
+  const inputApiRef = useRef<InputApi | undefined>();
 
-    const focusInput = useCallback(() => {
+  const focusInput = useCallback(() => {
+    if (inputApiRef.current) {
+      inputApiRef.current.focus();
+    }
+  }, [inputApiRef]);
+
+  const insertEmoji = useCallback(
+    (e: EmojiPickDataType) => {
       if (inputApiRef.current) {
-        inputApiRef.current.focus();
+        inputApiRef.current.insertEmoji(e);
+        // onPickEmoji(e);
       }
-    }, [inputApiRef]);
+    },
+    [inputApiRef]
+  );
 
-    const insertEmoji = useCallback(
-      (e: EmojiPickDataType) => {
-        if (inputApiRef.current) {
-          inputApiRef.current.insertEmoji(e);
-          // onPickEmoji(e);
-        }
-      },
-      [inputApiRef, onPickEmoji]
-    );
+  useEffect(() => {
+    focusInput();
+  }, [focusInput]);
 
-    useEffect(() => {
-      focusInput();
-    }, [focusInput]);
-
-    return (
-      <div className="module-transmitter">
-        <ul className="module-transmitter-actions">
-          <EmojiButton onPickEmoji={insertEmoji} />
-          <li className="module-transmitter-actions-content">
-            <span className="iconfont iconwenjian"></span>
-          </li>
-        </ul>
-        <div className="module-transmitter-textarea">
-          <CompositionInput
-            // editorRef={editorRef}
-            inputApi={inputApiRef}
-            // draftText={draftText}
-            // draftBodyRanges={draftBodyRanges}
-            // startingText={''}
-            onPickEmoji={onPickEmoji}
-          />
-        </div>
+  return (
+    <div className="module-transmitter">
+      <ul className="module-transmitter-actions">
+        <EmojiButton onPickEmoji={insertEmoji} />
+        <li className="module-transmitter-actions-content">
+          <span className="iconfont iconwenjian"></span>
+        </li>
+      </ul>
+      <div className="module-transmitter-textarea">
+        <CompositionInput
+          // editorRef={editorRef}
+          inputApi={inputApiRef}
+          // draftText={draftText}
+          // draftBodyRanges={draftBodyRanges}
+          // startingText={''}
+          onPickEmoji={onPickEmoji}
+          onSubmit={(content, mentions) => {
+            console.log(content);
+            console.log(mentions);
+          }}
+        />
       </div>
-    );
-  }
-);
+    </div>
+  );
+});

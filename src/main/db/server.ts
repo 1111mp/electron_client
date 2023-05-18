@@ -240,3 +240,155 @@ async function setUserTheme(theme: Theme) {
 
   return update.run({ id: user_id_key, theme });
 }
+
+// async function setFriends() {}
+
+/**
+ * @description: Set a message into db.
+ * @param message ModuleIM.Core.MessageBasic
+ * @return Promise<SQL.RunResult>
+ */
+async function setMessage(message: ModuleIM.Core.MessageBasic) {
+  const db = getInstance();
+  const columns = Object.keys(message);
+
+  const insert = db.prepare(`INSERT INTO messages (
+    ${columns.join(',')}
+  ) VALUES (
+    ${columns.map((column) => `$${column}`).join(',')}
+  )`);
+
+  return insert.run(message);
+}
+
+/**
+ * @description: Get messages by userId or groupId.
+ * @param sender number
+ * @param pageNum string
+ * @param pageSize number
+ * @return Promise<Array<ModuleIM.Core.MessageBasic>>
+ */
+async function getMessagesBySender({
+  sender,
+  pageNum = 1,
+  pageSize = 20,
+}: {
+  sender: number;
+  pageNum: number;
+  pageSize: number;
+}) {
+  const db = getInstance();
+  const messages = db
+    .prepare(
+      `SELECT 
+        Message.id,
+        Message.msgId,
+        Message.type,
+        Message.groupId,
+        Message.sender,
+        Message.receiver,
+        Message.content,
+        Message.timer,
+        Message.ext,
+        Info.id AS senderInfo.id,
+        Info.account AS senderInfo.account,
+        Info.avatar AS senderInfo.avatar,
+        Info.email AS senderInfo.email,
+        Info.regisTime AS senderInfo.regisTime,
+        Info.updateTime AS senderInfo.updateTime
+       FROM messages AS Message LEFT OUTER JOIN infos AS Info ON Message.sender = Info.id
+       WHERE Message.sender = $sender LIMIT $limit OFFSET $offset`
+    )
+    .all({ sender, limit: pageSize, offset: (pageNum - 1) * pageSize });
+
+  return messages as Array<ModuleIM.Core.MessageBasic>;
+}
+
+/**
+ * @description: Remove messages by sender.
+ * @param sender number
+ * @return Promise<SQL.RunResult>
+ */
+async function removeMessagesBySender(sender: number) {
+  const db = getInstance();
+  const messages = db.prepare(`DELETE FROM messages WHERE sender = $sender`);
+
+  return messages.run({ sender });
+}
+
+/**
+ * @description: Remove all messages.
+ * @return Promise<SQL.RunResult>
+ */
+async function removeAllMessages() {
+  const db = getInstance();
+  const messages = db.prepare(`DELETE FROM messages`);
+
+  return messages.run();
+}
+
+/**
+ * @description: Create a room into table rooms.
+ * @param room ModuleIM.Core.Room
+ * @return Promise<SQL.RunResult>
+ */
+async function createRoom(room: ModuleIM.Core.Room) {
+  const db = getInstance();
+  const columns = Object.keys(room);
+  const creator = db.prepare(`INSERT INTO rooms (
+    ${columns.join(',')}
+  ) VALUES (
+    ${columns.map((column) => `$${column}`).join(',')}
+  )`);
+
+  return creator.run(room);
+}
+
+/**
+ * @description: Remove room by owner & sender.
+ * @param owner number (userId)
+ * @param sender number (userId or groupId)
+ * @return Promise<SQL.RunResult>
+ */
+async function removeRoom({
+  owner,
+  sender,
+}: {
+  owner: number;
+  sender: number;
+}) {
+  const db = getInstance();
+  const result = db
+    .prepare(`DELETE FROM rooms WHERE owner = $owner AND sender = $sender`)
+    .run({ owner, sender });
+
+  return result;
+}
+
+/**
+ * @description: Remove all rooms by owner.
+ * @param owner number (userId)
+ * @return Promise<SQL.RunResult>
+ */
+async function removeRooms(owner: number) {
+  const db = getInstance();
+  const result = db
+    .prepare(`DELETE FROM rooms WHERE owner = $owner`)
+    .run({ owner });
+
+  return result;
+}
+
+/**
+ * @description: Get all rooms.
+ * @param owner number (owner userId)
+ * @return Promise<Array<ModuleIM.Core.Room>>
+ */
+async function getRooms(owner: number) {
+  const db = getInstance();
+  const rooms = db
+    .prepare(`SELECT * FROM rooms WHERE owner = $owner`)
+    .all({ owner });
+
+  return rooms as Array<ModuleIM.Core.Room>;
+}

@@ -117,9 +117,7 @@ class IMSocket {
    * @param msg Omit<ModuleIM.Core.MessageBasic, 'sender'> & { sender: number }
    * @return Promise<ModuleIM.Core.AckResponse>
    */
-  public sendMessage(
-    msg: Omit<ModuleIM.Core.MessageBasic, 'sender'> & { sender: number }
-  ) {
+  public sendMessage(msg: Omit<ModuleIM.Core.MessageBasic, 'senderInfo'>) {
     const buffer = setMessageToProto(msg);
     return this.send(ModuleIMCommon.MessageEventNames.Message, buffer);
   }

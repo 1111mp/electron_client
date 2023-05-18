@@ -251,7 +251,7 @@ export const CompositionInput: React.ComponentType<Props> = (props) => {
     // console.log(mentions);
 
     // window.log.info(`Submitting a message with ${mentions.length} mentions`);
-    // onSubmit(text, mentions);
+    onSubmit(text, mentions);
   };
 
   if (inputApi) {

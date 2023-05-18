@@ -12,7 +12,8 @@ declare global {
         id?: bigint;
         msgId: string;
         type: ModuleIMCommon.MsgType;
-        sender: DB.SenderInfo;
+        sender: number;
+        senderInfo: DB.SenderInfo;
         groupId?: number;
         receiver: number; // userId or groupId
         content: string;
@@ -47,6 +48,16 @@ declare global {
         creator: number;
         createdAt?: string;
         updatedAt?: string;
+      };
+
+      type Room = {
+        owner: number;
+        type: ModuleIMCommon.MsgType;
+        groupId?: number;
+        sender: number;
+        receiver: number;
+        content: string;
+        timer: string;
       };
     }
   }
