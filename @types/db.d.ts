@@ -14,13 +14,34 @@ declare global {
       updateTime: string;
     }
 
-    interface SenderInfo {
+    interface UserInfo {
       id: number;
       account: string;
-      avatar: string | null;
-      email: string | null;
+      avatar?: string;
+      email?: string;
       regisTime: string;
       updateTime: string;
     }
+
+    interface SenderInfo {
+      id: number;
+      account: string;
+      avatar?: string | null;
+      email?: string | null;
+      regisTime: string;
+      updateTime: string;
+    }
+
+    interface FriendSetting {
+      remark: string;
+      astrolabe: boolean;
+      block: boolean;
+      createdAt: string;
+      updatedAt: string;
+    }
+
+    interface UserWithFriendSetting
+      extends Partial<FriendSetting>,
+        SenderInfo {}
   }
 }

@@ -51,7 +51,7 @@ const Room: React.FC<IAnyObject> = () => {
       \u{1F469}: 👩 emoji modifier base (Emoji_Modifier_Base)
       \u{1F469}\u{1F3FF}: 👩🏿 emoji modifier base followed by a modifier
       `,
-      timer: '1678854360721',
+      timer: 1678854360721,
     },
     {
       id: BigInt(34),
@@ -69,7 +69,7 @@ const Room: React.FC<IAnyObject> = () => {
       receiver: 10007,
       content:
         '在每一个需要使用变量的component组件中都需要😀单独引引io入index.styl文件，不仅进行了多次重复性的操作，而且文件名称一旦发生改变，维护更新非常麻烦，非常的不人性化。',
-      timer: '1678854360722',
+      timer: 1678854360722,
     },
     {
       id: BigInt(38),
@@ -86,7 +86,7 @@ const Room: React.FC<IAnyObject> = () => {
       },
       receiver: 10009,
       content: 'Hello World.',
-      timer: '1683966763244',
+      timer: 1683966763244,
     },
     {
       id: BigInt(39),
@@ -104,7 +104,7 @@ const Room: React.FC<IAnyObject> = () => {
       receiver: 10009,
       content:
         '在每一个需要使用变量的component组件中都需要单独引引io入index.styl文件，不仅进行了多次重复性的操作，而且文件名称一旦发生改变，维护更新非常麻烦，非常的不人性化。',
-      timer: '1683966796148',
+      timer: 1683966796148,
     },
     {
       id: BigInt(50),
@@ -122,7 +122,7 @@ const Room: React.FC<IAnyObject> = () => {
       receiver: 10009,
       content:
         'http://touxiangkong.com/uploads/allimg/20203301301/2020/3/Vzuiy2.jpg',
-      timer: '1683966885425',
+      timer: 1683966885425,
     },
     {
       id: BigInt(40),
@@ -140,7 +140,7 @@ const Room: React.FC<IAnyObject> = () => {
       receiver: 10009,
       content:
         '在每一个需要使用变量的component组件中都需要单独引入index.styl文件，不仅进行了多次重复性的操作，而且文件名称一旦发生改变，维护更新非常麻烦，非常的不人性化。',
-      timer: '1683966885425',
+      timer: 1683966885425,
     },
     {
       id: BigInt(41),
@@ -158,7 +158,7 @@ const Room: React.FC<IAnyObject> = () => {
       receiver: 10009,
       content:
         '在每一个需要使用变量的component组件中都需要单独烦，非常的不人性化。',
-      timer: '1683966893762',
+      timer: 1683966893762,
     },
   ]);
   const [visible, setVisible] = useState<boolean>(false);
@@ -206,9 +206,7 @@ const Room: React.FC<IAnyObject> = () => {
                   previousMessage,
                   // nextMessage,
                   position:
-                    message.sender === 10009
-                      ? Positions.Right
-                      : Positions.Left,
+                    message.sender === 10009 ? Positions.Right : Positions.Left,
                 };
 
                 return (

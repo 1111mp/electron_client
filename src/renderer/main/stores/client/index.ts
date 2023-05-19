@@ -36,7 +36,7 @@ export default class ClientStore {
         type: ModuleIMCommon.MsgType.Text,
         sender: userId,
         receiver: 10009, // userId or groupId
-        timer: `${Date.now()}`,
+        timer: Date.now(),
         content: '在每一个需要使用变量的component组件中都需要单独烦，非常的不人性化。',
       })
       .then((res) => {

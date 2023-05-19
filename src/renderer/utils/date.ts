@@ -1,13 +1,13 @@
 import dayjs from 'dayjs';
 
 /** 判断两个日期是否是同一天 */
-export function isSameDay(currentTime: string, diffTime: string) {
+export function isSameDay(currentTime: number, diffTime: number) {
   if (!diffTime) {
     return false;
   }
 
-  const currentCreatedAt = dayjs(parseInt(currentTime));
-  const diffCreatedAt = dayjs(parseInt(diffTime));
+  const currentCreatedAt = dayjs(currentTime);
+  const diffCreatedAt = dayjs(diffTime);
 
   if (!currentCreatedAt.isValid() || !diffCreatedAt.isValid()) {
     return false;
@@ -17,8 +17,8 @@ export function isSameDay(currentTime: string, diffTime: string) {
 }
 
 /** 时间格式化 */
-export function showTime(timer: string) {
-  const date = dayjs(parseInt(timer)).locale('zh-cn');
+export function showTime(timer: number) {
+  const date = dayjs(timer).locale('zh-cn');
   const nowDate = dayjs();
   const diffDay = nowDate.diff(date, 'day');
 

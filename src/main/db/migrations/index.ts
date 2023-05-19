@@ -47,7 +47,8 @@ function updateToSchemaVersion1(
     // table friends
     db.exec(`
       CREATE TABLE friends(
-        userId INTEGER PRIMARY KEY,
+        userId INTEGER,
+        friendId INTEGER,
         remark STRING,
         astrolabe BOOLEAN DEFAULT FALSE,
         block BOOLEAN DEFAULT FALSE,
@@ -87,7 +88,7 @@ function updateToSchemaVersion1(
         sender INTEGER NOT NULL,
         receiver INTEGER NOT NULL,
         content TEXT,
-        timer TEXT NOT NULL,
+        timer INTEGER NOT NULL,
         ext TEXT,
       )
     `);
@@ -101,7 +102,7 @@ function updateToSchemaVersion1(
         sender INTEGER NOT NULL,
         receiver INTEGER NOT NULL,
         content TEXT,
-        timer TEXT NOT NULL
+        timer INTEGER NOT NULL
       )
     `);
 

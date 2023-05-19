@@ -17,7 +17,7 @@ declare global {
         groupId?: number;
         receiver: number; // userId or groupId
         content: string;
-        timer: string;
+        timer: number;
         ext?: string; // reserved field
       };
 
@@ -35,7 +35,7 @@ declare global {
         sender: DB.SenderInfo;
         receiver: number;
         status: ModuleIMCommon.NotifyStatus;
-        timer: string;
+        timer: number;
         remark?: string;
         ext?: string;
       };
@@ -57,7 +57,7 @@ declare global {
         sender: number;
         receiver: number;
         content: string;
-        timer: string;
+        timer: number;
       };
     }
   }

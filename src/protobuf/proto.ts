@@ -3,7 +3,7 @@ import { ModuleIMCommon } from 'App/renderer/socket/enums';
 
 @Type.d()
 export class AckMessage extends Message<AckMessage> {
-  @Field.d(1, 'int32', 'required')
+  @Field.d(1, 'int64', 'required')
   public statusCode: HttpStatus;
 
   @Field.d(2, 'string', 'optional')
@@ -11,7 +11,7 @@ export class AckMessage extends Message<AckMessage> {
 }
 
 class Sender extends Message<Sender> {
-  @Field.d(1, 'int32', 'required')
+  @Field.d(1, 'int64', 'required')
   public id: number;
 
   @Field.d(2, 'string', 'required')
@@ -77,14 +77,14 @@ export class Notify extends Message<Notify> {
   @Field.d(3, Sender)
   public sender: DB.SenderInfo;
 
-  @Field.d(4, 'int32', 'required')
+  @Field.d(4, 'int64', 'required')
   public receiver: number;
 
   @Field.d(5, NotifyStatus, 'required')
   public status: ModuleIMCommon.NotifyStatus;
 
-  @Field.d(6, 'string', 'required')
-  public timer: string;
+  @Field.d(6, 'int64', 'required')
+  public timer: number;
 
   @Field.d(7, 'string', 'required')
   public remark?: string;
@@ -101,13 +101,13 @@ export class MessageForSender extends Message<MessageForSender> {
   @Field.d(2, 'string', 'required')
   public msgId: string;
 
-  @Field.d(3, 'int32', 'required')
+  @Field.d(3, 'int64', 'required')
   public sender: number;
 
-  @Field.d(4, 'int32', 'optional')
+  @Field.d(4, 'int64', 'optional')
   public groupId?: number;
 
-  @Field.d(5, 'int32', 'required')
+  @Field.d(5, 'int64', 'required')
   public receiver: number;
 
   @Field.d(6, 'string', 'required')
@@ -116,8 +116,8 @@ export class MessageForSender extends Message<MessageForSender> {
   @Field.d(7, 'string', 'required')
   public content: string;
 
-  @Field.d(8, 'string', 'required')
-  public timer: string;
+  @Field.d(8, 'int64', 'required')
+  public timer: number;
 
   @Field.d(9, 'string', 'optional')
   public ext?: string;
@@ -131,16 +131,16 @@ export class MessageForReceived extends Message<MessageForReceived> {
   @Field.d(2, 'string', 'required')
   public msgId: string;
 
-  @Field.d(3, 'int32', 'required')
+  @Field.d(3, 'int64', 'required')
   public sender: number;
 
   @Field.d(4, Sender)
   public senderInfo: DB.SenderInfo;
 
-  @Field.d(5, 'int32', 'optional')
+  @Field.d(5, 'int64', 'optional')
   public groupId?: number;
 
-  @Field.d(6, 'int32', 'required')
+  @Field.d(6, 'int64', 'required')
   public receiver: number;
 
   @Field.d(7, 'string', 'required')
@@ -149,8 +149,8 @@ export class MessageForReceived extends Message<MessageForReceived> {
   @Field.d(8, 'string', 'required')
   public content: string;
 
-  @Field.d(9, 'string', 'required')
-  public timer: string;
+  @Field.d(9, 'int64', 'required')
+  public timer: number;
 
   @Field.d(10, 'string', 'optional')
   public ext?: string;
@@ -164,10 +164,10 @@ export class MessageRead extends Message<MessageRead> {
   @Field.d(2, Session, 'required')
   public session: ModuleIMCommon.Session;
 
-  @Field.d(3, 'int32', 'required')
+  @Field.d(3, 'int64', 'required')
   public sender: number;
 
-  @Field.d(4, 'int32', 'required')
+  @Field.d(4, 'int64', 'required')
   public receiver: number;
 
   @Field.d(5, MsgStatus)

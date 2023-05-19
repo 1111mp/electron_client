@@ -236,12 +236,114 @@ async function getUserInfo() {
 
 async function setUserTheme(theme: Theme) {
   const db = getInstance();
-  const update = db.prepare(`UPDATE users SET theme = $theme WHERE id = $id`);
+  const update = db.prepare(`UPDATE users SET theme = $theme WHERE id = $id;`);
 
   return update.run({ id: user_id_key, theme });
 }
 
 // async function setFriends() {}
+
+/**
+ * @description: Cache groups info to db.
+ * @param groups ModuleIM.Core.Group[]
+ * @return Promise<void>
+ */
+async function setGroups(groups: ModuleIM.Core.Group[]): Promise<void> {
+  const db = getInstance();
+  const insert = db.prepare(
+    `INSERT OR REPLACE INTO groups (
+      id, name, avatar, type, creator, createdAt, updatedAt
+    ) VALUES (
+      $id, $name, $avatar, $type, $creator, $createdAt, $updatedAt
+    );`
+  );
+
+  db.transaction((groups: ModuleIM.Core.Group[]) => {
+    for (const group of groups) insert.run(group);
+  })(groups);
+}
+
+async function setGroupMembers(groupId: number, members: DB.UserInfo[]) {
+  const db = getInstance();
+
+  db.transaction((members: DB.UserInfo[]) => {
+    
+  })(members);
+}
+
+/**
+ * @description: Get group detail include members info. If the group member is a friend, the friend setting information will be added.
+ * @param userId number
+ * @param groupId number
+ * @return Promise<ModuleIM.Core.Group & { members: DB.UserWithFriendSetting[] } | null>
+ */
+async function getGroupWithMember(userId: number, groupId: number) {
+  const db = getInstance();
+  const group = db
+    .prepare(`SELECT * FROM groups WHERE id = $id`)
+    .get({ id: groupId }) as ModuleIM.Core.Group;
+
+  if (!group) return null;
+
+  const members = db
+    .prepare(
+      `SELECT
+        Info.id,
+        Info.account,
+        Info.avatar,
+        Info.email,
+        Info.regisTime,
+        Info.updateTime,
+        Friend.remark,
+        Friend.astrolabe,
+        Friend.block,
+        Friend.createdAt,
+        Friend.updatedAt
+      FROM infos AS Info
+      INNER JOIN members AS Member ON Info.id = Member.userId AND Member.groupId = $groupId
+      LEFT OUTER JOIN friends AS Friend ON Friend.friendId = Member.userId AND Friend.userId = $userId
+      ORDER BY Friend.remark ASC, Info.account ASC;
+      `
+    )
+    .all({ userId, groupId }) as DB.UserWithFriendSetting[];
+
+  return {
+    ...group,
+    members,
+  };
+}
+
+/**
+ * @description: Get user all groups.
+ * @param userId number
+ * @return Promise<Array<ModuleIM.Core.Group & { count: number }>>
+ */
+async function getUserAllGroups(userId: number) {
+  const db = getInstance();
+  const groups = db
+    .prepare(
+      `SELECT
+        Group.id,
+        Group.name,
+        Group.avatar,
+        Group.type,
+        Group.creator,
+        Group.createdAt,
+        Group.updatedAt,
+        (
+          SELECT COUNT(*) FROM members AS Member WHERE Member.groupId = Group.id
+        ) AS count
+       FROM groups AS Group INNER JOIN members AS Member ON Group.id = Member.groupId AND Member.userId = $userId
+       WHERE userId = $userId
+       ORDER BY Group.name ASC;
+      `
+    )
+    .all({
+      userId,
+    }) as Array<ModuleIM.Core.Group & { count: number }>;
+
+  return groups;
+}
 
 /**
  * @description: Set a message into db.
@@ -256,7 +358,7 @@ async function setMessage(message: ModuleIM.Core.MessageBasic) {
     ${columns.join(',')}
   ) VALUES (
     ${columns.map((column) => `$${column}`).join(',')}
-  )`);
+  );`);
 
   return insert.run(message);
 }
@@ -297,7 +399,9 @@ async function getMessagesBySender({
         Info.regisTime AS senderInfo.regisTime,
         Info.updateTime AS senderInfo.updateTime
        FROM messages AS Message LEFT OUTER JOIN infos AS Info ON Message.sender = Info.id
-       WHERE Message.sender = $sender LIMIT $limit OFFSET $offset`
+       WHERE Message.sender = $sender
+       ORDER BY Message.timer DESC
+       LIMIT $limit OFFSET $offset;`
     )
     .all({ sender, limit: pageSize, offset: (pageNum - 1) * pageSize });
 
@@ -311,7 +415,7 @@ async function getMessagesBySender({
  */
 async function removeMessagesBySender(sender: number) {
   const db = getInstance();
-  const messages = db.prepare(`DELETE FROM messages WHERE sender = $sender`);
+  const messages = db.prepare(`DELETE FROM messages WHERE sender = $sender;`);
 
   return messages.run({ sender });
 }
@@ -322,7 +426,7 @@ async function removeMessagesBySender(sender: number) {
  */
 async function removeAllMessages() {
   const db = getInstance();
-  const messages = db.prepare(`DELETE FROM messages`);
+  const messages = db.prepare(`DELETE FROM messages;`);
 
   return messages.run();
 }
@@ -339,7 +443,7 @@ async function createRoom(room: ModuleIM.Core.Room) {
     ${columns.join(',')}
   ) VALUES (
     ${columns.map((column) => `$${column}`).join(',')}
-  )`);
+  );`);
 
   return creator.run(room);
 }
@@ -359,7 +463,7 @@ async function removeRoom({
 }) {
   const db = getInstance();
   const result = db
-    .prepare(`DELETE FROM rooms WHERE owner = $owner AND sender = $sender`)
+    .prepare(`DELETE FROM rooms WHERE owner = $owner AND sender = $sender;`)
     .run({ owner, sender });
 
   return result;
@@ -373,7 +477,7 @@ async function removeRoom({
 async function removeRooms(owner: number) {
   const db = getInstance();
   const result = db
-    .prepare(`DELETE FROM rooms WHERE owner = $owner`)
+    .prepare(`DELETE FROM rooms WHERE owner = $owner;`)
     .run({ owner });
 
   return result;
@@ -387,7 +491,7 @@ async function removeRooms(owner: number) {
 async function getRooms(owner: number) {
   const db = getInstance();
   const rooms = db
-    .prepare(`SELECT * FROM rooms WHERE owner = $owner`)
+    .prepare(`SELECT * FROM rooms WHERE owner = $owner ORDER BY timer DESC;`)
     .all({ owner });
 
   return rooms as Array<ModuleIM.Core.Room>;
