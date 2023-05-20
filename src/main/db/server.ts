@@ -4,7 +4,13 @@ import SQL from 'better-sqlite3-multiple-ciphers';
 import { isString } from 'lodash';
 import { updateSchema } from './migrations';
 import { consoleLogger } from '../utils/consoleLogger';
-import { getSchemaVersion, getUserVersion, setUserVersion } from './util';
+import {
+  getSchemaVersion,
+  getUserVersion,
+  jsonToObject,
+  objectToJSON,
+  setUserVersion,
+} from './util';
 
 import type { Database, Statement } from 'better-sqlite3';
 import type { LogFunctions } from 'electron-log';
@@ -208,7 +214,7 @@ async function updateOrCreateUser(user: DB.UserAttributes) {
   const columns = { id: user_id_key, ...user };
   const keys = Object.keys(columns);
 
-  const insertUser = db.prepare(
+  db.prepare(
     `
     INSERT OR REPLACE INTO users (
       ${keys.join(',')}
@@ -216,9 +222,7 @@ async function updateOrCreateUser(user: DB.UserAttributes) {
       ${keys.map((key) => `$${key}`).join(',')}
     );
     `
-  );
-
-  return insertUser.run(columns);
+  ).run(columns);
 }
 
 async function getUserInfo() {
@@ -234,17 +238,18 @@ async function getUserInfo() {
   return user as DB.UserAttributes;
 }
 
-async function setUserTheme(theme: Theme) {
+async function setUserTheme(theme: Theme): Promise<void> {
   const db = getInstance();
-  const update = db.prepare(`UPDATE users SET theme = $theme WHERE id = $id;`);
-
-  return update.run({ id: user_id_key, theme });
+  db.prepare(`UPDATE users SET theme = $theme WHERE id = $id;`).run({
+    id: user_id_key,
+    theme,
+  });
 }
 
 // async function setFriends() {}
 
 /**
- * @description: Cache groups info to db.
+ * @description: Cache groups info to db (not include members).
  * @param groups ModuleIM.Core.Group[]
  * @return Promise<void>
  */
@@ -263,54 +268,115 @@ async function setGroups(groups: ModuleIM.Core.Group[]): Promise<void> {
   })(groups);
 }
 
-async function setGroupMembers(groupId: number, members: DB.UserInfo[]) {
+/**
+ * @description:  Cache groups info to db (include members).
+ * @param groups Array<ModuleIM.Core.Group & { members: DB.UserInfo[] }>
+ * @return Promise<void>
+ */
+async function setGroupsIncludeMembers(
+  groups: Array<ModuleIM.Core.Group & { members: DB.UserInfo[] }>
+): Promise<void> {
   const db = getInstance();
+  const insert = db.prepare(
+    `INSERT OR REPLACE INTO groups (
+      id, name, avatar, type, creator, members, createdAt, updatedAt
+    ) VALUES (
+      $id, $name, $avatar, $type, $creator, $members, $createdAt, $updatedAt
+    );`
+  );
 
-  db.transaction((members: DB.UserInfo[]) => {
-    
-  })(members);
+  db.transaction(
+    (groups: Array<ModuleIM.Core.Group & { members: DB.UserInfo[] }>) => {
+      for (const group of groups)
+        insert.run({ ...group, members: objectToJSON(group.members) });
+    }
+  )(groups);
 }
 
 /**
- * @description: Get group detail include members info. If the group member is a friend, the friend setting information will be added.
- * @param userId number
- * @param groupId number
- * @return Promise<ModuleIM.Core.Group & { members: DB.UserWithFriendSetting[] } | null>
+ * @description: Insert or update a group info (include members).
+ * @param group ModuleIM.Core.Group & { members: DB.UserInfo }
+ * @return Promise<void>
  */
-async function getGroupWithMember(userId: number, groupId: number) {
+async function setGroup(
+  group: ModuleIM.Core.Group & { members: DB.UserInfo }
+): Promise<void> {
+  const { members } = group;
   const db = getInstance();
+  db.prepare(
+    `INSERT OR REPLACE INTO groups (
+      id, name, avatar, type, creator, members, createdAt, updatedAt
+    ) VALUES (
+      $id, $name, $avatar, $type, $creator, $members, $createdAt, $updatedAt
+    );`
+  ).run({ group, members: JSON.stringify(members) });
+}
+
+/**
+ * @description: Get group info not include members.
+ * @param groupId number
+ * @return ModuleIM.Core.Group
+ */
+async function getGroup(groupId: number) {
+  const db = getInstance();
+
   const group = db
-    .prepare(`SELECT * FROM groups WHERE id = $id`)
-    .get({ id: groupId }) as ModuleIM.Core.Group;
-
-  if (!group) return null;
-
-  const members = db
     .prepare(
-      `SELECT
-        Info.id,
-        Info.account,
-        Info.avatar,
-        Info.email,
-        Info.regisTime,
-        Info.updateTime,
-        Friend.remark,
-        Friend.astrolabe,
-        Friend.block,
-        Friend.createdAt,
-        Friend.updatedAt
-      FROM infos AS Info
-      INNER JOIN members AS Member ON Info.id = Member.userId AND Member.groupId = $groupId
-      LEFT OUTER JOIN friends AS Friend ON Friend.friendId = Member.userId AND Friend.userId = $userId
-      ORDER BY Friend.remark ASC, Info.account ASC;
+      `
+        SELECT id, name, avatar, type, creator, createAt, updateAt
+        FROM groups WHERE id = $groupId;
       `
     )
-    .all({ userId, groupId }) as DB.UserWithFriendSetting[];
+    .get({ groupId }) as ModuleIM.Core.Group;
 
-  return {
-    ...group,
-    members,
-  };
+  return group;
+}
+
+/**
+ * @description: Get group info include members.
+ * @param groupId number
+ * @return ModuleIM.Core.Group & { members: DB.UserInfo[] }
+ */
+async function getGroupWithMembers(
+  groupId: number
+): Promise<(ModuleIM.Core.Group & { members: DB.UserInfo[] }) | undefined> {
+  const db = getInstance();
+
+  const row = db
+    .prepare(
+      `
+        SELECT id, name, avatar, type, creator, members, createAt, updateAt
+        FROM groups WHERE id = $groupId;
+      `
+    )
+    .get({ groupId }) as ModuleIM.Core.Group & { members: string };
+
+  if (!row) return undefined;
+
+  return { ...row, members: jsonToObject<DB.UserInfo[]>(row.members) };
+}
+
+/**
+ * @description: Get group members by groupId.
+ * @param groupId number
+ * @return Promise<DB.UserInfo[] | undefined>
+ */
+async function getMembersByGroupId(
+  groupId: number
+): Promise<DB.UserInfo[] | undefined> {
+  const db = getInstance();
+  const row = db
+    .prepare(
+      `
+        SELECT members
+        FROM groups WHERE id = $groupId;
+      `
+    )
+    .get({ groupId }) as { members: string };
+
+  if (!row) return undefined;
+
+  return jsonToObject<DB.UserInfo[]>(row.members);
 }
 
 /**
@@ -409,50 +475,62 @@ async function getMessagesBySender({
 }
 
 /**
+ * @description: Remove messages by msgIds.
+ * @param msgIds string[]
+ * @return Promise<void>
+ */
+async function removeMessageBymsgIds(msgIds: string[]): Promise<void> {
+  const db = getInstance();
+  db.prepare(
+    `
+        DELETE FROM messages WHERE msgId IN ( 
+          ${msgIds.map(() => '?').join(', ')} 
+        );
+      `
+  ).run(msgIds);
+}
+
+/**
  * @description: Remove messages by sender.
  * @param sender number
- * @return Promise<SQL.RunResult>
+ * @return Promise<void>
  */
-async function removeMessagesBySender(sender: number) {
+async function removeMessagesBySender(sender: number): Promise<void> {
   const db = getInstance();
-  const messages = db.prepare(`DELETE FROM messages WHERE sender = $sender;`);
-
-  return messages.run({ sender });
+  db.prepare(`DELETE FROM messages WHERE sender = $sender;`).run({ sender });
 }
 
 /**
  * @description: Remove all messages.
- * @return Promise<SQL.RunResult>
+ * @return Promise<void>
  */
-async function removeAllMessages() {
+async function removeAllMessages(): Promise<void> {
   const db = getInstance();
-  const messages = db.prepare(`DELETE FROM messages;`);
-
-  return messages.run();
+  db.prepare(`DELETE FROM messages;`).run();
 }
 
 /**
  * @description: Create a room into table rooms.
  * @param room ModuleIM.Core.Room
- * @return Promise<SQL.RunResult>
+ * @return Promise<void>
  */
-async function createRoom(room: ModuleIM.Core.Room) {
+async function createRoom(room: ModuleIM.Core.Room): Promise<void> {
   const db = getInstance();
   const columns = Object.keys(room);
-  const creator = db.prepare(`INSERT INTO rooms (
+  db.prepare(
+    `INSERT INTO rooms (
     ${columns.join(',')}
   ) VALUES (
     ${columns.map((column) => `$${column}`).join(',')}
-  );`);
-
-  return creator.run(room);
+  );`
+  ).run(room);
 }
 
 /**
  * @description: Remove room by owner & sender.
  * @param owner number (userId)
  * @param sender number (userId or groupId)
- * @return Promise<SQL.RunResult>
+ * @return Promise<void>
  */
 async function removeRoom({
   owner,
@@ -460,27 +538,21 @@ async function removeRoom({
 }: {
   owner: number;
   sender: number;
-}) {
+}): Promise<void> {
   const db = getInstance();
-  const result = db
-    .prepare(`DELETE FROM rooms WHERE owner = $owner AND sender = $sender;`)
-    .run({ owner, sender });
-
-  return result;
+  db.prepare(
+    `DELETE FROM rooms WHERE owner = $owner AND sender = $sender;`
+  ).run({ owner, sender });
 }
 
 /**
  * @description: Remove all rooms by owner.
  * @param owner number (userId)
- * @return Promise<SQL.RunResult>
+ * @return Promise<void>
  */
-async function removeRooms(owner: number) {
+async function removeRooms(owner: number): Promise<void> {
   const db = getInstance();
-  const result = db
-    .prepare(`DELETE FROM rooms WHERE owner = $owner;`)
-    .run({ owner });
-
-  return result;
+  db.prepare(`DELETE FROM rooms WHERE owner = $owner;`).run({ owner });
 }
 
 /**

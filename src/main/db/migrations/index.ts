@@ -60,29 +60,22 @@ function updateToSchemaVersion1(
     // table groups
     db.exec(`
       CREATE TABLE groups(
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY ASC,
         name STRING,
         avatar STRING DEFAULT NULL,
         type INTEGER NOT NULL,
         creator INTEGER NOT NULL,
+        members TEXT,
         createdAt STRING,
         updatedAt STRING,
-      )
-    `);
-
-    // table members
-    db.exec(`
-      CREATE TABLE members(
-        groupId INTEGER NOT NULL,
-        userId INTEGER NOT NULL,
       )
     `);
 
     // table messages
     db.exec(`
       CREATE TABLE messages(
-        id BIGINT PRIMARY KEY,
-        msgId STRING NOT NULL,
+        msgId STRING PRIMARY KEY,
+        id BIGINT NOT NULL,
         type STRING NOT NULL,
         groupId INTEGER DEFAULT NULL,
         sender INTEGER NOT NULL,

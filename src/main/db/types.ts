@@ -7,7 +7,7 @@ export type DataInterface = {
   removeDB: () => Promise<void>;
 
   // user
-  updateOrCreateUser(users: DB.UserAttributes): Promise<SQL.RunResult>;
+  updateOrCreateUser(users: DB.UserAttributes): Promise<void>;
   getUserInfo: () => Promise<DB.UserAttributes>;
   setUserTheme: (theme: Theme) => Promise<unknown>;
 };
