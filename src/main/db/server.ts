@@ -250,72 +250,147 @@ async function setUserTheme(theme: Theme): Promise<void> {
 
 /**
  * @description: Cache groups info to db (not include members).
- * @param groups ModuleIM.Core.Group[]
+ * @param groups ModuleIM.Core.GroupBasic[]
  * @return Promise<void>
  */
-async function setGroups(groups: ModuleIM.Core.Group[]): Promise<void> {
+async function setGroups(groups: ModuleIM.Core.GroupBasic[]): Promise<void> {
   const db = getInstance();
   const insert = db.prepare(
     `INSERT OR REPLACE INTO groups (
-      id, name, avatar, type, creator, createdAt, updatedAt
+      id, name, avatar, type, creator,count, createdAt, updatedAt
     ) VALUES (
-      $id, $name, $avatar, $type, $creator, $createdAt, $updatedAt
+      $id, $name, $avatar, $type, $creator, $count, $createdAt, $updatedAt
     );`
   );
 
-  db.transaction((groups: ModuleIM.Core.Group[]) => {
+  db.transaction((groups: ModuleIM.Core.GroupBasic[]) => {
     for (const group of groups) insert.run(group);
   })(groups);
 }
 
 /**
  * @description:  Cache groups info to db (include members).
- * @param groups Array<ModuleIM.Core.Group & { members: DB.UserInfo[] }>
+ * @param groups Array<ModuleIM.Core.GroupBasic & { members: DB.UserInfo[] }>
  * @return Promise<void>
  */
 async function setGroupsIncludeMembers(
-  groups: Array<ModuleIM.Core.Group & { members: DB.UserInfo[] }>
+  groups: Array<ModuleIM.Core.GroupBasic & { members: DB.UserInfo[] }>
 ): Promise<void> {
   const db = getInstance();
-  const insert = db.prepare(
-    `INSERT OR REPLACE INTO groups (
-      id, name, avatar, type, creator, members, createdAt, updatedAt
-    ) VALUES (
-      $id, $name, $avatar, $type, $creator, $members, $createdAt, $updatedAt
-    );`
-  );
 
   db.transaction(
-    (groups: Array<ModuleIM.Core.Group & { members: DB.UserInfo[] }>) => {
-      for (const group of groups)
-        insert.run({ ...group, members: objectToJSON(group.members) });
+    (groups: Array<ModuleIM.Core.GroupBasic & { members: DB.UserInfo[] }>) => {
+      for (const group of groups) {
+        const { members } = group;
+
+        db.prepare(
+          `INSERT OR REPLACE INTO groups (
+            id, name, avatar, type, creator, count, members, createdAt, updatedAt
+          ) VALUES (
+            $id, $name, $avatar, $type, $creator, $count, $members, $createdAt, $updatedAt
+          );`
+        ).run({
+          ...group,
+          members: members.map((member) => member.id).join(' '),
+        });
+
+        for (const member of members) {
+          db.prepare(
+            `
+            INSERT OR REPLACE INTO userInfos (
+              id,
+              account,
+              avatar,
+              email,
+              regisTime,
+              updateTime
+            ) VALUES (
+              $id,
+              $account,
+              $avatar,
+              $email,
+              $regisTime,
+              $updateTime
+            )
+            `
+          ).run(member);
+        }
+      }
     }
   )(groups);
 }
 
 /**
- * @description: Insert or update a group info (include members).
- * @param group ModuleIM.Core.Group & { members: DB.UserInfo }
+ * @description: Insert or update a group info (not include members).
+ * @param group ModuleIM.Core.GroupBasic
  * @return Promise<void>
  */
-async function setGroup(
-  group: ModuleIM.Core.Group & { members: DB.UserInfo }
-): Promise<void> {
-  const { members } = group;
+async function setGroup(group: ModuleIM.Core.GroupBasic): Promise<void> {
   const db = getInstance();
   db.prepare(
     `INSERT OR REPLACE INTO groups (
-      id, name, avatar, type, creator, members, createdAt, updatedAt
+      id, name, avatar, type, creator, count, createdAt, updatedAt
     ) VALUES (
-      $id, $name, $avatar, $type, $creator, $members, $createdAt, $updatedAt
+      $id, $name, $avatar, $type, $creator, $count, $createdAt, $updatedAt
     );`
-  ).run({ group, members: JSON.stringify(members) });
+  ).run(group);
+}
+
+/**
+ * @description: Insert or update a group info (include members).
+ * @param group ModuleIM.Core.GroupBasic & { members: DB.UserInfo[] }
+ * @return Promise<void>
+ */
+async function setGroupIncludeMembers(
+  group: ModuleIM.Core.GroupBasic & { members: DB.UserInfo[] }
+): Promise<void> {
+  const db = getInstance();
+  db.transaction(
+    (group: ModuleIM.Core.GroupBasic & { members: DB.UserInfo[] }) => {
+      const { members } = group;
+
+      db.prepare(
+        `
+        INSERT OR REPLACE INTO groups (
+          id, name, avatar, type, creator, count, members, createdAt, updatedAt
+        ) VALUES (
+          $id, $name, $avatar, $type, $creator, $count, $members, $createdAt, $updatedAt
+        );
+        `
+      ).run({
+        ...group,
+        members: members.map((member) => member.id).join(' '),
+      });
+
+      for (const member of members) {
+        db.prepare(
+          `
+            INSERT OR REPLACE INTO userInfos (
+              id,
+              account,
+              avatar,
+              email,
+              regisTime,
+              updateTime
+            ) VALUES (
+              $id,
+              $account,
+              $avatar,
+              $email,
+              $regisTime,
+              $updateTime
+            )
+            `
+        ).run(member);
+      }
+    }
+  )(group);
 }
 
 /**
  * @description: Get group info not include members.
  * @param groupId number
- * @return ModuleIM.Core.Group
+ * @return ModuleIM.Core.GroupBasic
  */
 async function getGroup(groupId: number) {
   const db = getInstance();
@@ -323,11 +398,11 @@ async function getGroup(groupId: number) {
   const group = db
     .prepare(
       `
-        SELECT id, name, avatar, type, creator, createAt, updateAt
+        SELECT id, name, avatar, type, creator, count, createAt, updateAt
         FROM groups WHERE id = $groupId;
       `
     )
-    .get({ groupId }) as ModuleIM.Core.Group;
+    .get({ groupId }) as ModuleIM.Core.GroupBasic;
 
   return group;
 }
@@ -335,80 +410,147 @@ async function getGroup(groupId: number) {
 /**
  * @description: Get group info include members.
  * @param groupId number
- * @return ModuleIM.Core.Group & { members: DB.UserInfo[] }
+ * @return ModuleIM.Core.GroupBasic & { members: DB.UserInfo[] }
  */
 async function getGroupWithMembers(
   groupId: number
-): Promise<(ModuleIM.Core.Group & { members: DB.UserInfo[] }) | undefined> {
+): Promise<
+  (ModuleIM.Core.GroupBasic & { members: DB.UserInfo[] }) | undefined
+> {
   const db = getInstance();
 
   const row = db
     .prepare(
       `
-        SELECT id, name, avatar, type, creator, members, createAt, updateAt
-        FROM groups WHERE id = $groupId;
+      SELECT id, name, avatar, type, creator, count, members, createAt, updateAt
+      FROM groups WHERE id = $groupId;
       `
     )
-    .get({ groupId }) as ModuleIM.Core.Group & { members: string };
+    .get({ groupId }) as ModuleIM.Core.GroupBasic & { members: string };
 
   if (!row) return undefined;
 
-  return { ...row, members: jsonToObject<DB.UserInfo[]>(row.members) };
+  const ids = row.members.split(' ').map((id) => parseInt(id));
+
+  const members = db
+    .prepare(
+      `
+      SELECT * FROM userInfos
+      WHERE id IN (
+        ${ids.map(() => '?').join(', ')}
+      )
+      `
+    )
+    .all(ids) as DB.UserInfo[];
+
+  return { ...row, members };
 }
 
 /**
  * @description: Get group members by groupId.
  * @param groupId number
- * @return Promise<DB.UserInfo[] | undefined>
+ * @return Promise<DB.UserInfo[]>
  */
-async function getMembersByGroupId(
-  groupId: number
-): Promise<DB.UserInfo[] | undefined> {
+async function getMembersByGroupId(groupId: number): Promise<DB.UserInfo[]> {
   const db = getInstance();
   const row = db
     .prepare(
       `
-        SELECT members
-        FROM groups WHERE id = $groupId;
+      SELECT members
+      FROM groups WHERE id = $groupId;
       `
     )
     .get({ groupId }) as { members: string };
 
-  if (!row) return undefined;
+  if (!row) return [];
 
-  return jsonToObject<DB.UserInfo[]>(row.members);
+  const ids = row.members.split(' ').map((id) => parseInt(id));
+
+  const members = db
+    .prepare(
+      `
+      SELECT * FROM userInfos
+      WHERE id IN (
+        ${ids.map(() => '?').join(', ')}
+      )
+      `
+    )
+    .all(ids) as DB.UserInfo[];
+
+  return members;
 }
 
 /**
- * @description: Get user all groups.
+ * @description: Get user all groups (not include members).
  * @param userId number
- * @return Promise<Array<ModuleIM.Core.Group & { count: number }>>
+ * @return Promise<Array<ModuleIM.Core.GroupBasic>>
  */
 async function getUserAllGroups(userId: number) {
   const db = getInstance();
   const groups = db
     .prepare(
-      `SELECT
-        Group.id,
-        Group.name,
-        Group.avatar,
-        Group.type,
-        Group.creator,
-        Group.createdAt,
-        Group.updatedAt,
-        (
-          SELECT COUNT(*) FROM members AS Member WHERE Member.groupId = Group.id
-        ) AS count
-       FROM groups AS Group INNER JOIN members AS Member ON Group.id = Member.groupId AND Member.userId = $userId
-       WHERE userId = $userId
-       ORDER BY Group.name ASC;
+      `
+      SELECT id, name, avatar, type, creator, count, createdAt, updatedAt
+      FROM groups
+      WHERE members LIKE $userId
+      ORDER BY name ASC;
       `
     )
     .all({
-      userId,
-    }) as Array<ModuleIM.Core.Group & { count: number }>;
+      userId: `%${userId}%`,
+    }) as Array<ModuleIM.Core.GroupBasic>;
 
   return groups;
+}
+
+/**
+ * @description: Get user all groups (include members).
+ * @param userId number
+ * @return Promise<Array<ModuleIM.Core.GroupBasic & { members: DB.UserInfo[] }>>
+ */
+async function getUserAllGroupsIncludeMembers(userId: number) {
+  const db = getInstance();
+  const groups = db
+    .prepare(
+      `
+      SELECT id, name, avatar, type, creator, count, members, createdAt, updatedAt
+      FROM groups
+      WHERE members LIKE $userId
+      ORDER BY name ASC;
+      `
+    )
+    .all({
+      userId: `%${userId}%`,
+    }) as Array<ModuleIM.Core.GroupBasic & { members: string }>;
+
+  if (!groups || !groups.length) return [];
+
+  return db.transaction(
+    (groups: Array<ModuleIM.Core.GroupBasic & { members: string }>) => {
+      const result: Array<
+        ModuleIM.Core.GroupBasic & { members: DB.UserInfo[] }
+      > = [];
+
+      for (const group of groups) {
+        const ids = group.members.split(' ').map((id) => parseInt(id));
+
+        const members = db
+          .prepare(
+            `
+            SELECT * FROM userInfos
+            WHERE id IN (
+              ${ids.map(() => '?').join(', ')}
+            )
+            `
+          )
+          .all(ids) as DB.UserInfo[];
+
+        result.push({ ...group, members });
+      }
+
+      return result;
+    }
+  )(groups);
 }
 
 /**
@@ -464,7 +606,7 @@ async function getMessagesBySender({
         Info.email AS senderInfo.email,
         Info.regisTime AS senderInfo.regisTime,
         Info.updateTime AS senderInfo.updateTime
-       FROM messages AS Message LEFT OUTER JOIN infos AS Info ON Message.sender = Info.id
+       FROM messages AS Message LEFT OUTER JOIN userInfos AS Info ON Message.sender = Info.id
        WHERE Message.sender = $sender
        ORDER BY Message.timer DESC
        LIMIT $limit OFFSET $offset;`
@@ -484,7 +626,7 @@ async function removeMessageBymsgIds(msgIds: string[]): Promise<void> {
   db.prepare(
     `
         DELETE FROM messages WHERE msgId IN ( 
-          ${msgIds.map(() => '?').join(', ')} 
+          ${msgIds.map(() => '?').join(', ')}
         );
       `
   ).run(msgIds);

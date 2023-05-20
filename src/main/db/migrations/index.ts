@@ -34,7 +34,7 @@ function updateToSchemaVersion1(
 
     // table infos (to save user info)
     db.exec(`
-      CREATE TABLE infos(
+      CREATE TABLE userInfos(
         id INTEGER PRIMARY KEY,
         account STRING NOT NULL,
         avatar STRING DEFAULT NULL,
@@ -65,6 +65,7 @@ function updateToSchemaVersion1(
         avatar STRING DEFAULT NULL,
         type INTEGER NOT NULL,
         creator INTEGER NOT NULL,
+        count INTEGER,
         members TEXT,
         createdAt STRING,
         updatedAt STRING,

@@ -40,12 +40,13 @@ declare global {
         ext?: string;
       };
 
-      type Group = {
+      type GroupBasic = {
         id: number;
         name: string;
         avatar?: string;
         type: ModuleIMCommon.GroupType;
         creator: number;
+        count: number;
         createdAt?: string;
         updatedAt?: string;
       };
