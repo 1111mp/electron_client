@@ -19,7 +19,7 @@ function updateToSchemaVersion1(
   db.transaction(() => {
     // table users
     db.exec(`
-      CREATE TABLE users(
+      CREATE TABLE users (
         id INTEGER PRIMARY KEY,
         userId INTEGER NOT NULL,
         account STRING NOT NULL,
@@ -32,21 +32,21 @@ function updateToSchemaVersion1(
       );
     `);
 
-    // table infos (to save user info)
+    // table userInfos (to save user info)
     db.exec(`
-      CREATE TABLE userInfos(
+      CREATE TABLE userInfos (
         id INTEGER PRIMARY KEY,
         account STRING NOT NULL,
         avatar STRING DEFAULT NULL,
         email STRING DEFAULT NULL,
         regisTime STRING,
         updateTime STRING,
-      )
+      );
     `);
 
     // table friends
     db.exec(`
-      CREATE TABLE friends(
+      CREATE TABLE friends (
         userId INTEGER,
         friendId INTEGER,
         remark STRING,
@@ -54,12 +54,12 @@ function updateToSchemaVersion1(
         block BOOLEAN DEFAULT FALSE,
         createdAt STRING,
         updatedAt STRING,
-      )
+      );
     `);
 
     // table groups
     db.exec(`
-      CREATE TABLE groups(
+      CREATE TABLE groups (
         id INTEGER PRIMARY KEY ASC,
         name STRING,
         avatar STRING DEFAULT NULL,
@@ -69,14 +69,15 @@ function updateToSchemaVersion1(
         members TEXT,
         createdAt STRING,
         updatedAt STRING,
-      )
+      );
     `);
 
     // table messages
     db.exec(`
-      CREATE TABLE messages(
-        msgId STRING PRIMARY KEY,
-        id BIGINT NOT NULL,
+      CREATE TABLE messages (
+        id BIGINT PRIMARY KEY DESC,
+        msgId STRING NOT NULL,
+        owner INTEGER NOT NULL,
         type STRING NOT NULL,
         groupId INTEGER DEFAULT NULL,
         sender INTEGER NOT NULL,
@@ -84,20 +85,33 @@ function updateToSchemaVersion1(
         content TEXT,
         timer INTEGER NOT NULL,
         ext TEXT,
-      )
+      );
+
+      CREATE INDEX messages_msgId ON messages (msgId);
+
+      CREATE INDEX messages_owner ON messages (owner);
+
+      CREATE INDEX messages_sender ON messages (sender);
+
+      CREATE INDEX messages_timer ON messages (timer);
     `);
 
-    // table rooms
+    // table conversations
     db.exec(`
-      CREATE TABLE rooms(
-        owner INTEGER PRIMARY KEY,
-        type STRING NOT NULL,
+      CREATE TABLE conversations (
+        id STRING PRIMARY KEY ASC,
+        owner INTEGER NOT NULL,
         groupId INTEGER DEFAULT NULL,
         sender INTEGER NOT NULL,
         receiver INTEGER NOT NULL,
-        content TEXT,
-        timer INTEGER NOT NULL
-      )
+        lastReadAck BIGINT DEFAULT -1,
+      );
+
+      CREATE INDEX conversations_owner ON conversations (owner);
+      
+      CREATE INDEX conversations_sender ON conversations (sender);
+
+      CREATE INDEX conversations_receiver ON conversations (receiver);
     `);
 
     db.pragma('user_version = 1');

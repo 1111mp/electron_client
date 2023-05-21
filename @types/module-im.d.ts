@@ -51,14 +51,13 @@ declare global {
         updatedAt?: string;
       };
 
-      type Room = {
+      type ConversationType = {
+        id: string;
         owner: number;
-        type: ModuleIMCommon.MsgType;
         groupId?: number;
         sender: number;
         receiver: number;
-        content: string;
-        timer: number;
+        lastReadAck: bigint;
       };
     }
   }

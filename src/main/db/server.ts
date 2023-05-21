@@ -2,6 +2,7 @@ import { join } from 'path';
 import { ensureDirSync, removeSync } from 'fs-extra';
 import SQL from 'better-sqlite3-multiple-ciphers';
 import { isString } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 import { updateSchema } from './migrations';
 import { consoleLogger } from '../utils/consoleLogger';
 import {
@@ -257,7 +258,7 @@ async function setGroups(groups: ModuleIM.Core.GroupBasic[]): Promise<void> {
   const db = getInstance();
   const insert = db.prepare(
     `INSERT OR REPLACE INTO groups (
-      id, name, avatar, type, creator,count, createdAt, updatedAt
+      id, name, avatar, type, creator, count, createdAt, updatedAt
     ) VALUES (
       $id, $name, $avatar, $type, $creator, $count, $createdAt, $updatedAt
     );`
@@ -555,20 +556,70 @@ async function getUserAllGroupsIncludeMembers(userId: number) {
 
 /**
  * @description: Set a message into db.
+ * @param owner number
  * @param message ModuleIM.Core.MessageBasic
- * @return Promise<SQL.RunResult>
+ * @return Promise<void>
  */
-async function setMessage(message: ModuleIM.Core.MessageBasic) {
+async function setMessage(owner: number, message: ModuleIM.Core.MessageBasic) {
   const db = getInstance();
   const columns = Object.keys(message);
 
-  const insert = db.prepare(`INSERT INTO messages (
-    ${columns.join(',')}
-  ) VALUES (
-    ${columns.map((column) => `$${column}`).join(',')}
-  );`);
+  db.prepare(
+    `
+    INSERT INTO messages (
+      owner, ${columns.join(',')}
+    ) VALUES (
+      owner, ${columns.map((column) => `$${column}`).join(',')}
+    );
+    `
+  ).run({ ...message, owner });
+}
 
-  return insert.run(message);
+/**
+ * @description: Set messages into db.
+ * @param owner number
+ * @param message ModuleIM.Core.MessageBasic[]
+ * @return Promise<void>
+ */
+async function setMessages(
+  owner: number,
+  messages: ModuleIM.Core.MessageBasic[]
+): Promise<void> {
+  const db = getInstance();
+
+  db.transaction((messages: ModuleIM.Core.MessageBasic[]) => {
+    for (const message of messages)
+      db.prepare(
+        `
+        INSERT INTO messages (
+          msgId,
+          id,
+          owner,
+          type,
+          groupId,
+          sender,
+          receiver,
+          content,
+          timer,
+          ext
+        ) VALUES (
+          $msgId,
+          $id,
+          $owner,
+          $type,
+          $groupId,
+          $sender,
+          $receiver,
+          $content,
+          $timer,
+          $ext
+        )
+        `
+      ).run({
+        ...message,
+        owner,
+      });
+  })(messages);
 }
 
 /**
@@ -579,10 +630,12 @@ async function setMessage(message: ModuleIM.Core.MessageBasic) {
  * @return Promise<Array<ModuleIM.Core.MessageBasic>>
  */
 async function getMessagesBySender({
+  owner,
   sender,
   pageNum = 1,
   pageSize = 20,
 }: {
+  owner: number;
   sender: number;
   pageNum: number;
   pageSize: number;
@@ -607,13 +660,38 @@ async function getMessagesBySender({
         Info.regisTime AS senderInfo.regisTime,
         Info.updateTime AS senderInfo.updateTime
        FROM messages AS Message LEFT OUTER JOIN userInfos AS Info ON Message.sender = Info.id
-       WHERE Message.sender = $sender
-       ORDER BY Message.timer DESC
+       WHERE Message.owner = $owner AND Message.sender = $sender
+       ORDER BY Message.id DESC
        LIMIT $limit OFFSET $offset;`
     )
-    .all({ sender, limit: pageSize, offset: (pageNum - 1) * pageSize });
+    .all({ owner, sender, limit: pageSize, offset: (pageNum - 1) * pageSize });
 
   return messages as Array<ModuleIM.Core.MessageBasic>;
+}
+
+/**
+ * @description: Get the last message for conversation.
+ * @param owner number
+ * @param sender number
+ * @return Promise<ModuleIM.Core.MessageBasic>
+ */
+async function getLastConversationMessage(
+  owner: number,
+  sender: number
+): Promise<ModuleIM.Core.MessageBasic> {
+  const db = getInstance();
+  const message = db
+    .prepare(
+      `
+      SELECT * FROM messages WHERE
+        owner = $owner AND sender = $sender
+      ORDER BY id DESC
+      LIMIT 1;
+      `
+    )
+    .get({ owner, sender }) as ModuleIM.Core.MessageBasic;
+
+  return message;
 }
 
 /**
@@ -634,79 +712,160 @@ async function removeMessageBymsgIds(msgIds: string[]): Promise<void> {
 
 /**
  * @description: Remove messages by sender.
+ * @param owner number
  * @param sender number
  * @return Promise<void>
  */
-async function removeMessagesBySender(sender: number): Promise<void> {
-  const db = getInstance();
-  db.prepare(`DELETE FROM messages WHERE sender = $sender;`).run({ sender });
-}
-
-/**
- * @description: Remove all messages.
- * @return Promise<void>
- */
-async function removeAllMessages(): Promise<void> {
-  const db = getInstance();
-  db.prepare(`DELETE FROM messages;`).run();
-}
-
-/**
- * @description: Create a room into table rooms.
- * @param room ModuleIM.Core.Room
- * @return Promise<void>
- */
-async function createRoom(room: ModuleIM.Core.Room): Promise<void> {
-  const db = getInstance();
-  const columns = Object.keys(room);
-  db.prepare(
-    `INSERT INTO rooms (
-    ${columns.join(',')}
-  ) VALUES (
-    ${columns.map((column) => `$${column}`).join(',')}
-  );`
-  ).run(room);
-}
-
-/**
- * @description: Remove room by owner & sender.
- * @param owner number (userId)
- * @param sender number (userId or groupId)
- * @return Promise<void>
- */
-async function removeRoom({
-  owner,
-  sender,
-}: {
-  owner: number;
-  sender: number;
-}): Promise<void> {
+async function removeMessagesBySender(
+  owner: number,
+  sender: number
+): Promise<void> {
   const db = getInstance();
   db.prepare(
-    `DELETE FROM rooms WHERE owner = $owner AND sender = $sender;`
+    `DELETE FROM messages WHERE owner = $owner AND sender = $sender;`
   ).run({ owner, sender });
 }
 
 /**
- * @description: Remove all rooms by owner.
- * @param owner number (userId)
+ * @description: Remove all messages.
+ * @param owner number
  * @return Promise<void>
  */
-async function removeRooms(owner: number): Promise<void> {
+async function removeAllMessages(owner: number): Promise<void> {
   const db = getInstance();
-  db.prepare(`DELETE FROM rooms WHERE owner = $owner;`).run({ owner });
+  db.prepare(`DELETE FROM messages WHERE owner = $owner;`).run({ owner });
 }
 
 /**
- * @description: Get all rooms.
- * @param owner number (owner userId)
- * @return Promise<Array<ModuleIM.Core.Room>>
+ * @description: Create a room into table rooms.
+ * @param room ModuleIM.Core.ConversationType
+ * @return Promise<void>
  */
-async function getRooms(owner: number) {
+async function createConversation(
+  conversation: Omit<ModuleIM.Core.ConversationType, 'id' | 'lastReadAck'> & {
+    id?: string;
+    lastReadAck?: bigint;
+  }
+): Promise<void> {
   const db = getInstance();
-  const rooms = db
-    .prepare(`SELECT * FROM rooms WHERE owner = $owner ORDER BY timer DESC;`)
+  const columns = Object.keys(conversation);
+
+  if (!conversation['id']) {
+    conversation['id'] = uuidv4();
+  }
+
+  db.prepare(
+    `INSERT INTO conversations (
+    ${columns.join(',')}
+  ) VALUES (
+    ${columns.map((column) => `$${column}`).join(',')}
+  );`
+  ).run(conversation);
+}
+
+/**
+ * @description: Update lastReadAck for conversation (async).
+ * @param owner number
+ * @param options <{ id: string; lastReadAck: bigint }>
+ * @return Promise<void>
+ */
+async function updateLastReadforConversation(
+  owner: number,
+  options: { id: string; lastReadAck: bigint }
+): Promise<void> {
+  updateLastReadforConversationSync(owner, options);
+}
+
+/**
+ * @description: Update lastReadAck for conversation (sync).
+ * @param owner number
+ * @param options <{ id: string; lastReadAck: bigint }>
+ * @return Promise<void>
+ */
+function updateLastReadforConversationSync(
+  owner: number,
+  { id, lastReadAck }: { id: string; lastReadAck: bigint }
+) {
+  const db = getInstance();
+
+  db.prepare(
+    `
+    UPDATE conversations SET
+      lastReadAck = $lastReadAck
+    WHERE owner = $owner AND id = $id;
+    `
+  ).run({ owner, id, lastReadAck });
+}
+
+/**
+ * @description: Remove all conversations by owner.
+ * @param owner number (userId)
+ * @return Promise<void>
+ */
+async function removeConversationById(id: string): Promise<void> {
+  const db = getInstance();
+  db.prepare(`DELETE FROM conversations WHERE id = $id;`).run({ id });
+}
+
+/**
+ * @description: Get all conversations.
+ * @param owner number (owner userId)
+ * @return Promise<Array<ModuleIM.Core.ConversationType>>
+ */
+async function getAllConversations(owner: number) {
+  const db = getInstance();
+  const conversations = db
+    .prepare(
+      `SELECT * FROM conversations WHERE owner = $owner ORDER BY timer DESC;`
+    )
     .all({ owner });
 
-  return rooms as Array<ModuleIM.Core.Room>;
+  return conversations as Array<ModuleIM.Core.ConversationType>;
+}
+
+/**
+ * @description: Get total unread messages count for conversation (async).
+ * @param owner number
+ * @param options <{ sender: number; lastReadAck: bigint; }>
+ * @return Promise<void>
+ */
+async function getTotalUnreadForConversation(
+  owner: number,
+  options: {
+    sender: number;
+    lastReadAck: bigint;
+  }
+): Promise<number> {
+  return getTotalUnreadForConversationSync(owner, options);
+}
+
+/**
+ * @description: Get total unread messages count for conversation (sync).
+ * @param owner number
+ * @param options <{ sender: number; lastReadAck: bigint; }>
+ * @return Promise<void>
+ */
+function getTotalUnreadForConversationSync(
+  owner: number,
+  {
+    sender,
+    lastReadAck,
+  }: {
+    sender: number;
+    lastReadAck: bigint;
+  }
+) {
+  const db = getInstance();
+  const count = db
+    .prepare(
+      `
+      SELECT count(1)
+      FROM messages
+      WHERE owner = $owner AND sender = $sender AND id > $lastReadAck
+      `
+    )
+    .pluck()
+    .get({ owner, sender, lastReadAck }) as number;
+
+  return count;
 }
