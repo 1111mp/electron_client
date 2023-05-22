@@ -47,14 +47,18 @@ function updateToSchemaVersion1(
     // table friends
     db.exec(`
       CREATE TABLE friends (
-        userId INTEGER,
-        friendId INTEGER,
+        owner INTEGER NOT NULL,
+        id INTEGER NOT NULL,
         remark STRING,
         astrolabe BOOLEAN DEFAULT FALSE,
         block BOOLEAN DEFAULT FALSE,
         createdAt STRING,
         updatedAt STRING,
       );
+
+      CREATE INDEX friends_owner ON friends (owner);
+
+      CREATE INDEX friends_id ON friends (id);
     `);
 
     // table groups
@@ -70,6 +74,8 @@ function updateToSchemaVersion1(
         createdAt STRING,
         updatedAt STRING,
       );
+
+      CREATE INDEX groups_members ON groups (members);
     `);
 
     // table messages
@@ -105,6 +111,7 @@ function updateToSchemaVersion1(
         sender INTEGER NOT NULL,
         receiver INTEGER NOT NULL,
         lastReadAck BIGINT DEFAULT -1,
+        active_at INTEGER,
       );
 
       CREATE INDEX conversations_owner ON conversations (owner);
@@ -112,6 +119,10 @@ function updateToSchemaVersion1(
       CREATE INDEX conversations_sender ON conversations (sender);
 
       CREATE INDEX conversations_receiver ON conversations (receiver);
+
+      CREATE INDEX conversations_active ON conversations (
+        active_at
+      ) WHERE active_at IS NOT NULL;
     `);
 
     db.pragma('user_version = 1');

@@ -1,6 +1,9 @@
 import type { Database } from 'better-sqlite3';
 import { isNumber } from 'lodash';
 
+// This value needs to be below SQLITE_MAX_VARIABLE_NUMBER.
+const MAX_VARIABLE_COUNT = 100;
+
 export function objectToJSON<T>(data: T): string {
   return JSON.stringify(data);
 }
@@ -34,4 +37,44 @@ export function getUserVersion(db: Database): number {
 
 export function getSQLCipherVersion(db: Database) {
   return db.pragma('cipher_version', { simple: true });
+}
+
+//
+// Various table helpers
+//
+
+export function batchMultiVarQuery<ValueT>(
+  db: Database,
+  values: ReadonlyArray<ValueT>,
+  query: (batch: ReadonlyArray<ValueT>) => void
+): [];
+export function batchMultiVarQuery<ValueT, ResultT>(
+  db: Database,
+  values: ReadonlyArray<ValueT>,
+  query: (batch: ReadonlyArray<ValueT>) => Array<ResultT>
+): Array<ResultT>;
+
+export function batchMultiVarQuery<ValueT, ResultT>(
+  db: Database,
+  values: ReadonlyArray<ValueT>,
+  query:
+    | ((batch: ReadonlyArray<ValueT>) => void)
+    | ((batch: ReadonlyArray<ValueT>) => Array<ResultT>)
+): Array<ResultT> {
+  if (values.length > MAX_VARIABLE_COUNT) {
+    const result: Array<ResultT> = [];
+    db.transaction(() => {
+      for (let i = 0; i < values.length; i += MAX_VARIABLE_COUNT) {
+        const batch = values.slice(i, i + MAX_VARIABLE_COUNT);
+        const batchResult = query(batch);
+        if (Array.isArray(batchResult)) {
+          result.push(...batchResult);
+        }
+      }
+    })();
+    return result;
+  }
+
+  const result = query(values);
+  return Array.isArray(result) ? result : [];
 }

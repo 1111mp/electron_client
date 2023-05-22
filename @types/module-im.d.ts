@@ -58,6 +58,7 @@ declare global {
         sender: number;
         receiver: number;
         lastReadAck: bigint;
+        active_at: number;
       };
     }
   }

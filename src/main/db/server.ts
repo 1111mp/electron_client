@@ -6,10 +6,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { updateSchema } from './migrations';
 import { consoleLogger } from '../utils/consoleLogger';
 import {
+  batchMultiVarQuery,
   getSchemaVersion,
   getUserVersion,
-  jsonToObject,
-  objectToJSON,
   setUserVersion,
 } from './util';
 
@@ -247,7 +246,237 @@ async function setUserTheme(theme: Theme): Promise<void> {
   });
 }
 
-// async function setFriends() {}
+/**
+ * @description: Cache user friends info to db (async).
+ * @param owner number
+ * @param friends DB.UserWithFriendSetting[]
+ * @return Promise<void>
+ */
+async function setFriends(owner: number, friends: DB.UserWithFriendSetting[]) {
+  setFriendsSync(owner, friends);
+}
+
+/**
+ * @description: Cache user friends info to db (sync).
+ * @param owner number
+ * @param friends DB.UserWithFriendSetting[]
+ * @return void
+ */
+function setFriendsSync(
+  owner: number,
+  friends: DB.UserWithFriendSetting[]
+): void {
+  const db = getInstance();
+
+  db.transaction(() => {
+    for (const friend of friends) {
+      const {
+        id,
+        remark,
+        astrolabe,
+        block,
+        createdAt,
+        updatedAt,
+        account,
+        avatar,
+        email,
+        regisTime,
+        updateTime,
+      } = friend;
+      db.prepare(
+        `
+        INSERT INTO friends (
+          owner, id, remark, astrolabe, block, createdAt, updatedAt
+        ) VALUES (
+          $owner, $id, $remark, $astrolabe, $block, $createdAt, $updatedAt
+        );
+        `
+      ).run({ owner, id, remark, astrolabe, block, createdAt, updatedAt });
+
+      db.prepare(
+        `
+        INSERT OR REPLACE INTO userInfos (
+          id, account, avatar, email, regisTime, updateTime
+        ) VALUES (
+          $id, $account, $avatar, $email, $regisTime, $updateTime
+        );
+        `
+      ).run({
+        id,
+        account,
+        avatar,
+        email,
+        regisTime,
+        updateTime,
+      });
+    }
+  })();
+}
+
+/**
+ * @description: Get friend info by friend' id (async).
+ * @param owner number
+ * @param id number
+ * @return Promise<DB.UserWithFriendSetting>
+ */
+async function getFriend(owner: number, id: number) {
+  return getFriendSync(owner, id);
+}
+
+/**
+ * @description: Get friend info by friend' id (sync).
+ * @param owner number
+ * @param id number
+ * @return DB.UserWithFriendSetting
+ */
+function getFriendSync(owner: number, id: number) {
+  const db = getInstance();
+
+  const friend = db
+    .prepare(
+      `
+      SELECT
+        Info.id,
+        Info.account,
+        Info.avatar,
+        Info.email,
+        Info.regisTime,
+        Info.updateTime,
+        Friend.remark,
+        Friend.astrolabe,
+        Friend.block,
+        Friend.createdAt,
+        Friend.updatedAt
+      FROM friends AS Friend
+      LEFT OUTER JOIN userInfos AS Info ON Friend.id = Info.id
+      WHERE Friend.owner = $owner AND Friend.id = $id
+      `
+    )
+    .get({ owner, id }) as DB.UserWithFriendSetting;
+
+  return friend;
+}
+
+/**
+ * @description: Get user friends info (async).
+ * @param owner number
+ * @return Promise<DB.UserWithFriendSetting[]>
+ */
+async function getFriends(owner: number) {
+  return getFriendsSnyc(owner);
+}
+
+/**
+ * @description: Get user friends info (sync).
+ * @param owner number
+ * @return DB.UserWithFriendSetting[]
+ */
+function getFriendsSnyc(owner: number) {
+  const db = getInstance();
+
+  const friends = db
+    .prepare(
+      `
+      SELECT
+        Info.id,
+        Info.account,
+        Info.avatar,
+        Info.email,
+        Info.regisTime,
+        Info.updateTime,
+        Friend.remark,
+        Friend.astrolabe,
+        Friend.block,
+        Friend.createdAt,
+        Friend.updatedAt
+      FROM friends AS Friend
+      LEFT OUTER JOIN userInfos AS Info ON Friend.id = Info.id
+      WHERE Friend.owner = $owner
+      `
+    )
+    .all({ owner }) as DB.UserWithFriendSetting[];
+
+  return friends;
+}
+
+/**
+ * @description: Update user friend info by id (async).
+ * @param owner number
+ * @param info DB.FriendSetting & { id: number }
+ * @return Promise<void>
+ */
+async function updateFriendInfo(
+  owner: number,
+  info: DB.FriendSetting & { id: number }
+) {
+  updateFriendInfoSync(owner, info);
+}
+
+/**
+ * @description: Update user friend info by id (sync).
+ * @param owner number
+ * @param info DB.FriendSetting & { id: number }
+ * @return void
+ */
+function updateFriendInfoSync(
+  owner: number,
+  info: DB.FriendSetting & { id: number }
+): void {
+  const db = getInstance();
+
+  const { id, remark, astrolabe, block, createdAt, updatedAt } = info;
+
+  db.prepare(
+    `
+    UPDATE friends SET
+      remark = $remark,
+      astrolabe = $astrolabe,
+      block = $remark,
+      createdAt = $createdAt,
+      updatedAt = $updatedAt,
+    WHERE owner = $owner AND id = $id
+    `
+  ).run({ owner, id, remark, astrolabe, block, createdAt, updatedAt });
+}
+
+/**
+ * @description: Remove user friends (async).
+ * @param owner number
+ * @param id number | number[]
+ * @return Promise<void>
+ */
+async function removeFriends(owner: number, id: number | number[]) {
+  removeFriendsSync(owner, id);
+}
+
+/**
+ * @description: Remove user friends (sync).
+ * @param owner number
+ * @param id number | number[]
+ * @return void
+ */
+function removeFriendsSync(owner: number, id: number | number[]): void {
+  const db = getInstance();
+
+  if (!Array.isArray(id)) {
+    db.prepare(
+      `
+      DELETE FROM friends WHERE owner = $owner AND id = $id;
+      `
+    ).run({ owner, id });
+
+    return;
+  }
+
+  if (!id.length) return;
+
+  db.prepare(
+    `
+    DELETE FROM friends
+    WHERE owner = $owner AND id IN ( ${id.map(() => '?').join(', ')} );
+    `
+  ).run(id, { owner });
+}
 
 /**
  * @description: Cache groups info to db (not include members).
@@ -394,12 +623,21 @@ async function setGroupIncludeMembers(
  * @return ModuleIM.Core.GroupBasic
  */
 async function getGroup(groupId: number) {
+  return getGroupSync(groupId);
+}
+
+/**
+ * @description: Get group info not include members (sync).
+ * @param groupId number
+ * @return ModuleIM.Core.GroupBasic
+ */
+function getGroupSync(groupId: number) {
   const db = getInstance();
 
   const group = db
     .prepare(
       `
-        SELECT id, name, avatar, type, creator, count, createAt, updateAt
+        SELECT id, name, avatar, type, creator, count, members, createAt, updateAt
         FROM groups WHERE id = $groupId;
       `
     )
@@ -643,7 +881,8 @@ async function getMessagesBySender({
   const db = getInstance();
   const messages = db
     .prepare(
-      `SELECT 
+      `
+      SELECT 
         Message.id,
         Message.msgId,
         Message.type,
@@ -659,39 +898,15 @@ async function getMessagesBySender({
         Info.email AS senderInfo.email,
         Info.regisTime AS senderInfo.regisTime,
         Info.updateTime AS senderInfo.updateTime
-       FROM messages AS Message LEFT OUTER JOIN userInfos AS Info ON Message.sender = Info.id
-       WHERE Message.owner = $owner AND Message.sender = $sender
-       ORDER BY Message.id DESC
-       LIMIT $limit OFFSET $offset;`
+      FROM messages AS Message LEFT OUTER JOIN userInfos AS Info ON Message.sender = Info.id
+      WHERE Message.owner = $owner AND Message.sender = $sender
+      ORDER BY Message.id DESC
+      LIMIT $limit OFFSET $offset;
+      `
     )
     .all({ owner, sender, limit: pageSize, offset: (pageNum - 1) * pageSize });
 
   return messages as Array<ModuleIM.Core.MessageBasic>;
-}
-
-/**
- * @description: Get the last message for conversation.
- * @param owner number
- * @param sender number
- * @return Promise<ModuleIM.Core.MessageBasic>
- */
-async function getLastConversationMessage(
-  owner: number,
-  sender: number
-): Promise<ModuleIM.Core.MessageBasic> {
-  const db = getInstance();
-  const message = db
-    .prepare(
-      `
-      SELECT * FROM messages WHERE
-        owner = $owner AND sender = $sender
-      ORDER BY id DESC
-      LIMIT 1;
-      `
-    )
-    .get({ owner, sender }) as ModuleIM.Core.MessageBasic;
-
-  return message;
 }
 
 /**
@@ -737,14 +952,56 @@ async function removeAllMessages(owner: number): Promise<void> {
 }
 
 /**
+ * @description: Get the last message for conversation (async).
+ * @param owner number
+ * @param sender number
+ * @return Promise<ModuleIM.Core.MessageBasic>
+ */
+async function getLastConversationMessage(
+  owner: number,
+  sender: number
+): Promise<ModuleIM.Core.MessageBasic> {
+  return getLastConversationMessageSync(owner, sender);
+}
+
+/**
+ * @description: Get the last message for conversation (sync).
+ * @param owner number
+ * @param sender number
+ * @return ModuleIM.Core.MessageBasic
+ */
+function getLastConversationMessageSync(
+  owner: number,
+  sender: number
+): ModuleIM.Core.MessageBasic {
+  const db = getInstance();
+  const message = db
+    .prepare(
+      `
+      SELECT * FROM messages WHERE
+        owner = $owner AND sender = $sender
+      ORDER BY id DESC
+      LIMIT 1;
+      `
+    )
+    .get({ owner, sender }) as ModuleIM.Core.MessageBasic;
+
+  return message;
+}
+
+/**
  * @description: Create a room into table rooms.
  * @param room ModuleIM.Core.ConversationType
  * @return Promise<void>
  */
 async function createConversation(
-  conversation: Omit<ModuleIM.Core.ConversationType, 'id' | 'lastReadAck'> & {
+  conversation: Omit<
+    ModuleIM.Core.ConversationType,
+    'id' | 'lastReadAck' | 'active_at'
+  > & {
     id?: string;
     lastReadAck?: bigint;
+    active_at?: number;
   }
 ): Promise<void> {
   const db = getInstance();
@@ -752,6 +1009,10 @@ async function createConversation(
 
   if (!conversation['id']) {
     conversation['id'] = uuidv4();
+  }
+
+  if (!conversation['active_at']) {
+    conversation['active_at'] = Date.now();
   }
 
   db.prepare(
@@ -764,37 +1025,63 @@ async function createConversation(
 }
 
 /**
+ * @description: Update conversation active_at (async).
+ * @param id string
+ * @return Promise<void>
+ */
+async function updateConversationActiveAt(id: string) {
+  updateConversationActiveAtSync(id);
+}
+
+/**
+ * @description: Update conversation active_at (sync).
+ * @param id string
+ * @return void
+ */
+function updateConversationActiveAtSync(id: string): void {
+  const db = getInstance();
+
+  db.prepare(
+    `
+    UPDATE conversations SET
+      active_at = $active_at
+    WHERE id = $id;
+    `
+  ).run({
+    id,
+    active_at: Date.now(),
+  });
+}
+
+/**
  * @description: Update lastReadAck for conversation (async).
- * @param owner number
- * @param options <{ id: string; lastReadAck: bigint }>
+ * @param id string
+ * @param lastReadAck bigint
  * @return Promise<void>
  */
 async function updateLastReadforConversation(
-  owner: number,
-  options: { id: string; lastReadAck: bigint }
+  id: string,
+  lastReadAck: bigint
 ): Promise<void> {
-  updateLastReadforConversationSync(owner, options);
+  updateLastReadforConversationSync(id, lastReadAck);
 }
 
 /**
  * @description: Update lastReadAck for conversation (sync).
- * @param owner number
- * @param options <{ id: string; lastReadAck: bigint }>
+ * @param id string
+ * @param lastReadAck bigint
  * @return Promise<void>
  */
-function updateLastReadforConversationSync(
-  owner: number,
-  { id, lastReadAck }: { id: string; lastReadAck: bigint }
-) {
+function updateLastReadforConversationSync(id: string, lastReadAck: bigint) {
   const db = getInstance();
 
   db.prepare(
     `
     UPDATE conversations SET
       lastReadAck = $lastReadAck
-    WHERE owner = $owner AND id = $id;
+    WHERE AND id = $id;
     `
-  ).run({ owner, id, lastReadAck });
+  ).run({ id, lastReadAck });
 }
 
 /**
@@ -808,19 +1095,137 @@ async function removeConversationById(id: string): Promise<void> {
 }
 
 /**
+ * @description: Remove conversations by owner (async).
+ * @param owner number
+ * @return Promise<void>
+ */
+async function removeConversations(owner: number): Promise<void> {
+  removeConversationsSync(owner);
+}
+
+/**
+ * @description: Remove conversations by owner (sync).
+ * @param owner number
+ * @return void
+ */
+function removeConversationsSync(owner: number): void {
+  const db = getInstance();
+
+  db.prepare(
+    `
+    DELETE FROM conversations WHERE owner = $owner
+    `
+  ).run({ owner });
+}
+
+/**
  * @description: Get all conversations.
  * @param owner number (owner userId)
  * @return Promise<Array<ModuleIM.Core.ConversationType>>
  */
-async function getAllConversations(owner: number) {
+async function getConversations(owner: number) {
   const db = getInstance();
   const conversations = db
     .prepare(
-      `SELECT * FROM conversations WHERE owner = $owner ORDER BY timer DESC;`
+      `SELECT * FROM conversations WHERE owner = $owner ORDER BY active_at DESC;`
     )
     .all({ owner });
 
   return conversations as Array<ModuleIM.Core.ConversationType>;
+}
+
+/**
+ * @description: Get all conversations with detail (async).
+ * @param owner number
+ * @return Promise<>
+ */
+async function getConversationsWithAll(owner: number): Promise<
+  Array<
+    ModuleIM.Core.ConversationType & {
+      info: ModuleIM.Core.GroupBasic | DB.UserWithFriendSetting;
+    } & { lastMessage: ModuleIM.Core.MessageBasic }
+  >
+> {
+  return getConversationsWithAllSync(owner);
+}
+
+/**
+ * @description: Get all conversations with detail (sync).
+ * @param owner number
+ * @return <>
+ */
+function getConversationsWithAllSync(owner: number): Array<
+  ModuleIM.Core.ConversationType & {
+    info: ModuleIM.Core.GroupBasic | DB.UserWithFriendSetting;
+  } & { lastMessage: ModuleIM.Core.MessageBasic }
+> {
+  const db = getInstance();
+
+  return db.transaction(() => {
+    const conversations = db
+      .prepare(
+        `
+        SELECT * FROM conversations WHERE owner = $owner ORDER BY active_at DESC;
+        `
+      )
+      .all({ owner }) as ModuleIM.Core.ConversationType[];
+
+    const result = conversations.map((conversation) => {
+      // get last message & sender info(user or group)
+      const { groupId } = conversation;
+      const lastMessage = db
+        .prepare(
+          `
+          SELECT * FROM messages WHERE
+            owner = $owner AND sender = $sender
+          ORDER BY id DESC
+          LIMIT 1;
+          `
+        )
+        .get({
+          owner,
+          sender: conversation.sender,
+        }) as ModuleIM.Core.MessageBasic;
+
+      const info = groupId
+        ? (db
+            .prepare(
+              `
+              SELECT id, name, avatar, type, creator, count, members, createAt, updateAt
+              FROM groups WHERE id = $groupId;
+              `
+            )
+            .get({ groupId }) as ModuleIM.Core.GroupBasic)
+        : (db
+            .prepare(
+              `
+              SELECT
+                Info.id,
+                Info.account,
+                Info.avatar,
+                Info.email,
+                Info.regisTime,
+                Info.updateTime,
+                Friend.remark,
+                Friend.astrolabe,
+                Friend.block,
+                Friend.createdAt,
+                Friend.updatedAt
+              FROM userInfos AS Info
+              LEFT OUTER JOIN friends AS Friend ON Friend.owner = $owner AND Friend.id = Info.id
+              WHERE Info.id = $sender
+              `
+            )
+            .get({
+              owner,
+              sender: conversation.sender,
+            }) as DB.UserWithFriendSetting);
+
+      return { ...conversation, lastMessage, info };
+    });
+
+    return result;
+  })();
 }
 
 /**
