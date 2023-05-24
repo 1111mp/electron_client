@@ -23,10 +23,59 @@ const dataInterface: ServerInterface = {
   close,
   removeDB,
 
-  //user
+  // user
   updateOrCreateUser,
   getUserInfo,
   setUserTheme,
+
+  // friends
+  setFriends,
+  setFriendsSync,
+  getFriend,
+  getFriendSync,
+  getFriends,
+  getFriendsSync,
+  updateFriendInfo,
+  updateFriendInfoSync,
+  removeFriends,
+  removeFriendsSync,
+
+  // groups
+  setGroups,
+  setGroupsIncludeMembers,
+  setGroup,
+  setGroupIncludeMembers,
+  getGroup,
+  getGroupSync,
+  getGroupWithMembers,
+  getMembersByGroupId,
+  getGroups,
+  getGroupsIncludeMembers,
+
+  // messages
+  setMessage,
+  setMessages,
+  getMessagesBySender,
+  removeMessageByMsgIds,
+  removeMessagesBySender,
+  removeMessages,
+
+  // conversations
+  getLastConversationMessage,
+  getLastConversationMessageSync,
+  createConversation,
+  updateConversationActiveAt,
+  updateConversationActiveAtSync,
+  updateConversationLastRead,
+  updateConversationLastReadSync,
+  removeConversationById,
+  removeConversations,
+  removeConversationsSync,
+  getConversations,
+  getConversationsWithAll,
+  getConversationsWithAllSync,
+  getTotalUnreadForConversation,
+  getTotalUnreadForConversationSync,
 
   // Server-only
 
@@ -168,13 +217,11 @@ async function initialize({
 }
 
 async function close(): Promise<void> {
-  for (const dbRef of [globalInstance]) {
-    // SQLLite documentation suggests that we run `PRAGMA optimize` right
-    // before closing the database connection.
-    dbRef?.pragma('optimize');
+  // SQLLite documentation suggests that we run `PRAGMA optimize` right
+  // before closing the database connection.
+  globalInstance?.pragma('optimize');
 
-    dbRef?.close();
-  }
+  globalInstance?.close();
 
   globalInstance = undefined;
 }
@@ -252,7 +299,10 @@ async function setUserTheme(theme: Theme): Promise<void> {
  * @param friends DB.UserWithFriendSetting[]
  * @return Promise<void>
  */
-async function setFriends(owner: number, friends: DB.UserWithFriendSetting[]) {
+async function setFriends(
+  owner: number,
+  friends: DB.UserWithFriendSetting[]
+): Promise<void> {
   setFriendsSync(owner, friends);
 }
 
@@ -319,7 +369,10 @@ function setFriendsSync(
  * @param id number
  * @return Promise<DB.UserWithFriendSetting>
  */
-async function getFriend(owner: number, id: number) {
+async function getFriend(
+  owner: number,
+  id: number
+): Promise<DB.UserWithFriendSetting> {
   return getFriendSync(owner, id);
 }
 
@@ -329,7 +382,7 @@ async function getFriend(owner: number, id: number) {
  * @param id number
  * @return DB.UserWithFriendSetting
  */
-function getFriendSync(owner: number, id: number) {
+function getFriendSync(owner: number, id: number): DB.UserWithFriendSetting {
   const db = getInstance();
 
   const friend = db
@@ -362,8 +415,8 @@ function getFriendSync(owner: number, id: number) {
  * @param owner number
  * @return Promise<DB.UserWithFriendSetting[]>
  */
-async function getFriends(owner: number) {
-  return getFriendsSnyc(owner);
+async function getFriends(owner: number): Promise<DB.UserWithFriendSetting[]> {
+  return getFriendsSync(owner);
 }
 
 /**
@@ -371,7 +424,7 @@ async function getFriends(owner: number) {
  * @param owner number
  * @return DB.UserWithFriendSetting[]
  */
-function getFriendsSnyc(owner: number) {
+function getFriendsSync(owner: number): DB.UserWithFriendSetting[] {
   const db = getInstance();
 
   const friends = db
@@ -408,7 +461,7 @@ function getFriendsSnyc(owner: number) {
 async function updateFriendInfo(
   owner: number,
   info: DB.FriendSetting & { id: number }
-) {
+): Promise<void> {
   updateFriendInfoSync(owner, info);
 }
 
@@ -445,7 +498,10 @@ function updateFriendInfoSync(
  * @param id number | number[]
  * @return Promise<void>
  */
-async function removeFriends(owner: number, id: number | number[]) {
+async function removeFriends(
+  owner: number,
+  id: number | number[]
+): Promise<void> {
   removeFriendsSync(owner, id);
 }
 
@@ -622,7 +678,7 @@ async function setGroupIncludeMembers(
  * @param groupId number
  * @return ModuleIM.Core.GroupBasic
  */
-async function getGroup(groupId: number) {
+async function getGroup(groupId: number): Promise<ModuleIM.Core.GroupBasic> {
   return getGroupSync(groupId);
 }
 
@@ -631,7 +687,7 @@ async function getGroup(groupId: number) {
  * @param groupId number
  * @return ModuleIM.Core.GroupBasic
  */
-function getGroupSync(groupId: number) {
+function getGroupSync(groupId: number): ModuleIM.Core.GroupBasic {
   const db = getInstance();
 
   const group = db
@@ -724,7 +780,9 @@ async function getMembersByGroupId(groupId: number): Promise<DB.UserInfo[]> {
  * @param userId number
  * @return Promise<Array<ModuleIM.Core.GroupBasic>>
  */
-async function getUserAllGroups(userId: number) {
+async function getGroups(
+  userId: number
+): Promise<Array<ModuleIM.Core.GroupBasic>> {
   const db = getInstance();
   const groups = db
     .prepare(
@@ -747,7 +805,9 @@ async function getUserAllGroups(userId: number) {
  * @param userId number
  * @return Promise<Array<ModuleIM.Core.GroupBasic & { members: DB.UserInfo[] }>>
  */
-async function getUserAllGroupsIncludeMembers(userId: number) {
+async function getGroupsIncludeMembers(
+  userId: number
+): Promise<Array<ModuleIM.Core.GroupBasic & { members: DB.UserInfo[] }>> {
   const db = getInstance();
   const groups = db
     .prepare(
@@ -798,7 +858,10 @@ async function getUserAllGroupsIncludeMembers(userId: number) {
  * @param message ModuleIM.Core.MessageBasic
  * @return Promise<void>
  */
-async function setMessage(owner: number, message: ModuleIM.Core.MessageBasic) {
+async function setMessage(
+  owner: number,
+  message: ModuleIM.Core.MessageBasic
+): Promise<void> {
   const db = getInstance();
   const columns = Object.keys(message);
 
@@ -865,7 +928,7 @@ async function setMessages(
  * @param sender number
  * @param pageNum string
  * @param pageSize number
- * @return Promise<Array<ModuleIM.Core.MessageBasic>>
+ * @return Promise<ModuleIM.Core.MessageBasic[]>
  */
 async function getMessagesBySender({
   owner,
@@ -877,7 +940,7 @@ async function getMessagesBySender({
   sender: number;
   pageNum: number;
   pageSize: number;
-}) {
+}): Promise<ModuleIM.Core.MessageBasic[]> {
   const db = getInstance();
   const messages = db
     .prepare(
@@ -914,7 +977,7 @@ async function getMessagesBySender({
  * @param msgIds string[]
  * @return Promise<void>
  */
-async function removeMessageBymsgIds(msgIds: string[]): Promise<void> {
+async function removeMessageByMsgIds(msgIds: string[]): Promise<void> {
   const db = getInstance();
   db.prepare(
     `
@@ -946,7 +1009,7 @@ async function removeMessagesBySender(
  * @param owner number
  * @return Promise<void>
  */
-async function removeAllMessages(owner: number): Promise<void> {
+async function removeMessages(owner: number): Promise<void> {
   const db = getInstance();
   db.prepare(`DELETE FROM messages WHERE owner = $owner;`).run({ owner });
 }
@@ -1029,7 +1092,7 @@ async function createConversation(
  * @param id string
  * @return Promise<void>
  */
-async function updateConversationActiveAt(id: string) {
+async function updateConversationActiveAt(id: string): Promise<void> {
   updateConversationActiveAtSync(id);
 }
 
@@ -1059,11 +1122,11 @@ function updateConversationActiveAtSync(id: string): void {
  * @param lastReadAck bigint
  * @return Promise<void>
  */
-async function updateLastReadforConversation(
+async function updateConversationLastRead(
   id: string,
   lastReadAck: bigint
 ): Promise<void> {
-  updateLastReadforConversationSync(id, lastReadAck);
+  updateConversationLastReadSync(id, lastReadAck);
 }
 
 /**
@@ -1072,7 +1135,7 @@ async function updateLastReadforConversation(
  * @param lastReadAck bigint
  * @return Promise<void>
  */
-function updateLastReadforConversationSync(id: string, lastReadAck: bigint) {
+function updateConversationLastReadSync(id: string, lastReadAck: bigint) {
   const db = getInstance();
 
   db.prepare(
@@ -1121,9 +1184,11 @@ function removeConversationsSync(owner: number): void {
 /**
  * @description: Get all conversations.
  * @param owner number (owner userId)
- * @return Promise<Array<ModuleIM.Core.ConversationType>>
+ * @return Promise<ModuleIM.Core.ConversationType[]>
  */
-async function getConversations(owner: number) {
+async function getConversations(
+  owner: number
+): Promise<ModuleIM.Core.ConversationType[]> {
   const db = getInstance();
   const conversations = db
     .prepare(
@@ -1259,7 +1324,7 @@ function getTotalUnreadForConversationSync(
     sender: number;
     lastReadAck: bigint;
   }
-) {
+): number {
   const db = getInstance();
   const count = db
     .prepare(

@@ -1,81 +1,45 @@
-import { ipcRenderer as ipc } from 'electron';
 import Logging from '../LogForRenderer';
-import { compact, fromPairs, isFunction, map, toPairs } from 'lodash';
-import createTaskWithTimeout from '../utils/taskWithTimeout';
-import { ClientInterface, ServerInterface } from './types';
-import { Theme } from 'App/types';
+import { ipcInvoke, doShutdown } from './channels';
+import { get, has } from 'lodash';
 
-let activeJobCount = 0;
-
-// ipcRenderer.setMaxListeners(0);
-
-const DATABASE_UPDATE_TIMEOUT = 2 * 60 * 1000; // two minutes
-
-const SQL_CHANNEL_KEY = 'sql-channel';
+import type { ClientInterface, ServerInterface } from './types';
 
 const log = Logging().getLogger();
 
-const dataInterface: ClientInterface = {
-  close,
-  removeDB,
+const channels: ServerInterface = new Proxy({} as ServerInterface, {
+  get(_target, name) {
+    return async (...args: ReadonlyArray<unknown>) =>
+      ipcInvoke(String(name), args);
+  },
+});
 
-  // user
-  updateOrCreateUser,
-  getUserInfo,
-  setUserTheme,
-};
+const dataInterface: ClientInterface = new Proxy(
+  {
+    shutdown,
+  } as ClientInterface,
+  {
+    get(target, name) {
+      return async (...args: ReadonlyArray<unknown>) => {
+        if (has(target, name)) {
+          return get(target, name)(...args);
+        }
+
+        return get(channels, name)(...args);
+      };
+    },
+  }
+);
 
 export default dataInterface;
 
-const channelsAsUnknown = fromPairs(
-  compact(
-    map(toPairs(dataInterface), ([name, value]: [string, unknown]) => {
-      if (isFunction(value)) {
-        return [name, makeChannel(name)];
-      }
+// Top-level calls
 
-      return null;
-    })
-  )
-) as unknown;
+async function shutdown(): Promise<void> {
+  log.info('Client.shutdown');
 
-const channels: ServerInterface = channelsAsUnknown as ServerInterface;
+  // Stop accepting new SQL jobs, flush outstanding queue
+  await doShutdown();
 
-function makeChannel(fnName: string) {
-  return async (...args: ReadonlyArray<unknown>) => {
-    activeJobCount += 1;
-
-    return createTaskWithTimeout(async () => {
-      try {
-        return await ipc.invoke(SQL_CHANNEL_KEY, fnName, ...args);
-      } finally {
-        activeJobCount -= 1;
-        if (activeJobCount === 0) {
-          // resolveShutdown?.();
-        }
-      }
-    }, `SQL channel call (${fnName})`)();
-  };
-}
-
-// Note: will need to restart the app after calling this, to set up afresh
-async function close(): Promise<void> {
+  // Close database
   await channels.close();
-}
-
-// Note: will need to restart the app after calling this, to set up afresh
-async function removeDB(): Promise<void> {
-  await channels.removeDB();
-}
-
-function updateOrCreateUser(user: DB.UserAttributes) {
-  return channels.updateOrCreateUser(user);
-}
-
-async function getUserInfo() {
-  return channels.getUserInfo();
-}
-
-async function setUserTheme(theme: Theme) {
-  return channels.setUserTheme(theme);
 }

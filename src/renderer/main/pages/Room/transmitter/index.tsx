@@ -50,7 +50,7 @@ export const Transmitter: React.ComponentType<Props> = memo(({}) => {
           // draftText={draftText}
           // draftBodyRanges={draftBodyRanges}
           // startingText={''}
-          onPickEmoji={onPickEmoji}
+          // onPickEmoji={onPickEmoji}
           onSubmit={(content, mentions) => {
             console.log(content);
             console.log(mentions);

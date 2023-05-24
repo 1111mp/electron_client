@@ -2,6 +2,8 @@ import { contextBridge, ipcRenderer } from 'electron';
 import sqlClient from '../db/client';
 import type { Theme, WindowName } from 'App/types';
 
+const { getUserInfo, setUserTheme } = sqlClient;
+
 try {
   const { locale, message } = ipcRenderer.sendSync('locale-data');
 
@@ -12,7 +14,7 @@ try {
     locale,
     localeMessages: message,
 
-    sqlClient,
+    sqlClient: { getUserInfo, setUserTheme },
 
     windowOpen: (args: Windows.Args) => ipcRenderer.send('window:open', args),
     windowClose: (name: WindowName) => ipcRenderer.send('window:close', name),

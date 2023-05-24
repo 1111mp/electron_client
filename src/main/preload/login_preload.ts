@@ -1,6 +1,8 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import sqlClient from '../db/client';
 
+const { getUserInfo, updateOrCreateUser, setUserTheme } = sqlClient;
+
 try {
   const { locale, message } = ipcRenderer.sendSync('locale-data');
 
@@ -11,7 +13,11 @@ try {
     locale,
     localeMessages: message,
 
-    sqlClient,
+    sqlClient: {
+      getUserInfo,
+      updateOrCreateUser,
+      setUserTheme,
+    },
 
     loginSuccessed: (userInfo: DB.UserAttributes) =>
       ipcRenderer.send('login-successed', userInfo),

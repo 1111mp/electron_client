@@ -2,6 +2,8 @@ import { contextBridge, ipcRenderer } from 'electron';
 import sqlClient from '../db/client';
 import { Theme, WindowName } from '../../types';
 
+const { getUserInfo, setUserTheme } = sqlClient;
+
 (async function () {
   try {
     const { locale, message } = ipcRenderer.sendSync('locale-data');
@@ -49,7 +51,7 @@ import { Theme, WindowName } from '../../types';
       locale,
       localeMessages: message,
 
-      sqlClient,
+      sqlClient: { getUserInfo, setUserTheme },
     });
   } catch (err) {
     console.error(err);
