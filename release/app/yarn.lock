@@ -7,10 +7,10 @@ base64-js@^1.3.1:
   resolved "https://registry.npmjs.org/base64-js/-/base64-js-1.5.1.tgz"
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
 
-better-sqlite3-multiple-ciphers@^8.3.0:
-  version "8.3.0"
-  resolved "https://registry.npmmirror.com/better-sqlite3-multiple-ciphers/-/better-sqlite3-multiple-ciphers-8.3.0.tgz#e2e555a92cda8c152c1444683318f75be5c72455"
-  integrity sha512-q56v+L/U/e0/hXIGh/nzkuKeEDVlHOoU1mrCrPYpfQP9LmSSDYbNBxC7bSVnHB+S9/HGod92mRII6M+ZnoWRVA==
+better-sqlite3-multiple-ciphers@^8.4.0:
+  version "8.4.0"
+  resolved "https://registry.npmmirror.com/better-sqlite3-multiple-ciphers/-/better-sqlite3-multiple-ciphers-8.4.0.tgz#fd3ff4e8fa441dc17e28a8f5f9baf390b9bad23a"
+  integrity sha512-8becGVhCF6x+nH2e1xz5wUgKBwa9b9AcdOFs6D45+pk0YpUUIzkoM3NFsT3apPw75ao+Ekjgxkz0ed7/VPfVWw==
   dependencies:
     bindings "^1.5.0"
     prebuild-install "^7.1.0"
@@ -61,10 +61,10 @@ detect-libc@^2.0.0:
   resolved "https://registry.npmjs.org/detect-libc/-/detect-libc-2.0.1.tgz"
   integrity sha512-463v3ZeIrcWtdgIg6vI6XUncguvr2TnGl4SzDXinkt9mSLpBJKXT3mW6xT3VQdDN11+WVs29pgvivTc4Lp8v+w==
 
-emoji-datasource-apple@^14.0.0:
-  version "14.0.0"
-  resolved "https://registry.npmmirror.com/emoji-datasource-apple/-/emoji-datasource-apple-14.0.0.tgz"
-  integrity sha512-92Q53C44DzSqreHVlajEG24O5sFZjY1E9xRLWWyud7+/hW8S2vs4DiHuNuNZ0CLDCmZMQHc95okN9V8Mk6yBRw==
+emoji-datasource-apple@^15.0.0:
+  version "15.0.0"
+  resolved "https://registry.npmmirror.com/emoji-datasource-apple/-/emoji-datasource-apple-15.0.0.tgz#833b032f685f24ea37ae0f37de88b614875a1cf6"
+  integrity sha512-cOJRu9I4B4Qh9iOcLfT5f3U4pqkY9Fi22zs1lkfFyJ6rwoEUH+x3KC2fEbW+bsagVqaqqLsRTtzpyo2QC1jO4g==
 
 end-of-stream@^1.1.0, end-of-stream@^1.4.1:
   version "1.4.4"
