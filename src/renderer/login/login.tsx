@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import request from 'App/renderer/services';
+import { request } from 'App/renderer/services';
 import { useI18n } from 'Renderer/utils/i18n';
 
 import { Theme } from 'App/types';
@@ -47,18 +47,21 @@ const Login: React.FC = () => {
 
   const submit = async () => {
     if (!account || !pwd || aerror || perror) return;
-    request('users')(type === Type.SignIn ? '/login' : '/create', {
-      method: 'POST',
-      data: { account, pwd },
-    })
+    request('users')<DB.UserInfo & { token: string }>(
+      type === Type.SignIn ? '/login' : '/create',
+      {
+        method: 'POST',
+        data: { account, pwd },
+      }
+    )
       .then(async (res) => {
         if (res.statusCode === 200) {
           /** login 成功之后 更新数据库 user信息 */
-          const { id, account, avatar, email, regisTime, updateTime } =
+          const { token, id, account, avatar, email, regisTime, updateTime } =
             res.data;
 
           const userInfo = {
-            token: res.token!,
+            token,
             userId: id,
             account,
             avatar,

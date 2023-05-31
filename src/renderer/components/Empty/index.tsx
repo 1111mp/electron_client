@@ -1,6 +1,6 @@
 import './styles.scss';
 
-export const Empty: React.ComponentType = () => {
+export function Component() {
   return (
     <p className="module-empty">
       <svg
@@ -20,4 +20,6 @@ export const Empty: React.ComponentType = () => {
       <span className="module-empty-text">暂无数据</span>
     </p>
   );
-};
+}
+
+Component.displayName = 'Empty';

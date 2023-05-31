@@ -1,19 +1,19 @@
 import './styles.scss';
 
 import { Outlet } from 'react-router-dom';
-import RoomList from '../roomList';
+import { Conversations } from './Conversations';
 
-const IndexPage: React.FC = () => {
+export function Component() {
   return (
     <div className="module-index_page">
       <div className="module-index_page-sider">
-        <RoomList />
+        <Conversations />
       </div>
       <div className="module-index_page-content">
         <Outlet />
       </div>
     </div>
   );
-};
+}
 
-export default IndexPage;
+Component.displayName = 'IndexPage';

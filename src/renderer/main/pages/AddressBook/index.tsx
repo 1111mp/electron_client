@@ -1,11 +1,14 @@
 import './styles.scss';
 
-import { useState, useCallback } from 'react';
+import { useState, useMemo } from 'react';
+import { observer } from 'mobx-react';
 import classNames from 'classnames';
+import { Avatar } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 import _AutoSizer from 'react-virtualized/dist/es/AutoSizer';
 import _List from 'react-virtualized/dist/es/List';
 import Header from './header';
-import Row from './row';
+import { useTargetStore } from '../../stores';
 
 import type {
   AutoSizerProps,
@@ -15,6 +18,12 @@ import type {
 
 const AutoSizer = _AutoSizer as unknown as React.FC<AutoSizerProps>;
 const List = _List as unknown as React.FC<ListProps>;
+
+const text = `
+  A dog is a type of domesticated animal.
+  Known for its loyalty and faithfulness,
+  it can be found as a welcome guest in many households across the world.
+`;
 
 export type Props = {};
 
@@ -41,29 +50,36 @@ const list = [
   { name: 'c5' },
 ];
 
-const AddressBook: React.ComponentType<Props> = () => {
+export const Component: React.ComponentType<Props> = observer(() => {
   const [hidden, setHidden] = useState(true);
 
-  const rowRenderer = useCallback(
-    ({ key, index, style }: ListRowProps) => {
-      const row = list[index];
+  const { friends } = useTargetStore('friendsStore');
 
-      return <Row key={key} row={row} style={style} index={index} />;
-    },
-    [list]
+  const rowRenderer = useMemo(
+    () =>
+      ({ key, index, style }: ListRowProps) => {
+        const { remark, account } = friends[index];
+        return (
+          <div className="module-row" key={key} style={style}>
+            <Avatar size={40} icon={<UserOutlined />} />
+            <p className="module-row__name">{remark ? remark : account}</p>
+          </div>
+        );
+      },
+    [friends]
   );
 
   const scrollHandler = (val: boolean) => {
     setHidden(val);
   };
 
-  const getRowHeight = useCallback(
-    ({ index }: { index: number }) => {
-      const row = list.find((item, i: number) => i === index);
-      return row?.type ? 30 : 60;
-    },
-    [list]
-  );
+  // const getRowHeight = useCallback(
+  //   ({ index }: { index: number }) => {
+  //     const row = list.find((item, i: number) => i === index);
+  //     return row?.type ? 30 : 60;
+  //   },
+  //   [list]
+  // );
 
   return (
     <div className="module-addressbook">
@@ -83,10 +99,9 @@ const AddressBook: React.ComponentType<Props> = () => {
                   'ReactVirtualized__List-hidden': hidden,
                 })}
                 height={height}
-                rowCount={list.length}
-                rowHeight={getRowHeight}
+                rowCount={friends.length}
+                rowHeight={60}
                 rowRenderer={rowRenderer}
-                style={{ overflow: 'overlay' }}
                 width={width}
               />
             )}
@@ -95,6 +110,6 @@ const AddressBook: React.ComponentType<Props> = () => {
       </div>
     </div>
   );
-};
+});
 
-export default AddressBook;
+Component.displayName = 'AddressBook';

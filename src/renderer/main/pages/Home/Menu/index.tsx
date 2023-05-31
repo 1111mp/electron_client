@@ -4,8 +4,8 @@ import React from 'react';
 import { Avatar } from 'antd';
 import classNames from 'classnames';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { WindowName, WindowUrl } from 'App/types';
-import { useTargetStore } from '../../stores';
+// import { WindowName, WindowUrl } from 'App/types';
+import { useTargetStore } from 'Renderer/main/stores';
 
 export const Menus: any[] = [
   {
@@ -39,15 +39,15 @@ export const Menu: React.ComponentType = () => {
   };
 
   return (
-    <div className="module-app-menu">
-      <p className="module-app-menu-avatar">
+    <div className="module-menu">
+      <p className="module-menu-avatar">
         <Avatar size={36} />
       </p>
-      <ul className="module-app-menu-container">
+      <ul className="module-menu-container">
         {Menus.map((menu) => (
           <li
             key={menu.path}
-            className={classNames('module-app-menu-container-item', {
+            className={classNames('module-menu-container-item', {
               active: location.pathname.includes(menu.path),
             })}
             onClick={() => menuHandler(menu.path)}
@@ -56,11 +56,7 @@ export const Menu: React.ComponentType = () => {
           </li>
         ))}
       </ul>
-      <p
-        className="module-app-menu-setting"
-        title="Setting"
-        onClick={openSetting}
-      >
+      <p className="module-menu-setting" title="Setting" onClick={openSetting}>
         <span className="iconfont iconsetting"></span>
       </p>
     </div>

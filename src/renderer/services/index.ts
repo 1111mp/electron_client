@@ -22,7 +22,7 @@ axios.interceptors.request.use(
 
     if (!/login|register/.test(config.url)) {
       const { token, userId } = window.Context.getUserInfo();
-      config.headers.token = token; // getToken
+      config.headers.authorization = token; // getToken
       config.headers.userid = userId; // getUserId
     }
 
@@ -42,15 +42,15 @@ axios.interceptors.response.use(
   }
 );
 
-export default function request(module: string = '') {
-  return function <T = any>(
+export function request(module: string = '') {
+  return <T = unknown>(
     api: string,
     config: AxiosRequestConfig = {}
   ): Promise<{
     statusCode: HttpStatus;
     data: T;
-    token?: string;
-  }> {
+    message?: string;
+  }> => {
     return new Promise((resolve, reject) => {
       config.url = `/${module}${api}`;
       config.method = config.method || DEFAULT_API_CONFIG.method;

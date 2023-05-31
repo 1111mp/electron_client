@@ -6,34 +6,30 @@ import {
   createHashRouter,
 } from 'react-router-dom';
 
-import Home from 'Renderer/main/pages/Home';
-import IndexPage from 'Renderer/main/pages/IndexPage';
-import Room from 'Renderer/main/pages/Room';
-import AddressBook from 'Renderer/main/pages/AddressBook';
-import { Empty } from 'App/renderer/components/Empty';
+import { Conversation } from 'Renderer/main/pages/Conversation';
 
 export const routerConfig: RouteObject[] = [
   {
     path: '/',
-    element: <Home />,
+    lazy: () => import('Renderer/main/pages/Home'),
     children: [
       {
         path: 'index',
-        element: <IndexPage />,
+        lazy: () => import('Renderer/main/pages/IndexPage'),
         children: [
           {
             index: true,
-            element: <Empty />,
+            lazy: () => import('Renderer/components/Empty'),
           },
           {
-            path: 'room/:roomId',
-            element: <Room />,
+            path: 'conversation/:id',
+            element: <Conversation />,
           },
         ],
       },
       {
         path: 'addressbook',
-        element: <AddressBook />,
+        lazy: () => import('Renderer/main/pages/AddressBook'),
       },
     ],
   },

@@ -317,7 +317,8 @@ function setFriendsSync(
   friends: DB.UserWithFriendSetting[]
 ): void {
   const db = getInstance();
-
+  console.log(owner);
+  console.log(friends);
   db.transaction(() => {
     for (const friend of friends) {
       const {
@@ -341,7 +342,15 @@ function setFriendsSync(
           $owner, $id, $remark, $astrolabe, $block, $createdAt, $updatedAt
         );
         `
-      ).run({ owner, id, remark, astrolabe, block, createdAt, updatedAt });
+      ).run({
+        owner,
+        id,
+        remark,
+        astrolabe: astrolabe ? 1 : 0,
+        block: block ? 1 : 0,
+        createdAt,
+        updatedAt,
+      });
 
       db.prepare(
         `

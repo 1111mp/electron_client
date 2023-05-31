@@ -29,7 +29,7 @@ const AutoSizer = _AutoSizer as unknown as React.FC<AutoSizerProps>;
 const List = _List as unknown as React.FC<ListProps>;
 const CellMeasurer = _CellMeasurer as unknown as React.FC<CellMeasurerProps>;
 
-const Room: React.FC<IAnyObject> = () => {
+export const Conversation: React.FC<IAnyObject> = () => {
   const [messages, setMessages] = useState<ModuleIM.Core.MessageBasic[]>([
     {
       id: BigInt(33),
@@ -163,9 +163,9 @@ const Room: React.FC<IAnyObject> = () => {
   ]);
   const [visible, setVisible] = useState<boolean>(false);
 
-  const { roomId } = useParams();
+  const { id } = useParams();
 
-  console.log(roomId);
+  console.log(id);
 
   useEffect(() => {
     return () => {
@@ -249,5 +249,3 @@ const Room: React.FC<IAnyObject> = () => {
     </div>
   );
 };
-
-export default Room;

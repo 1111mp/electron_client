@@ -1,9 +1,9 @@
 import './styles.scss';
 
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { Menu } from 'Renderer/main/parts/menu';
+import { Menu } from './Menu';
 
-const Home: React.FC = () => {
+export function Component() {
   const { pathname } = useLocation();
 
   return (
@@ -15,6 +15,6 @@ const Home: React.FC = () => {
       {pathname === '/' ? <Navigate to="/index" /> : null}
     </div>
   );
-};
+}
 
-export default Home;
+Component.displayName = 'Home';

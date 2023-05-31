@@ -40,7 +40,7 @@ function updateToSchemaVersion1(
         avatar STRING DEFAULT NULL,
         email STRING DEFAULT NULL,
         regisTime STRING,
-        updateTime STRING,
+        updateTime STRING
       );
     `);
 
@@ -53,7 +53,7 @@ function updateToSchemaVersion1(
         astrolabe BOOLEAN DEFAULT FALSE,
         block BOOLEAN DEFAULT FALSE,
         createdAt STRING,
-        updatedAt STRING,
+        updatedAt STRING
       );
 
       CREATE INDEX friends_owner ON friends (owner);
@@ -72,7 +72,7 @@ function updateToSchemaVersion1(
         count INTEGER,
         members TEXT,
         createdAt STRING,
-        updatedAt STRING,
+        updatedAt STRING
       );
 
       CREATE INDEX groups_members ON groups (members);
@@ -90,7 +90,7 @@ function updateToSchemaVersion1(
         receiver INTEGER NOT NULL,
         content TEXT,
         timer INTEGER NOT NULL,
-        ext TEXT,
+        ext TEXT
       );
 
       CREATE INDEX messages_msgId ON messages (msgId);
@@ -111,7 +111,7 @@ function updateToSchemaVersion1(
         sender INTEGER NOT NULL,
         receiver INTEGER NOT NULL,
         lastReadAck BIGINT DEFAULT -1,
-        active_at INTEGER,
+        active_at INTEGER
       );
 
       CREATE INDEX conversations_owner ON conversations (owner);
@@ -124,6 +124,8 @@ function updateToSchemaVersion1(
         active_at
       ) WHERE active_at IS NOT NULL;
     `);
+
+    console.log(6666);
 
     db.pragma('user_version = 1');
   })();

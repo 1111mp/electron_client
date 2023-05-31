@@ -1,6 +1,6 @@
-import request, { makeParams } from '../index';
+import { request, makeParams } from '../index';
 
-const fetcher = request('/friends');
+const fetcher = request('friends');
 
 export function addFriend({
   userId,
@@ -18,4 +18,10 @@ export function addFriend({
   });
 
   return fetcher('', { method: 'POST', data });
+}
+
+export function getFriends() {
+  return fetcher<{ count: number; friends: DB.UserWithFriendSetting[] }>('', {
+    method: 'GET',
+  });
 }

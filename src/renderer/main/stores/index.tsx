@@ -3,6 +3,7 @@ import { configure } from 'mobx';
 import Config from 'Renderer/config';
 import ClientStore from './client';
 import UserStore from './user';
+import Friends from './friends';
 
 Config.isDev &&
   import('mobx-logger').then((logger) => {
@@ -22,12 +23,14 @@ configure({
 export type RootStore = {
   clientStore: ClientStore;
   userStore: UserStore;
+  friendsStore: Friends;
 };
 
 export function createStore(): RootStore {
   return {
     clientStore: new ClientStore(),
     userStore: new UserStore(),
+    friendsStore: new Friends(),
   };
 }
 

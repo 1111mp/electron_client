@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs-extra';
 import rimraf from 'rimraf';
 import webpackPaths from '../configs/webpack.paths';
 
