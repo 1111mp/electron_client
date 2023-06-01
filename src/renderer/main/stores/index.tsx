@@ -4,6 +4,7 @@ import Config from 'Renderer/config';
 import ClientStore from './client';
 import UserStore from './user';
 import Friends from './friends';
+import Conversations from './conversations';
 
 Config.isDev &&
   import('mobx-logger').then((logger) => {
@@ -24,6 +25,7 @@ export type RootStore = {
   clientStore: ClientStore;
   userStore: UserStore;
   friendsStore: Friends;
+  conversationStore: Conversations;
 };
 
 export function createStore(): RootStore {
@@ -31,6 +33,7 @@ export function createStore(): RootStore {
     clientStore: new ClientStore(),
     userStore: new UserStore(),
     friendsStore: new Friends(),
+    conversationStore: new Conversations(),
   };
 }
 

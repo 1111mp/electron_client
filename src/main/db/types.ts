@@ -92,8 +92,9 @@ export type DataInterface = {
       active_at?: number;
     }
   ) => Promise<void>;
+  updateConvActiveAtWithValue: (id: string, active_at: number) => Promise<void>;
   updateConversationActiveAt: (id: string) => Promise<void>;
-  updateConversationActiveAtSync: (id: string) => void;
+  updateConversationActiveAtSync: (id: string, active_at: number) => void;
   updateConversationLastRead: (
     id: string,
     lastReadAck: bigint

@@ -135,6 +135,8 @@ export const I18nAndTheme: React.ComponentType<I18nProps> = ({
               : antdTheme.darkAlgorithm,
           token: {
             colorPrimary: '#58acec',
+            colorLink: '#58acec',
+            colorLinkActive: '#10ACED',
           },
         }}
         locale={localeForAntd}

@@ -12,7 +12,7 @@ import { WindowName, WindowUrl } from 'App/types';
 
 import type { MenuProps } from 'antd';
 
-const Header: React.FC = memo(() => {
+export const Header: React.FC = memo(() => {
   const addFriend: MenuProps['onClick'] = ({ key }) => {
     if (key === 'friend') {
       window.Context.windowOpen({
@@ -55,5 +55,3 @@ const Header: React.FC = memo(() => {
     </div>
   );
 });
-
-export default Header;

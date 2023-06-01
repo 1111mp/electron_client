@@ -64,6 +64,7 @@ const dataInterface: ServerInterface = {
   getLastConversationMessage,
   getLastConversationMessageSync,
   createConversation,
+  updateConvActiveAtWithValue,
   updateConversationActiveAt,
   updateConversationActiveAtSync,
   updateConversationLastRead,
@@ -1077,7 +1078,6 @@ async function createConversation(
   }
 ): Promise<void> {
   const db = getInstance();
-  const columns = Object.keys(conversation);
 
   if (!conversation['id']) {
     conversation['id'] = uuidv4();
@@ -1086,6 +1086,8 @@ async function createConversation(
   if (!conversation['active_at']) {
     conversation['active_at'] = Date.now();
   }
+
+  const columns = Object.keys(conversation);
 
   db.prepare(
     `INSERT INTO conversations (
@@ -1097,12 +1099,22 @@ async function createConversation(
 }
 
 /**
+ * @description: Update conversation active_at with default value (async).
+ * @param id string
+ * @param active_at number
+ * @return Promise<void>
+ */
+async function updateConvActiveAtWithValue(id: string, active_at: number) {
+  updateConversationActiveAtSync(id, active_at);
+}
+
+/**
  * @description: Update conversation active_at (async).
  * @param id string
  * @return Promise<void>
  */
 async function updateConversationActiveAt(id: string): Promise<void> {
-  updateConversationActiveAtSync(id);
+  updateConversationActiveAtSync(id, Date.now());
 }
 
 /**
@@ -1110,7 +1122,7 @@ async function updateConversationActiveAt(id: string): Promise<void> {
  * @param id string
  * @return void
  */
-function updateConversationActiveAtSync(id: string): void {
+function updateConversationActiveAtSync(id: string, active_at: number): void {
   const db = getInstance();
 
   db.prepare(
@@ -1121,7 +1133,7 @@ function updateConversationActiveAtSync(id: string): void {
     `
   ).run({
     id,
-    active_at: Date.now(),
+    active_at,
   });
 }
 
@@ -1246,7 +1258,7 @@ function getConversationsWithAllSync(owner: number): Array<
 
     const result = conversations.map((conversation) => {
       // get last message & sender info(user or group)
-      const { groupId } = conversation;
+      const { groupId, sender } = conversation;
       const lastMessage = db
         .prepare(
           `
@@ -1258,7 +1270,7 @@ function getConversationsWithAllSync(owner: number): Array<
         )
         .get({
           owner,
-          sender: conversation.sender,
+          sender,
         }) as ModuleIM.Core.MessageBasic;
 
       const info = groupId
@@ -1292,7 +1304,7 @@ function getConversationsWithAllSync(owner: number): Array<
             )
             .get({
               owner,
-              sender: conversation.sender,
+              sender,
             }) as DB.UserWithFriendSetting);
 
       return { ...conversation, lastMessage, info };

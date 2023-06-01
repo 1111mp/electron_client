@@ -7,7 +7,9 @@ import { Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import _AutoSizer from 'react-virtualized/dist/es/AutoSizer';
 import _List from 'react-virtualized/dist/es/List';
-import Header from './header';
+import { Header } from './Header';
+import { Concat } from './Concat';
+
 import { useTargetStore } from '../../stores';
 
 import type {
@@ -18,14 +20,6 @@ import type {
 
 const AutoSizer = _AutoSizer as unknown as React.FC<AutoSizerProps>;
 const List = _List as unknown as React.FC<ListProps>;
-
-const text = `
-  A dog is a type of domesticated animal.
-  Known for its loyalty and faithfulness,
-  it can be found as a welcome guest in many households across the world.
-`;
-
-export type Props = {};
 
 const list = [
   { type: 'header', title: 'A' },
@@ -50,24 +44,38 @@ const list = [
   { name: 'c5' },
 ];
 
-export const Component: React.ComponentType<Props> = observer(() => {
-  const [hidden, setHidden] = useState(true);
+export const Component: React.FC = observer(() => {
+  const [hidden, setHidden] = useState<boolean>(true);
+  const [userId, setUserId] = useState<number>();
 
   const { friends } = useTargetStore('friendsStore');
 
   const rowRenderer = useMemo(
     () =>
       ({ key, index, style }: ListRowProps) => {
-        const { remark, account } = friends[index];
+        const { id, remark, account } = friends[index];
         return (
-          <div className="module-row" key={key} style={style}>
+          <div
+            className={classNames('module-row', {
+              'module-row__active': id === userId,
+            })}
+            key={key}
+            style={style}
+            onClick={() => {
+              setUserId(id);
+            }}
+          >
             <Avatar size={40} icon={<UserOutlined />} />
             <p className="module-row__name">{remark ? remark : account}</p>
           </div>
         );
       },
-    [friends]
+    [friends, userId]
   );
+
+  const info = useMemo(() => {
+    return friends.find(({ id }) => id === userId);
+  }, [friends, userId]);
 
   const scrollHandler = (val: boolean) => {
     setHidden(val);
@@ -107,6 +115,10 @@ export const Component: React.ComponentType<Props> = observer(() => {
             )}
           </AutoSizer>
         </div>
+      </div>
+      <div className="module-addressbook-container">
+        <p className="module-addressbook-placeholder"></p>
+        <Concat info={info} />
       </div>
     </div>
   );

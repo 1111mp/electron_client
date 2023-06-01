@@ -70,16 +70,22 @@
       }
     }
 
-    &-active {
-      background: linear-gradient(to right, $color-gray-05, $color-white);
+    &__active {
+      @include light-theme() {
+        background: linear-gradient(to right, $color-gray-05, $color-white);
+      }
+
+      @include dark-theme() {
+        background: linear-gradient(to right, $color-gray-65, $color-gray-80);
+      }
     }
   }
 
   &-info {
-    @include flex($direction: column, $justify: center);
+    @include flex($direction: column, $justify: space-between);
     position: relative;
     flex: 1;
-    // height: 100%;
+    height: 40px;
     margin: 0;
     margin-left: 12px;
     overflow: hidden;
@@ -90,7 +96,6 @@
 
     &-name {
       font-size: 14px;
-      line-height: 28px;
       font-weight: bold;
 
       @include light-theme() {
@@ -103,7 +108,7 @@
     }
 
     &-desc {
-      max-width: 86%;
+      max-width: 96%;
       @include ellipse;
       white-space: nowrap;
       // display: -webkit-box;

@@ -2,7 +2,17 @@ import { contextBridge, ipcRenderer } from 'electron';
 import sqlClient from '../db/client';
 import { Theme, WindowName } from '../../types';
 
-const { getUserInfo, setUserTheme, setFriends, getFriends } = sqlClient;
+const {
+  getUserInfo,
+  setUserTheme,
+  setFriends,
+  getFriends,
+  getConversations,
+  getConversationsWithAll,
+  createConversation,
+  updateConversationActiveAt,
+  updateConvActiveAtWithValue,
+} = sqlClient;
 
 (async function () {
   try {
@@ -56,6 +66,11 @@ const { getUserInfo, setUserTheme, setFriends, getFriends } = sqlClient;
         setUserTheme,
         setFriends,
         getFriends,
+        getConversations,
+        getConversationsWithAll,
+        createConversation,
+        updateConversationActiveAt,
+        updateConvActiveAtWithValue,
       },
     });
   } catch (err) {

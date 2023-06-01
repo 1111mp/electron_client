@@ -1,0 +1,21 @@
+.module-concat {
+  width: 360px;
+  margin: 24px auto 0;
+
+  &-header {
+    @include flex();
+  }
+
+  &-footer {
+    margin-top: 24px;
+    @include flex($justify: space-around, $align: center);
+  }
+
+  &-btn {
+    @include flex($direction: column, $align: center);
+
+    .ant-btn-icon {
+      margin-inline-end: 0 !important;
+    }
+  }
+}

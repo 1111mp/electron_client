@@ -13,13 +13,14 @@ export default class Friends {
   }
 
   async initial() {
-    this.friends = await window.Context.sqlClient.getFriends(10007);
+    const { userId } = window.Context.getUserInfo();
+    this.friends = await window.Context.sqlClient.getFriends(userId);
 
     if (!this.friends || !this.friends.length)
       getFriends()
         .then((res) => {
           if (res.statusCode === HttpStatus.OK) {
-            window.Context.sqlClient.setFriends(10007, res.data.friends);
+            window.Context.sqlClient.setFriends(userId, res.data.friends);
             this.friends = res.data.friends;
           }
         })
