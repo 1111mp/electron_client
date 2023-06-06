@@ -1,15 +1,24 @@
 import { makeAutoObservable } from 'mobx';
+import { getIMSocketInstance } from 'Renderer/socket';
+import Config from 'Renderer/config';
 
 export default class Conversations {
-  conversations: Array<
-    ModuleIM.Core.ConversationType & {
-      info: DB.UserWithFriendSetting | ModuleIM.Core.GroupBasic;
-    } & {
-      lastMessage?: ModuleIM.Core.MessageBasic;
-    }
-  > = [];
+  private socket;
+  conversations: Array<ModuleIM.Core.ConversationWithAllType> = [];
+  activedId: string = '';
 
   constructor() {
+    const { userId, token } = window.Context.getUserInfo();
+    this.socket = getIMSocketInstance(Config.imSocketUrl, {
+      optionsForSocket: {
+        path: '/socket/v1/IM/',
+        // transports: ['websocket'],
+        // https://socket.io/zh-CN/docs/v4/client-options/#extraheaders
+        extraHeaders: { userid: `${userId}`, authorization: token },
+      },
+      onMessage: this.onMessage,
+    });
+
     makeAutoObservable(this, {}, { autoBind: true });
 
     this.initial();
@@ -54,5 +63,30 @@ export default class Conversations {
 
     await window.Context.sqlClient.createConversation(conversation);
     this.initial();
+  }
+
+  getActivedConversation(sender: number) {
+    return this.conversations.find(
+      (conversation) => sender === conversation.sender
+    );
+  }
+
+  async updateLastRead(id: string, lastRead: bigint) {
+    const index = this.conversations.findIndex(
+      ({ id: conversationId }) => conversationId === id
+    );
+    this.conversations[index].count = 0;
+
+    window.Context.sqlClient.updateConversationLastRead(id, lastRead);
+  }
+
+  async sendMesssage(msg: ModuleIM.Core.MessageBasic) {
+    return this.socket.sendMessage(msg);
+  }
+
+  // receive message handler
+  onMessage(msg: ModuleIM.Core.MessageBasic) {
+    console.log(msg);
+    const { id, msgId, sender, senderInfo, type, timer } = msg;
   }
 }

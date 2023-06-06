@@ -23,9 +23,7 @@ export function getNotifyFromProto(buffer: Uint8Array) {
   return Notify.decode(buffer).toJSON() as ModuleIM.Core.Notify;
 }
 
-export function setMessageToProto(
-  msg: Omit<ModuleIM.Core.MessageBasic, 'senderInfo'>
-) {
+export function setMessageToProto(msg: ModuleIM.Core.MessageBasic) {
   const message = new MessageForSender(msg);
   return MessageForSender.encode(message).finish();
 }

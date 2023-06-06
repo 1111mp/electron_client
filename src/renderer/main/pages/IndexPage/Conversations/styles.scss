@@ -117,7 +117,7 @@
       word-break: keep-all;
 
       @include light-theme() {
-        color: $color-gray-60;
+        color: #aeaeae;
       }
 
       @include dark-theme() {
@@ -127,7 +127,8 @@
   }
 
   &-extra {
-    @include flex($direction: column, $justify: center);
+    height: 40px;
+    @include flex($direction: column, $justify: space-between);
     margin: 0;
 
     &-timer {
@@ -144,7 +145,6 @@
 
     &-count {
       align-self: flex-end;
-      margin-top: 4px;
 
       .ant-badge-count {
         min-width: 18px;

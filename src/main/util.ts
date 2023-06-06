@@ -2,33 +2,28 @@
 import { URL } from 'url';
 import path from 'path';
 
-export let resolveHtmlPath: ({
+export function resolveHtmlPath({
   html,
+  hash,
   search,
 }: {
   html: string;
-  url?: string;
+  hash?: string;
   search?: Windows.SearchType;
-}) => string;
-
-if (process.env.NODE_ENV === 'development') {
-  const port = process.env.PORT || 1212;
-  resolveHtmlPath = ({ html, url: hash, search }) => {
+}) {
+  if (process.env.NODE_ENV === 'development') {
+    const port = process.env.PORT || 1212;
     const url = new URL(`http://localhost:${port}`);
+
     url.pathname = html;
-    if (hash !== undefined) {
-      url.hash = hash;
-    }
-    if (search !== undefined) {
-      url.search = new URLSearchParams(search).toString();
-    }
+    hash && (url.hash = hash);
+    search && (url.search = new URLSearchParams(search).toString());
+
     return url.href;
-  };
-} else {
-  resolveHtmlPath = ({ html, url, search }) => {
-    const searchStr = new URLSearchParams(search).toString();
-    return `file://${path.resolve(__dirname, '../renderer/', html)}${
-      url ? `#${url}?` : '?'
-    }${searchStr}`;
-  };
+  }
+
+  const searchStr = new URLSearchParams(search).toString();
+  return `file://${path.resolve(__dirname, '../renderer/', html)}${
+    hash ? `#${hash}?` : '?'
+  }${searchStr}`;
 }

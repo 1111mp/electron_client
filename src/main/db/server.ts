@@ -30,15 +30,15 @@ const dataInterface: ServerInterface = {
 
   // friends
   setFriends,
-  setFriendsSync,
+  // setFriendsSync,
   getFriend,
-  getFriendSync,
+  // getFriendSync,
   getFriends,
-  getFriendsSync,
+  // getFriendsSync,
   updateFriendInfo,
-  updateFriendInfoSync,
+  // updateFriendInfoSync,
   removeFriends,
-  removeFriendsSync,
+  // removeFriendsSync,
 
   // groups
   setGroups,
@@ -46,7 +46,7 @@ const dataInterface: ServerInterface = {
   setGroup,
   setGroupIncludeMembers,
   getGroup,
-  getGroupSync,
+  // getGroupSync,
   getGroupWithMembers,
   getMembersByGroupId,
   getGroups,
@@ -62,21 +62,22 @@ const dataInterface: ServerInterface = {
 
   // conversations
   getLastConversationMessage,
-  getLastConversationMessageSync,
+  // getLastConversationMessageSync,
   createConversation,
   updateConvActiveAtWithValue,
   updateConversationActiveAt,
-  updateConversationActiveAtSync,
+  // updateConversationActiveAtSync,
   updateConversationLastRead,
-  updateConversationLastReadSync,
+  // updateConversationLastReadSync,
   removeConversationById,
   removeConversations,
-  removeConversationsSync,
+  // removeConversationsSync,
   getConversations,
   getConversationsWithAll,
-  getConversationsWithAllSync,
+  // getConversationsWithAllSync,
   getTotalUnreadForConversation,
-  getTotalUnreadForConversationSync,
+  // getTotalUnreadForConversationSync,
+  getTotalUnreadCount,
 
   // Server-only
 
@@ -965,15 +966,15 @@ async function getMessagesBySender({
         Message.content,
         Message.timer,
         Message.ext,
-        Info.id AS senderInfo.id,
-        Info.account AS senderInfo.account,
-        Info.avatar AS senderInfo.avatar,
-        Info.email AS senderInfo.email,
-        Info.regisTime AS senderInfo.regisTime,
-        Info.updateTime AS senderInfo.updateTime
+        Info.id AS 'senderInfo.id',
+        Info.account AS 'senderInfo.account',
+        Info.avatar AS 'senderInfo.avatar',
+        Info.email AS 'senderInfo.email',
+        Info.regisTime AS 'senderInfo.regisTime',
+        Info.updateTime AS 'senderInfo.updateTime'
       FROM messages AS Message LEFT OUTER JOIN userInfos AS Info ON Message.sender = Info.id
       WHERE Message.owner = $owner AND Message.sender = $sender
-      ORDER BY Message.id DESC
+      ORDER BY Message.timer DESC
       LIMIT $limit OFFSET $offset;
       `
     )
@@ -1053,7 +1054,7 @@ function getLastConversationMessageSync(
       `
       SELECT * FROM messages WHERE
         owner = $owner AND sender = $sender
-      ORDER BY id DESC
+      ORDER BY timer DESC
       LIMIT 1;
       `
     )
@@ -1163,7 +1164,7 @@ function updateConversationLastReadSync(id: string, lastReadAck: bigint) {
     `
     UPDATE conversations SET
       lastReadAck = $lastReadAck
-    WHERE AND id = $id;
+    WHERE id = $id;
     `
   ).run({ id, lastReadAck });
 }
@@ -1225,13 +1226,9 @@ async function getConversations(
  * @param owner number
  * @return Promise<>
  */
-async function getConversationsWithAll(owner: number): Promise<
-  Array<
-    ModuleIM.Core.ConversationType & {
-      info: ModuleIM.Core.GroupBasic | DB.UserWithFriendSetting;
-    } & { lastMessage: ModuleIM.Core.MessageBasic }
-  >
-> {
+async function getConversationsWithAll(
+  owner: number
+): Promise<Array<ModuleIM.Core.ConversationWithAllType>> {
   return getConversationsWithAllSync(owner);
 }
 
@@ -1240,11 +1237,9 @@ async function getConversationsWithAll(owner: number): Promise<
  * @param owner number
  * @return <>
  */
-function getConversationsWithAllSync(owner: number): Array<
-  ModuleIM.Core.ConversationType & {
-    info: ModuleIM.Core.GroupBasic | DB.UserWithFriendSetting;
-  } & { lastMessage: ModuleIM.Core.MessageBasic }
-> {
+function getConversationsWithAllSync(
+  owner: number
+): Array<ModuleIM.Core.ConversationWithAllType> {
   const db = getInstance();
 
   return db.transaction(() => {
@@ -1258,13 +1253,13 @@ function getConversationsWithAllSync(owner: number): Array<
 
     const result = conversations.map((conversation) => {
       // get last message & sender info(user or group)
-      const { groupId, sender } = conversation;
+      const { groupId, sender, lastReadAck } = conversation;
       const lastMessage = db
         .prepare(
           `
           SELECT * FROM messages WHERE
             owner = $owner AND sender = $sender
-          ORDER BY id DESC
+          ORDER BY timer DESC
           LIMIT 1;
           `
         )
@@ -1272,6 +1267,17 @@ function getConversationsWithAllSync(owner: number): Array<
           owner,
           sender,
         }) as ModuleIM.Core.MessageBasic;
+
+      const count = db
+        .prepare(
+          `
+          SELECT count(1)
+          FROM messages
+          WHERE owner = $owner AND sender = $sender AND id != NULL AND id > $lastReadAck
+          `
+        )
+        .pluck()
+        .get({ owner, sender, lastReadAck }) as number;
 
       const info = groupId
         ? (db
@@ -1307,7 +1313,7 @@ function getConversationsWithAllSync(owner: number): Array<
               sender,
             }) as DB.UserWithFriendSetting);
 
-      return { ...conversation, lastMessage, info };
+      return { ...conversation, count, lastMessage, info };
     });
 
     return result;
@@ -1334,7 +1340,7 @@ async function getTotalUnreadForConversation(
  * @description: Get total unread messages count for conversation (sync).
  * @param owner number
  * @param options <{ sender: number; lastReadAck: bigint; }>
- * @return Promise<void>
+ * @return number
  */
 function getTotalUnreadForConversationSync(
   owner: number,
@@ -1352,11 +1358,38 @@ function getTotalUnreadForConversationSync(
       `
       SELECT count(1)
       FROM messages
-      WHERE owner = $owner AND sender = $sender AND id > $lastReadAck
+      WHERE owner = $owner AND sender = $sender AND id != NULL AND id > $lastReadAck
       `
     )
     .pluck()
     .get({ owner, sender, lastReadAck }) as number;
+
+  return count;
+}
+
+/**
+ * @description: Get user total unread messages's count.
+ * @param options <{ owner: number; lastReadAck: bigint; }>
+ * @return Promise<number>
+ */
+async function getTotalUnreadCount({
+  owner,
+  lastReadAck,
+}: {
+  owner: number;
+  lastReadAck: bigint;
+}) {
+  const db = getInstance();
+  const count = db
+    .prepare(
+      `
+    SELECT count(1)
+    FROM messages
+    WHERE owner = $owner AND id != NULL AND id > $lastReadAck
+    `
+    )
+    .pluck()
+    .get({ owner, lastReadAck }) as number;
 
   return count;
 }

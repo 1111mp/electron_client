@@ -194,9 +194,11 @@ export class MentionCompletion {
   }
 
   render() {
+    // this.options.setMentionPickerElement(this.results.length ? true : null);
+    // return;
     const { results: memberResults, index: memberResultsIndex } = this;
 
-    if (memberResults.length === 0) {
+    if (!memberResults.length) {
       this.options.setMentionPickerElement(null);
       return;
     }

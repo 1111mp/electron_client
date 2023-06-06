@@ -81,23 +81,25 @@ function updateToSchemaVersion1(
     // table messages
     db.exec(`
       CREATE TABLE messages (
-        id BIGINT PRIMARY KEY DESC,
-        msgId STRING NOT NULL,
+        msgId STRING PRIMARY KEY,
+        id BIGINT DEFAULT NULL,
         owner INTEGER NOT NULL,
         type STRING NOT NULL,
         groupId INTEGER DEFAULT NULL,
         sender INTEGER NOT NULL,
         receiver INTEGER NOT NULL,
         content TEXT,
-        timer INTEGER NOT NULL,
+        timer INTEGER NOT NULL DESC,
         ext TEXT
       );
 
-      CREATE INDEX messages_msgId ON messages (msgId);
+      CREATE INDEX messages_id ON messages (id);
 
       CREATE INDEX messages_owner ON messages (owner);
 
       CREATE INDEX messages_sender ON messages (sender);
+
+      CREATE INDEX messages_receiver ON messages (receiver);
 
       CREATE INDEX messages_timer ON messages (timer);
     `);
@@ -124,8 +126,6 @@ function updateToSchemaVersion1(
         active_at
       ) WHERE active_at IS NOT NULL;
     `);
-
-    console.log(6666);
 
     db.pragma('user_version = 1');
   })();

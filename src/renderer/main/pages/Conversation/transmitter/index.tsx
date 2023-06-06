@@ -8,10 +8,13 @@ import {
   Props as EmojiButtonProps,
 } from 'Components/EmojiWidgets/EmojiButton';
 import { EmojiPickDataType } from 'Components/EmojiWidgets/EmojiPicker';
+import type { BodyRangeType } from 'App/renderer/components/Quill/utils';
 
-type Props = {};
+export type Props = {
+  onSend: (content: string, mentions: BodyRangeType[]) => void;
+};
 
-export const Transmitter: React.ComponentType<Props> = memo(({}) => {
+export const Transmitter: React.ComponentType<Props> = memo(({ onSend }) => {
   // const editorRef = React.useRef<Editor>(null);
   const inputApiRef = useRef<InputApi | undefined>();
 
@@ -51,10 +54,7 @@ export const Transmitter: React.ComponentType<Props> = memo(({}) => {
           // draftBodyRanges={draftBodyRanges}
           // startingText={''}
           // onPickEmoji={onPickEmoji}
-          onSubmit={(content, mentions) => {
-            console.log(content);
-            console.log(mentions);
-          }}
+          onSubmit={onSend}
         />
       </div>
     </div>

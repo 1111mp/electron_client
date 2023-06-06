@@ -34,7 +34,6 @@ export class MemberRepository {
   }
 
   getMembers(omit?: ConversationType): Array<ConversationType> {
-    console.log(this.members);
     if (omit) {
       return this.members.filter(({ id }) => id !== omit.id);
     }

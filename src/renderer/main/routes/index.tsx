@@ -6,7 +6,10 @@ import {
   createHashRouter,
 } from 'react-router-dom';
 
-import { Conversation } from 'Renderer/main/pages/Conversation';
+import {
+  Conversation,
+  loader as ConversationLoader,
+} from 'Renderer/main/pages/Conversation';
 
 export const routerConfig: RouteObject[] = [
   {
@@ -23,6 +26,7 @@ export const routerConfig: RouteObject[] = [
           },
           {
             path: 'conversation/:id',
+            loader: ConversationLoader,
             element: <Conversation />,
           },
         ],

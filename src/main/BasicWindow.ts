@@ -71,7 +71,7 @@ export function setupForNewWindow(
     window.loadURL(
       resolveHtmlPath({
         html: 'window.html',
-        url,
+        hash: url,
         search: { ...getBaseSearch(), ...search },
       })
     );

@@ -12,6 +12,8 @@ const {
   createConversation,
   updateConversationActiveAt,
   updateConvActiveAtWithValue,
+  updateConversationLastRead,
+  getMessagesBySender,
 } = sqlClient;
 
 (async function () {
@@ -71,6 +73,8 @@ const {
         createConversation,
         updateConversationActiveAt,
         updateConvActiveAtWithValue,
+        updateConversationLastRead,
+        getMessagesBySender,
       },
     });
   } catch (err) {

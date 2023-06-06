@@ -16,21 +16,21 @@ export type DataInterface = {
     owner: number,
     friends: DB.UserWithFriendSetting[]
   ) => Promise<void>;
-  setFriendsSync: (owner: number, friends: DB.UserWithFriendSetting[]) => void;
+  // setFriendsSync: (owner: number, friends: DB.UserWithFriendSetting[]) => void;
   getFriend: (owner: number, id: number) => Promise<DB.UserWithFriendSetting>;
-  getFriendSync: (owner: number, id: number) => DB.UserWithFriendSetting;
+  // getFriendSync: (owner: number, id: number) => DB.UserWithFriendSetting;
   getFriends: (owner: number) => Promise<DB.UserWithFriendSetting[]>;
-  getFriendsSync: (owner: number) => DB.UserWithFriendSetting[];
+  // getFriendsSync: (owner: number) => DB.UserWithFriendSetting[];
   updateFriendInfo: (
     owner: number,
     info: DB.FriendSetting & { id: number }
   ) => Promise<void>;
-  updateFriendInfoSync: (
-    owner: number,
-    info: DB.FriendSetting & { id: number }
-  ) => void;
+  // updateFriendInfoSync: (
+  //   owner: number,
+  //   info: DB.FriendSetting & { id: number }
+  // ) => void;
   removeFriends: (owner: number, id: number | number[]) => Promise<void>;
-  removeFriendsSync: (owner: number, id: number | number[]) => void;
+  // removeFriendsSync: (owner: number, id: number | number[]) => void;
 
   // groups
   setGroups: (groups: ModuleIM.Core.GroupBasic[]) => Promise<void>;
@@ -42,7 +42,7 @@ export type DataInterface = {
     group: ModuleIM.Core.GroupBasic & { members: DB.UserInfo[] }
   ) => Promise<void>;
   getGroup: (groupId: number) => Promise<ModuleIM.Core.GroupBasic>;
-  getGroupSync: (groupId: number) => ModuleIM.Core.GroupBasic;
+  // getGroupSync: (groupId: number) => ModuleIM.Core.GroupBasic;
   getGroupWithMembers: (
     groupId: number
   ) => Promise<
@@ -78,10 +78,10 @@ export type DataInterface = {
     owner: number,
     sender: number
   ) => Promise<ModuleIM.Core.MessageBasic>;
-  getLastConversationMessageSync: (
-    owner: number,
-    sender: number
-  ) => ModuleIM.Core.MessageBasic;
+  // getLastConversationMessageSync: (
+  //   owner: number,
+  //   sender: number
+  // ) => ModuleIM.Core.MessageBasic;
   createConversation: (
     conversation: Omit<
       ModuleIM.Core.ConversationType,
@@ -94,30 +94,24 @@ export type DataInterface = {
   ) => Promise<void>;
   updateConvActiveAtWithValue: (id: string, active_at: number) => Promise<void>;
   updateConversationActiveAt: (id: string) => Promise<void>;
-  updateConversationActiveAtSync: (id: string, active_at: number) => void;
+  // updateConversationActiveAtSync: (id: string, active_at: number) => void;
   updateConversationLastRead: (
     id: string,
     lastReadAck: bigint
   ) => Promise<void>;
-  updateConversationLastReadSync: (id: string, lastReadAck: bigint) => void;
+  // updateConversationLastReadSync: (id: string, lastReadAck: bigint) => void;
   removeConversationById: (id: string) => Promise<void>;
   removeConversations: (owner: number) => Promise<void>;
-  removeConversationsSync: (owner: number) => void;
+  // removeConversationsSync: (owner: number) => void;
   getConversations: (
     owner: number
   ) => Promise<ModuleIM.Core.ConversationType[]>;
-  getConversationsWithAll: (owner: number) => Promise<
-    Array<
-      ModuleIM.Core.ConversationType & {
-        info: ModuleIM.Core.GroupBasic | DB.UserWithFriendSetting;
-      } & { lastMessage: ModuleIM.Core.MessageBasic }
-    >
-  >;
-  getConversationsWithAllSync: (owner: number) => Array<
-    ModuleIM.Core.ConversationType & {
-      info: ModuleIM.Core.GroupBasic | DB.UserWithFriendSetting;
-    } & { lastMessage: ModuleIM.Core.MessageBasic }
-  >;
+  getConversationsWithAll: (
+    owner: number
+  ) => Promise<Array<ModuleIM.Core.ConversationWithAllType>>;
+  // getConversationsWithAllSync: (
+  //   owner: number
+  // ) => Array<ModuleIM.Core.ConversationWithAllType>;
   getTotalUnreadForConversation: (
     owner: number,
     options: {
@@ -125,13 +119,17 @@ export type DataInterface = {
       lastReadAck: bigint;
     }
   ) => Promise<number>;
-  getTotalUnreadForConversationSync: (
-    owner: number,
-    options: {
-      sender: number;
-      lastReadAck: bigint;
-    }
-  ) => number;
+  // getTotalUnreadForConversationSync: (
+  //   owner: number,
+  //   options: {
+  //     sender: number;
+  //     lastReadAck: bigint;
+  //   }
+  // ) => number;
+  getTotalUnreadCount: (options: {
+    owner: number;
+    lastReadAck: bigint;
+  }) => Promise<number>;
 };
 
 export type ClientInterface = DataInterface & {

@@ -4,8 +4,7 @@ import React from 'react';
 import { Avatar } from 'antd';
 import classNames from 'classnames';
 import { useNavigate, useLocation } from 'react-router-dom';
-// import { WindowName, WindowUrl } from 'App/types';
-import { useTargetStore } from 'Renderer/main/stores';
+import { WindowName, WindowUrl } from 'App/types';
 
 export const Menus: any[] = [
   {
@@ -24,14 +23,11 @@ export const Menu: React.ComponentType = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { sendMesssage } = useTargetStore('clientStore');
-
   const openSetting = () => {
-    // window.Context.windowOpen({
-    //   name: WindowName.Setting,
-    //   url: WindowUrl.Setting,
-    // });
-    sendMesssage();
+    window.Context.windowOpen({
+      name: WindowName.Setting,
+      url: WindowUrl.Setting,
+    });
   };
 
   const menuHandler = (path: string) => {

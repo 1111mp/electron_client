@@ -1,7 +1,6 @@
 import { makeAutoObservable } from 'mobx';
-import Config from 'Renderer/config';
-import { v4 as uuidv4 } from 'uuid';
 import { getIMSocketInstance } from 'Renderer/socket';
+import Config from 'Renderer/config';
 import { ModuleIMCommon } from 'App/renderer/socket/enums';
 // https://stackoverflow.com/questions/61654633/mobx-react-console-warning-related-observer
 
@@ -28,21 +27,11 @@ export default class ClientStore {
     this.isMaximized = flag;
   };
 
-  public sendMesssage() {
-    const { userId } = window.Context.getUserInfo();
-    this.socket
-      .sendMessage({
-        msgId: uuidv4(),
-        type: ModuleIMCommon.MsgType.Text,
-        sender: userId,
-        receiver: 10009, // userId or groupId
-        timer: Date.now(),
-        content: '在每一个需要使用变量的component组件中都需要单独烦，非常的不人性化。',
-      })
-      .then((res) => {
-        console.log(res);
-      });
+  public async sendMesssage(msg: ModuleIM.Core.MessageBasic) {
+    return this.socket.sendMessage(msg);
   }
+
+  public sendMessageForGroup() {}
 
   onMessage(msg: ModuleIM.Core.MessageBasic) {
     console.log(msg);

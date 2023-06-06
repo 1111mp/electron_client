@@ -13,7 +13,7 @@ declare global {
         msgId: string;
         type: ModuleIMCommon.MsgType;
         sender: number;
-        senderInfo: DB.SenderInfo;
+        senderInfo?: DB.SenderInfo;
         groupId?: number;
         receiver: number; // userId or groupId
         content: string;
@@ -60,6 +60,11 @@ declare global {
         lastReadAck: bigint;
         active_at: number;
       };
+
+      type ConversationWithAllType = ModuleIM.Core.ConversationType & {
+        count: number;
+        info: ModuleIM.Core.GroupBasic | DB.UserWithFriendSetting;
+      } & { lastMessage: ModuleIM.Core.MessageBasic };
     }
   }
 }
