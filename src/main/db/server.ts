@@ -942,13 +942,13 @@ async function setMessages(
  * @return Promise<ModuleIM.Core.MessageBasic[]>
  */
 async function getMessagesBySender({
-  owner,
-  sender,
+  userId,
+  receiver,
   pageNum = 1,
   pageSize = 20,
 }: {
-  owner: number;
-  sender: number;
+  userId: number;
+  receiver: number;
   pageNum: number;
   pageSize: number;
 }): Promise<ModuleIM.Core.MessageBasic[]> {
@@ -973,12 +973,18 @@ async function getMessagesBySender({
         Info.regisTime AS 'senderInfo.regisTime',
         Info.updateTime AS 'senderInfo.updateTime'
       FROM messages AS Message LEFT OUTER JOIN userInfos AS Info ON Message.sender = Info.id
-      WHERE Message.owner = $owner AND Message.sender = $sender
+      WHERE Message.owner = $userId AND
+        ((Message.sender = $userId AND Message.receiver = $receiver) OR (Message.sender = $receiver AND Message.receiver = $userId))
       ORDER BY Message.timer DESC
       LIMIT $limit OFFSET $offset;
       `
     )
-    .all({ owner, sender, limit: pageSize, offset: (pageNum - 1) * pageSize });
+    .all({
+      userId,
+      receiver,
+      limit: pageSize,
+      offset: (pageNum - 1) * pageSize,
+    });
 
   return messages as Array<ModuleIM.Core.MessageBasic>;
 }
@@ -1383,10 +1389,10 @@ async function getTotalUnreadCount({
   const count = db
     .prepare(
       `
-    SELECT count(1)
-    FROM messages
-    WHERE owner = $owner AND id != NULL AND id > $lastReadAck
-    `
+      SELECT count(1)
+      FROM messages
+      WHERE owner = $owner AND id != NULL AND id > $lastReadAck
+      `
     )
     .pluck()
     .get({ owner, lastReadAck }) as number;

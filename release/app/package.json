@@ -16,6 +16,6 @@
   },
   "dependencies": {
     "better-sqlite3-multiple-ciphers": "^8.4.0",
-    "emoji-datasource-apple": "^15.0.0"
+    "emoji-datasource-apple": "^15.0.1"
   }
 }

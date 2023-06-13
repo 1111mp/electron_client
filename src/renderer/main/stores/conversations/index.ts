@@ -4,11 +4,12 @@ import Config from 'Renderer/config';
 
 export default class Conversations {
   private socket;
+  private userId: number;
   conversations: Array<ModuleIM.Core.ConversationWithAllType> = [];
-  activedId: string = '';
 
   constructor() {
     const { userId, token } = window.Context.getUserInfo();
+    this.userId = userId;
     this.socket = getIMSocketInstance(Config.imSocketUrl, {
       optionsForSocket: {
         path: '/socket/v1/IM/',
@@ -88,5 +89,6 @@ export default class Conversations {
   onMessage(msg: ModuleIM.Core.MessageBasic) {
     console.log(msg);
     const { id, msgId, sender, senderInfo, type, timer } = msg;
+    window.Context.sqlClient.setMessage(this.userId, msg);
   }
 }

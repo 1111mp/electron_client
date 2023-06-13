@@ -13,6 +13,7 @@ const {
   updateConversationActiveAt,
   updateConvActiveAtWithValue,
   updateConversationLastRead,
+  setMessage,
   getMessagesBySender,
 } = sqlClient;
 
@@ -74,6 +75,7 @@ const {
         updateConversationActiveAt,
         updateConvActiveAtWithValue,
         updateConversationLastRead,
+        setMessage,
         getMessagesBySender,
       },
     });

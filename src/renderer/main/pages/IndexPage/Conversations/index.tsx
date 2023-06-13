@@ -75,7 +75,7 @@ const Item: React.FC<Props> = memo(({ conversation }) => {
   return (
     <li
       className={classNames('module-conversations-wrapper', {
-        'module-conversations-wrapper__active': id === `${receiver}`,
+        'module-conversations-wrapper__active': id === `${sender}`,
       })}
       onClick={onConversationEnter}
     >

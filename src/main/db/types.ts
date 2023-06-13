@@ -64,8 +64,8 @@ export type DataInterface = {
     messages: ModuleIM.Core.MessageBasic[]
   ) => Promise<void>;
   getMessagesBySender: (options: {
-    owner: number;
-    sender: number;
+    userId: number;
+    receiver: number;
     pageNum: number;
     pageSize: number;
   }) => Promise<ModuleIM.Core.MessageBasic[]>;

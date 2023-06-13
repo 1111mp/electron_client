@@ -42,8 +42,8 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const { userId } = window.Context.getUserInfo();
 
   const messages = await window.Context.sqlClient.getMessagesBySender({
-    owner: userId,
-    sender: parseInt(params.id),
+    userId,
+    receiver: parseInt(params.id),
     pageNum: 1,
     pageSize: 15,
   });
@@ -199,7 +199,7 @@ export const Conversation: React.FC<IAnyObject> = observer(() => {
   const { user } = useTargetStore('userStore');
   const { getActivedConversation, updateLastRead } =
     useTargetStore('conversationStore');
-  const { sendMesssage } = useTargetStore('clientStore');
+  const { sendMesssage } = useTargetStore('conversationStore');
 
   const conversation = computed(() =>
     getActivedConversation(parseInt(id!))
@@ -270,6 +270,9 @@ export const Conversation: React.FC<IAnyObject> = observer(() => {
         draft.push(message);
         scrollTo(draft.length - 1);
       });
+
+      // cache to db
+      window.Context.sqlClient.setMessage(user.userId, message);
 
       // sendMesssage(message).then((res) => {
       //   console.log(res);
