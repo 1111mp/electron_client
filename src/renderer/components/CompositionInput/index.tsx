@@ -7,8 +7,10 @@ import { observer } from 'mobx-react';
 import Quill, { KeyboardStatic, RangeStatic, DeltaStatic } from 'quill';
 import Delta from 'quill-delta';
 import ReactQuill from 'react-quill';
-import { Manager, Reference, usePopper } from 'react-popper';
+import { usePopper } from 'react-popper';
 
+import { ImageBlot } from 'Components/Quill/image/blot';
+import { matchImageBlot } from 'Components/Quill/image/matchers';
 import { EmojiBlot, EmojiCompletion } from 'Components/Quill/emoji';
 import {
   matchEmojiImage,
@@ -38,6 +40,7 @@ import { SignalClipboard } from 'Components/Quill/signal-clipboard';
 import { useI18n } from 'Renderer/utils/i18n';
 import { useTargetStore } from 'App/renderer/main/stores';
 
+Quill.register('formats/iimage', ImageBlot);
 Quill.register('formats/emoji', EmojiBlot);
 Quill.register('formats/mention', MentionBlot);
 Quill.register('modules/emojiCompletion', EmojiCompletion);
@@ -479,6 +482,7 @@ export const CompositionInput: React.ComponentType<Props> = observer(
       return (
         <ReactQuill
           className="module-composition-input__quill"
+          scrollingContainer={scrollerRef.current!}
           onChange={onChange}
           // defaultValue={delta}
           modules={{
@@ -488,6 +492,7 @@ export const CompositionInput: React.ComponentType<Props> = observer(
               matchers: [
                 ['IMG', matchEmojiImage],
                 ['IMG', matchEmojiBlot],
+                ['IMG', matchImageBlot],
                 ['SPAN', matchReactEmoji],
                 [Node.TEXT_NODE, matchEmojiText],
                 ['SPAN', matchMention(memberRepositoryRef)],
@@ -519,7 +524,7 @@ export const CompositionInput: React.ComponentType<Props> = observer(
               // i18n,
             },
           }}
-          formats={['emoji', 'mention']}
+          formats={['iimage', 'emoji', 'mention']}
           placeholder={i18n('sendMessageToContact')}
           readOnly={disabled}
           ref={(element) => {
@@ -536,11 +541,11 @@ export const CompositionInput: React.ComponentType<Props> = observer(
               // When loading a multi-line message out of a draft, the cursor
               // position needs to be pushed to the end of the input manually.
               quill.once('editor-change', () => {
-                const scroller = scrollerRef.current;
+                // const scroller = scrollerRef.current;
 
-                if (scroller !== null) {
-                  quill.scrollingContainer = scroller;
-                }
+                // if (scroller !== null) {
+                //   quill.scrollingContainer = scroller;
+                // }
 
                 setTimeout(() => {
                   quill.setSelection(quill.getLength(), 0);

@@ -1264,7 +1264,7 @@ function getConversationsWithAllSync(
         .prepare(
           `
           SELECT * FROM messages WHERE
-            owner = $owner AND sender = $sender
+            owner = $owner AND (sender = $sender OR (sender = $owner AND receiver = $sender))
           ORDER BY timer DESC
           LIMIT 1;
           `

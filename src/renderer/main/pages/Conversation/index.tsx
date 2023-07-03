@@ -18,6 +18,7 @@ import { Message, Positions } from './Message';
 
 import { v4 as uuidv4 } from 'uuid';
 import { useTargetStore } from '../../stores';
+import { useEventCallback } from 'App/renderer/utils/hooks';
 import { ModuleIMCommon } from 'App/renderer/socket/enums';
 
 import type { LoaderFunctionArgs } from 'react-router-dom';
@@ -252,36 +253,39 @@ export const Conversation: React.FC<IAnyObject> = observer(() => {
     [messages]
   );
 
-  const onSend: TransmitterProps['onSend'] = (content, mentions) => {
-    if (!content) return;
-    const { groupId, sender } = conversation;
-    if (!groupId) {
-      // p2p message
-      const message = {
-        msgId: uuidv4(),
-        type: ModuleIMCommon.MsgType.Text,
-        sender: user.userId,
-        receiver: sender,
-        content,
-        timer: Date.now(),
-      };
+  const onSend: TransmitterProps['onSend'] = useEventCallback(
+    (content, mentions) => {
+      if (!content) return;
+      console.log(content);
+      const { groupId, sender } = conversation;
+      if (!groupId) {
+        // p2p message
+        const message = {
+          msgId: uuidv4(),
+          type: ModuleIMCommon.MsgType.Text,
+          sender: user.userId,
+          receiver: sender,
+          content,
+          timer: Date.now(),
+        };
 
-      updateMessages((draft) => {
-        draft.push(message);
-        scrollTo(draft.length - 1);
-      });
+        updateMessages((draft) => {
+          draft.push(message);
+          scrollTo(draft.length - 1);
+        });
 
-      // cache to db
-      window.Context.sqlClient.setMessage(user.userId, message);
+        // cache to db
+        // window.Context.sqlClient.setMessage(user.userId, message);
 
-      // sendMesssage(message).then((res) => {
-      //   console.log(res);
-      // });
-      return;
+        // sendMesssage(message).then((res) => {
+        //   console.log(res);
+        // });
+        return;
+      }
+
+      // group message
     }
-
-    // group message
-  };
+  );
 
   const scrollTo = (index: number) => {
     setScrollToIndex(index);

@@ -19,7 +19,6 @@ export class EmojiBlot extends Embed {
   static create(emoji: string): Node {
     const node = super.create(undefined) as HTMLElement;
     node.dataset.emoji = emoji;
-    console.log(emoji);
 
     const image = emojiToImage(emoji);
 

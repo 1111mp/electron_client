@@ -41,9 +41,11 @@ export class SignalClipboard {
   constructor(quill: Quill) {
     this.quill = quill;
 
-    this.quill.root.addEventListener('copy', e => this.onCaptureCopy(e, false));
-    this.quill.root.addEventListener('cut', e => this.onCaptureCopy(e, true));
-    this.quill.root.addEventListener('paste', e => this.onCapturePaste(e));
+    this.quill.root.addEventListener('copy', (e) =>
+      this.onCaptureCopy(e, false)
+    );
+    this.quill.root.addEventListener('cut', (e) => this.onCaptureCopy(e, true));
+    this.quill.root.addEventListener('paste', (e) => this.onCapturePaste(e));
   }
 
   onCaptureCopy(event: ClipboardEvent, isCut = false): void {
@@ -99,24 +101,72 @@ export class SignalClipboard {
     const text = event.clipboardData.getData('text/plain');
     const html = event.clipboardData.getData('text/signal');
 
-    const clipboardDelta = html
-      ? clipboard.convert(html)
-      : clipboard.convert(replaceAngleBrackets(text));
+    if (text || html) {
+      const clipboardDelta = html
+        ? clipboard.convert(html)
+        : clipboard.convert(replaceAngleBrackets(text));
 
-    const { scrollTop } = (this.quill as any).scrollingContainer;
+      const { scrollTop } = this.quill.scrollingContainer;
 
-    (this.quill as any).selection.update('silent');
+      this.quill.selection.update('silent');
 
-    if (selection) {
-      setTimeout(() => {
-        const delta = new Delta()
-          .retain(selection.index)
-          .concat(clipboardDelta);
-        this.quill.updateContents(delta, 'user');
-        this.quill.setSelection(delta.length(), 0, 'silent');
-        (this.quill as any).scrollingContainer.scrollTop = scrollTop;
-      }, 1);
+      if (selection) {
+        setTimeout(() => {
+          const delta = new Delta()
+            .retain(selection.index)
+            .concat(clipboardDelta);
+          this.quill.updateContents(delta, 'user');
+          this.quill.setSelection(delta.length(), 0, 'silent');
+          this.quill.scrollingContainer.scrollTop = scrollTop;
+        }, 1);
+      }
+
+      event.preventDefault();
+      return;
     }
+
+    const items = event.clipboardData.items;
+
+    if (!items || !items.length) return;
+
+    const promises: Promise<{ type: string; image: string }>[] = new Array(
+      items.length
+    );
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (item.kind === 'file') {
+        const file = item.getAsFile()!;
+        promises[i] = new Promise((resolve) => {
+          var reader = new FileReader();
+          reader.onload = (event) => {
+            resolve({
+              type: file.type!,
+              image: event.target!.result as string,
+            });
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+    }
+    const { scrollTop } = this.quill.scrollingContainer;
+
+    Promise.all(promises).then((result) => {
+      const delta = result.reduce(
+        (acc: Delta, cur: { type: string; image: string }) => {
+          acc.insert({
+            iimage: cur,
+          });
+
+          return acc;
+        },
+        new Delta().retain(selection.index)
+      );
+
+      this.quill.updateContents(delta, 'user');
+      this.quill.setSelection(delta.length(), 0, 'silent');
+      this.quill.scrollingContainer.scrollTop = scrollTop;
+    });
 
     event.preventDefault();
   }
