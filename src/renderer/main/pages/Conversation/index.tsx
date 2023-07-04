@@ -257,6 +257,7 @@ export const Conversation: React.FC<IAnyObject> = observer(() => {
     (content, mentions) => {
       if (!content) return;
       console.log(content);
+      console.log(mentions);
       const { groupId, sender } = conversation;
       if (!groupId) {
         // p2p message

@@ -8,6 +8,7 @@ import { Theme } from 'App/types';
 
 import 'Renderer/styles/app.css';
 import 'Renderer/styles/app.module.scss';
+import { disableDropBehavior } from '../utils/file';
 
 function appInit() {
   return Promise.all([
@@ -30,6 +31,8 @@ function appInit() {
 
 (async () => {
   InitNativeThemeListener();
+
+  disableDropBehavior();
 
   const theme =
     window.systemTheme === Theme.system

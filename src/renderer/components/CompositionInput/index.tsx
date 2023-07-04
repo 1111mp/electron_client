@@ -9,6 +9,8 @@ import Delta from 'quill-delta';
 import ReactQuill from 'react-quill';
 import { usePopper } from 'react-popper';
 
+import { VideoBlot } from 'Components/Quill/video/blot';
+import { matchVideoBlot } from 'Components/Quill/video/matchers';
 import { ImageBlot } from 'Components/Quill/image/blot';
 import { matchImageBlot } from 'Components/Quill/image/matchers';
 import { EmojiBlot, EmojiCompletion } from 'Components/Quill/emoji';
@@ -40,6 +42,7 @@ import { SignalClipboard } from 'Components/Quill/signal-clipboard';
 import { useI18n } from 'Renderer/utils/i18n';
 import { useTargetStore } from 'App/renderer/main/stores';
 
+Quill.register('formats/ivideo', VideoBlot);
 Quill.register('formats/iimage', ImageBlot);
 Quill.register('formats/emoji', EmojiBlot);
 Quill.register('formats/mention', MentionBlot);
@@ -417,24 +420,24 @@ export const CompositionInput: React.ComponentType<Props> = observer(
           return;
         }
 
-        const { onEditorStateChange } = propsRef.current;
+        // const { onEditorStateChange } = propsRef.current;
 
-        if (onEditorStateChange) {
-          // `getSelection` inside the `onChange` event handler will be the
-          // selection value _before_ the change occurs. `setTimeout` 0 here will
-          // let `getSelection` return the selection after the change takes place.
-          // this is necessary for `maybeGrabLinkPreview` as it needs the correct
-          // `caretLocation` from the post-change selection index value.
-          setTimeout(() => {
-            const selection = quill.getSelection();
+        // if (onEditorStateChange) {
+        //   // `getSelection` inside the `onChange` event handler will be the
+        //   // selection value _before_ the change occurs. `setTimeout` 0 here will
+        //   // let `getSelection` return the selection after the change takes place.
+        //   // this is necessary for `maybeGrabLinkPreview` as it needs the correct
+        //   // `caretLocation` from the post-change selection index value.
+        //   setTimeout(() => {
+        //     const selection = quill.getSelection();
 
-            onEditorStateChange(
-              text,
-              mentions,
-              selection ? selection.index : undefined
-            );
-          }, 0);
-        }
+        //     onEditorStateChange(
+        //       text,
+        //       mentions,
+        //       selection ? selection.index : undefined
+        //     );
+        //   }, 0);
+        // }
       }
 
       if (propsRef.current.onDirtyChange) {
@@ -477,7 +480,7 @@ export const CompositionInput: React.ComponentType<Props> = observer(
     }, [JSON.stringify(memberIds)]);
 
     const reactQuill = useMemo(() => {
-      const delta = generateDelta(draftText || '', draftBodyRanges || []);
+      // const delta = generateDelta(draftText || '', draftBodyRanges || []);
 
       return (
         <ReactQuill
@@ -490,9 +493,10 @@ export const CompositionInput: React.ComponentType<Props> = observer(
             signalClipboard: true,
             clipboard: {
               matchers: [
+                ['SPAN', matchVideoBlot],
+                ['IMG', matchImageBlot],
                 ['IMG', matchEmojiImage],
                 ['IMG', matchEmojiBlot],
-                ['IMG', matchImageBlot],
                 ['SPAN', matchReactEmoji],
                 [Node.TEXT_NODE, matchEmojiText],
                 ['SPAN', matchMention(memberRepositoryRef)],
@@ -524,7 +528,7 @@ export const CompositionInput: React.ComponentType<Props> = observer(
               // i18n,
             },
           }}
-          formats={['iimage', 'emoji', 'mention']}
+          formats={["ivideo", 'iimage', 'emoji', 'mention']}
           placeholder={i18n('sendMessageToContact')}
           readOnly={disabled}
           ref={(element) => {

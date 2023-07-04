@@ -18,6 +18,20 @@ export interface MentionBlotValue {
   title: string;
 }
 
+export interface ImageBlotValue {
+  type: string;
+  image: string;
+  size: number;
+  name?: string;
+}
+
+export interface VideoBlotValue {
+  type: string;
+  video: string;
+  size: number;
+  name?: string;
+}
+
 export const isMentionBlot = (blot: LeafBlot): blot is MentionBlot =>
   blot.value() && blot.value().mention;
 
@@ -34,6 +48,9 @@ export const isSpecificInsertOp = (op: Op, type: string): boolean => {
   );
 };
 
+export const isInsertIImageOp = (op: Op): op is InsertEmojiOp =>
+  isSpecificInsertOp(op, 'iimage');
+
 export const isInsertEmojiOp = (op: Op): op is InsertEmojiOp =>
   isSpecificInsertOp(op, 'emoji');
 
@@ -43,6 +60,7 @@ export const isInsertMentionOp = (op: Op): op is InsertMentionOp =>
 export const getTextAndMentionsFromOps = (
   ops: Array<Op>
 ): [string, Array<BodyRangeType>] => {
+  // const files: Array<FileBlotValue> = [];
   const mentions: Array<BodyRangeType> = [];
 
   const text = ops
@@ -55,6 +73,10 @@ export const getTextAndMentionsFromOps = (
         return acc + op.insert.emoji;
       }
 
+      if (isInsertIImageOp(op)) {
+        return acc + op.insert.emoji;
+      }
+
       if (isInsertMentionOp(op)) {
         mentions.push({
           length: 1, // The length of `\uFFFC`
@@ -63,7 +85,7 @@ export const getTextAndMentionsFromOps = (
           start: acc.length,
         });
 
-        return `${acc}\uFFFC`;
+        return `${acc}\uFFFD`;
       }
 
       return acc;

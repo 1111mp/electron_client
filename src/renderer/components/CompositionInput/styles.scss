@@ -30,6 +30,67 @@
         max-height: 100px;
         vertical-align: text-bottom;
       }
+
+      .video-blot {
+        display: inline-block;
+        // width: 230px;
+        height: 64px;
+        line-height: 64px;
+        font-size: 64px;
+        border-radius: 4px;
+        overflow: hidden;
+        vertical-align: text-bottom;
+
+        @include light-theme {
+          background-color: $color-gray-02;
+        }
+
+        @include dark-theme {
+          background-color: $color-gray-65;
+        }
+
+        &-content {
+          width: 230px;
+          height: 64px;
+          font-size: 14px;
+          line-height: normal;
+          @include flex($align: center);
+          transform: translateY(-19px);
+          
+
+          @include light-theme {
+            color: $color-gray-75;
+          }
+  
+          @include dark-theme {
+            color: $color-gray-15;
+          }
+
+          &-name {
+            max-width: 158px;
+            overflow: hidden;
+            display: -webkit-inline-box;
+            word-break: break-all;
+            overflow: hidden;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+          }
+
+          &-size {
+            font-size: 12px;
+
+            @include light-theme {
+              color: $color-gray-45;
+            }
+    
+            @include dark-theme {
+              color: $color-gray-25;
+            }
+          }
+        }
+      }
     }
   }
 

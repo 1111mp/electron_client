@@ -5,6 +5,7 @@ import Quill from 'quill';
 import Delta from 'quill-delta';
 
 import { getTextFromOps } from '../utils';
+import { FilesInfo, getInfoFromFileList } from 'App/renderer/utils/file';
 
 const getSelectionHTML = () => {
   const selection = window.getSelection();
@@ -46,6 +47,7 @@ export class SignalClipboard {
     );
     this.quill.root.addEventListener('cut', (e) => this.onCaptureCopy(e, true));
     this.quill.root.addEventListener('paste', (e) => this.onCapturePaste(e));
+    // this.quill.root.addEventListener('drop', (e) => this.onCaptureDrop(e));
   }
 
   onCaptureCopy(event: ClipboardEvent, isCut = false): void {
@@ -74,10 +76,10 @@ export class SignalClipboard {
     }
 
     const text = getTextFromOps(ops);
-    const html = getSelectionHTML();
+    // const html = getSelectionHTML();
 
     event.clipboardData.setData('text/plain', text);
-    event.clipboardData.setData('text/signal', html);
+    event.clipboardData.setData('text/signal', JSON.stringify(ops));
 
     if (isCut) {
       this.quill.deleteText(range.index, range.length, 'user');
@@ -91,7 +93,6 @@ export class SignalClipboard {
 
     this.quill.focus();
 
-    const clipboard = this.quill.getModule('clipboard');
     const selection = this.quill.getSelection();
 
     if (selection === null) {
@@ -99,11 +100,12 @@ export class SignalClipboard {
     }
 
     const text = event.clipboardData.getData('text/plain');
-    const html = event.clipboardData.getData('text/signal');
+    const opsStr = event.clipboardData.getData('text/signal');
 
-    if (text || html) {
-      const clipboardDelta = html
-        ? clipboard.convert(html)
+    if (text || opsStr) {
+      const clipboard = this.quill.getModule('clipboard');
+      const clipboardDelta = opsStr
+        ? new Delta(JSON.parse(opsStr))
         : clipboard.convert(replaceAngleBrackets(text));
 
       const { scrollTop } = this.quill.scrollingContainer;
@@ -125,49 +127,57 @@ export class SignalClipboard {
       return;
     }
 
-    const items = event.clipboardData.items;
+    const files = event.clipboardData.files;
 
-    if (!items || !items.length) return;
+    if (!files || !files.length) return;
 
-    const promises: Promise<{ type: string; image: string }>[] = new Array(
-      items.length
-    );
+    this.setFilesToQuill(files, selection.index);
 
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i];
-      if (item.kind === 'file') {
-        const file = item.getAsFile()!;
-        promises[i] = new Promise((resolve) => {
-          var reader = new FileReader();
-          reader.onload = (event) => {
-            resolve({
-              type: file.type!,
-              image: event.target!.result as string,
-            });
-          };
-          reader.readAsDataURL(file);
-        });
-      }
-    }
+    event.preventDefault();
+  }
+
+  // TODO maybe we dont need this feature
+  // onCaptureDrop(evt: DragEvent) {
+  //   console.log(evt.target);
+  //   console.log(evt.dataTransfer);
+  //   for (let i = 0; i < evt.dataTransfer!.files.length; i++) {
+  //     console.log(evt.dataTransfer!.files[i]);
+  //   }
+  //   for (let i = 0; i < evt.dataTransfer!.items.length; i++) {
+  //     console.log(evt.dataTransfer!.items[i]);
+  //   }
+  //   const selection = this.quill.getSelection();
+  //   console.log(selection);
+  //   evt.preventDefault();
+  // }
+
+  private setFilesToQuill(files: FileList, retain: number) {
     const { scrollTop } = this.quill.scrollingContainer;
 
-    Promise.all(promises).then((result) => {
-      const delta = result.reduce(
-        (acc: Delta, cur: { type: string; image: string }) => {
+    getInfoFromFileList(files).then((result) => {
+      const delta = result.reduce((acc: Delta, cur: FilesInfo) => {
+        if (cur === void 0) return acc;
+
+        const { type, name, size, url } = cur;
+
+        if (type.startsWith('image'))
           acc.insert({
-            iimage: cur,
+            iimage: { type, image: url, size, name },
           });
 
-          return acc;
-        },
-        new Delta().retain(selection.index)
-      );
+        if (type.startsWith('video'))
+          acc
+            .insert({
+              ivideo: { type, video: url, size, name },
+            })
+            .insert('\n');
+
+        return acc;
+      }, new Delta().retain(retain));
 
       this.quill.updateContents(delta, 'user');
       this.quill.setSelection(delta.length(), 0, 'silent');
       this.quill.scrollingContainer.scrollTop = scrollTop;
     });
-
-    event.preventDefault();
   }
 }
