@@ -5,16 +5,35 @@ import type Op from 'quill-delta/dist/Op';
 
 import { MentionBlot } from './mentions/blot';
 
-export interface BodyRangeType {
+export enum BodyRangeType {
+  Mention = 'mention',
+  Files = 'files',
+}
+
+export interface BodyRangeBasic {
   start: number;
   length: number;
-  mentionUuid: string;
-  replacementText: string;
   conversationID?: string;
 }
 
+interface BodyRangeMention {
+  body: BodyRangeType.Mention;
+  mentionId: number;
+  replacementText: string;
+}
+
+interface BodyRangeFiles {
+  body: BodyRangeType.Files;
+  type: string;
+  url: string;
+  size: number;
+  name?: string;
+}
+
+export type BodyRange = BodyRangeBasic & (BodyRangeMention | BodyRangeFiles);
+
 export interface MentionBlotValue {
-  uuid: string;
+  id: number;
   title: string;
 }
 
@@ -39,6 +58,8 @@ export type InsertOp<K extends string, T> = Op & { insert: { [V in K]: T } };
 
 export type InsertMentionOp = InsertOp<'mention', MentionBlotValue>;
 export type InsertEmojiOp = InsertOp<'emoji', string>;
+export type InsertIImageOp = InsertOp<'iimage', ImageBlotValue>;
+export type InsertIVideoOp = InsertOp<'ivideo', VideoBlotValue>;
 
 export const isSpecificInsertOp = (op: Op, type: string): boolean => {
   return (
@@ -48,7 +69,10 @@ export const isSpecificInsertOp = (op: Op, type: string): boolean => {
   );
 };
 
-export const isInsertIImageOp = (op: Op): op is InsertEmojiOp =>
+export const isInsertIVideoOp = (op: Op): op is InsertIVideoOp =>
+  isSpecificInsertOp(op, 'ivideo');
+
+export const isInsertIImageOp = (op: Op): op is InsertIImageOp =>
   isSpecificInsertOp(op, 'iimage');
 
 export const isInsertEmojiOp = (op: Op): op is InsertEmojiOp =>
@@ -57,11 +81,10 @@ export const isInsertEmojiOp = (op: Op): op is InsertEmojiOp =>
 export const isInsertMentionOp = (op: Op): op is InsertMentionOp =>
   isSpecificInsertOp(op, 'mention');
 
-export const getTextAndMentionsFromOps = (
+export const getTextAndBodysFromOps = (
   ops: Array<Op>
-): [string, Array<BodyRangeType>] => {
-  // const files: Array<FileBlotValue> = [];
-  const mentions: Array<BodyRangeType> = [];
+): [string, Array<BodyRange>] => {
+  const bodys: Array<BodyRange> = [];
 
   const text = ops
     .reduce((acc, op) => {
@@ -69,35 +92,64 @@ export const getTextAndMentionsFromOps = (
         return acc + op.insert;
       }
 
+      // iimage
+      if (isInsertIImageOp(op)) {
+        bodys.push({
+          body: BodyRangeType.Files,
+          length: 1, // The length of `\uFFFC`
+          type: op.insert.iimage.type,
+          name: op.insert.iimage.name,
+          url: op.insert.iimage.image,
+          size: op.insert.iimage.size,
+          start: acc.length,
+        });
+
+        return `${acc}\uFFFC`;
+      }
+
+      // ivideo
+      if (isInsertIVideoOp(op)) {
+        bodys.push({
+          body: BodyRangeType.Files,
+          length: 1, // The length of `\uFFFC`
+          type: op.insert.ivideo.type,
+          name: op.insert.ivideo.name,
+          url: op.insert.ivideo.video,
+          size: op.insert.ivideo.size,
+          start: acc.length,
+        });
+
+        return `${acc}\uFFFC`;
+      }
+
+      // emoji
       if (isInsertEmojiOp(op)) {
         return acc + op.insert.emoji;
       }
 
-      if (isInsertIImageOp(op)) {
-        return acc + op.insert.emoji;
-      }
-
+      // mention
       if (isInsertMentionOp(op)) {
-        mentions.push({
+        bodys.push({
+          body: BodyRangeType.Mention,
           length: 1, // The length of `\uFFFC`
-          mentionUuid: op.insert.mention.uuid,
+          mentionId: op.insert.mention.id,
           replacementText: op.insert.mention.title,
           start: acc.length,
         });
 
-        return `${acc}\uFFFD`;
+        return `${acc}\uFFFC`;
       }
 
       return acc;
     }, '')
     .trim();
 
-  return [text, mentions];
+  return [text, bodys];
 };
 
-export const insertMentionOps = (
+export const insertBodyOps = (
   incomingOps: Array<Op>,
-  bodyRanges: Array<BodyRangeType>
+  bodyRanges: Array<BodyRange>
 ): Array<Op> => {
   const ops = [...incomingOps];
 
@@ -107,24 +159,47 @@ export const insertMentionOps = (
   // Unshift the mention and surrounding text to leave the ops ready for the next range
   bodyRanges
     .sort((a, b) => b.start - a.start)
-    .forEach(({ start, length, mentionUuid, replacementText }) => {
+    .forEach((bodyRange) => {
       const op = ops.shift();
 
       if (op) {
         const { insert } = op;
 
         if (typeof insert === 'string') {
+          const { body, start, length } = bodyRange;
+
           const left = insert.slice(0, start);
           const right = insert.slice(start + length);
 
-          const mention = {
-            uuid: mentionUuid,
-            title: replacementText,
-          };
+          if (body === BodyRangeType.Mention) {
+            const mention = {
+              id: bodyRange.mentionId,
+              title: bodyRange.replacementText,
+            };
 
-          ops.unshift({ insert: right });
-          ops.unshift({ insert: { mention } });
-          ops.unshift({ insert: left });
+            ops.unshift({ insert: right });
+            ops.unshift({ insert: { mention } });
+            ops.unshift({ insert: left });
+          }
+
+          if (body === BodyRangeType.Files) {
+            const file = {
+              type: bodyRange.type,
+              name: bodyRange.name,
+              size: bodyRange.size,
+              [bodyRange.type.startsWith('image') ? 'image' : 'video']:
+                bodyRange.url,
+            };
+
+            ops.unshift({ insert: right });
+            ops.unshift({
+              insert: {
+                [bodyRange.type.startsWith('image') ? 'iimage' : 'ivideo']:
+                  file,
+              },
+            });
+            ops.unshift({ insert: left });
+          }
         } else {
           ops.unshift(op);
         }
@@ -207,14 +282,11 @@ export const getDeltaToRestartMention = (ops: Array<Op>): Delta => {
 
 export const getDeltaToRemoveStaleMentions = (
   ops: Array<Op>,
-  memberUuids: Array<string>
+  memberIds: Array<number>
 ): Delta => {
   const newOps = ops.reduce((memo, op) => {
     if (op.insert) {
-      if (
-        isInsertMentionOp(op) &&
-        !memberUuids.includes(op.insert.mention.uuid)
-      ) {
+      if (isInsertMentionOp(op) && !memberIds.includes(op.insert.mention.id)) {
         const deleteOp = { delete: 1 };
         const textOp = { insert: `@${op.insert.mention.title}` };
         return [...memo, deleteOp, textOp];
@@ -235,6 +307,7 @@ export const getDeltaToRemoveStaleMentions = (
   return new Delta(newOps);
 };
 
+// Not yet used
 export const getTextFromOps = (ops: Array<Op>): string =>
   ops
     .reduce((acc, op) => {

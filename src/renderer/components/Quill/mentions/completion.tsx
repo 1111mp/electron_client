@@ -4,7 +4,6 @@ import Quill, { DeltaStatic } from 'quill';
 import Delta from 'quill-delta';
 import { Avatar } from 'antd';
 import { debounce } from 'lodash';
-import { ConversationType } from '../memberRepository';
 import { MemberRepository } from '../memberRepository';
 import { matchBlotTextPartitions } from '../utils';
 
@@ -12,7 +11,7 @@ export interface MentionCompletionOptions {
   // i18n: LocalizerType;
   memberRepositoryRef: React.RefObject<MemberRepository>;
   setMentionPickerElement: (element: JSX.Element | null) => void;
-  me?: ConversationType;
+  me?: DB.UserWithFriendSetting;
 }
 
 declare global {
@@ -26,7 +25,7 @@ const Keyboard = Quill.import('modules/keyboard');
 const MENTION_REGEX = /(?:^|\W)@([-+\w]*)$/;
 
 export class MentionCompletion {
-  results: Array<ConversationType>;
+  results: Array<DB.UserWithFriendSetting>;
 
   index: number;
 
@@ -88,7 +87,7 @@ export class MentionCompletion {
     this.clearResults();
   }
 
-  possiblyShowMemberResults(): Array<ConversationType> {
+  possiblyShowMemberResults(): Array<DB.UserWithFriendSetting> {
     const range = this.quill.getSelection();
 
     if (range) {
@@ -103,7 +102,7 @@ export class MentionCompletion {
       if (leftTokenTextMatch) {
         const [, leftTokenText] = leftTokenTextMatch;
 
-        let results: Array<ConversationType> = [];
+        let results: Array<DB.UserWithFriendSetting> = [];
 
         const memberRepository = this.options.memberRepositoryRef.current;
 
@@ -165,7 +164,7 @@ export class MentionCompletion {
   }
 
   insertMention(
-    mention: ConversationType,
+    mention: DB.UserWithFriendSetting,
     index: number,
     range: number,
     withTrailingSpace = false
@@ -173,7 +172,12 @@ export class MentionCompletion {
     const delta = new Delta()
       .retain(index)
       .delete(range)
-      .insert({ mention }) as unknown as DeltaStatic;
+      .insert({
+        mention: {
+          id: mention.id,
+          title: mention.remark ? mention.remark : mention.account,
+        },
+      }) as unknown as DeltaStatic;
 
     if (withTrailingSpace) {
       this.quill.updateContents(delta.insert(' '), 'user');
@@ -209,7 +213,7 @@ export class MentionCompletion {
         role="listbox"
         aria-expanded
         aria-activedescendant={`mention-result--${
-          memberResults.length ? memberResults[memberResultsIndex].name : ''
+          memberResults.length ? memberResults[memberResultsIndex].account : ''
         }`}
         tabIndex={0}
       >
@@ -217,36 +221,39 @@ export class MentionCompletion {
           ref={this.suggestionListRef}
           className="module-composition-input__suggestions--scroller"
         >
-          {memberResults.map((member, index) => (
-            <button
-              type="button"
-              key={member.uuid}
-              id={`mention-result--${member.name}`}
-              role="option button"
-              aria-selected={memberResultsIndex === index}
-              onClick={() => {
-                this.completeMention(index);
-              }}
-              className={classNames(
-                'module-composition-input__suggestions__row',
-                'module-composition-input__suggestions__row--mention',
-                memberResultsIndex === index
-                  ? 'module-composition-input__suggestions__row--selected'
-                  : null
-              )}
-            >
-              <Avatar
-                src={member.avatarPath}
-                shape="circle"
-                // i18n={this.options.i18n}
-                size={28}
-                alt={member.title}
-              />
-              <div className="module-composition-input__suggestions__title">
-                {member.title}
-              </div>
-            </button>
-          ))}
+          {memberResults.map((member, index) => {
+            const title = member.remark ? member.remark : member.account;
+            return (
+              <button
+                type="button"
+                key={member.id}
+                id={`mention-result--${title}`}
+                role="option button"
+                aria-selected={memberResultsIndex === index}
+                onClick={() => {
+                  this.completeMention(index);
+                }}
+                className={classNames(
+                  'module-composition-input__suggestions__row',
+                  'module-composition-input__suggestions__row--mention',
+                  memberResultsIndex === index
+                    ? 'module-composition-input__suggestions__row--selected'
+                    : null
+                )}
+              >
+                <Avatar
+                  src={member.avatar}
+                  shape="circle"
+                  // i18n={this.options.i18n}
+                  size={28}
+                  alt={title}
+                />
+                <div className="module-composition-input__suggestions__title">
+                  {title}
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
     );

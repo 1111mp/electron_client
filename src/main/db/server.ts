@@ -715,13 +715,16 @@ function getGroupSync(groupId: number): ModuleIM.Core.GroupBasic {
 
 /**
  * @description: Get group info include members.
+ * @param owner number
  * @param groupId number
- * @return ModuleIM.Core.GroupBasic & { members: DB.UserInfo[] }
+ * @return ModuleIM.Core.GroupBasic & { members: DB.UserWithFriendSetting[] }
  */
 async function getGroupWithMembers(
+  owner: number,
   groupId: number
 ): Promise<
-  (ModuleIM.Core.GroupBasic & { members: DB.UserInfo[] }) | undefined
+  | (ModuleIM.Core.GroupBasic & { members: DB.UserWithFriendSetting[] })
+  | undefined
 > {
   const db = getInstance();
 
@@ -741,23 +744,42 @@ async function getGroupWithMembers(
   const members = db
     .prepare(
       `
-      SELECT * FROM userInfos
-      WHERE id IN (
+      SELECT
+        Info.id,
+        Info.account,
+        Info.avatar,
+        Info.email,
+        Info.regisTime,
+        Info.updateTime,
+        Friend.remark,
+        Friend.astrolabe,
+        Friend.block,
+        Friend.createdAt,
+        Friend.updatedAt
+      FROM userInfos AS Info
+      LEFT OUTER JOIN friends AS Friend ON Friend.owner = $owner AND Friend.id = Info.id
+      WHERE Info.id IN (
         ${ids.map(() => '?').join(', ')}
       )
       `
     )
-    .all(ids) as DB.UserInfo[];
+    .all({
+      owner,
+    }) as DB.UserWithFriendSetting[];
 
   return { ...row, members };
 }
 
 /**
  * @description: Get group members by groupId.
+ * @param owner number
  * @param groupId number
- * @return Promise<DB.UserInfo[]>
+ * @return Promise<DB.UserWithFriendSetting[]>
  */
-async function getMembersByGroupId(groupId: number): Promise<DB.UserInfo[]> {
+async function getMembersByGroupId(
+  owner: number,
+  groupId: number
+): Promise<DB.UserWithFriendSetting[]> {
   const db = getInstance();
   const row = db
     .prepare(
@@ -775,13 +797,26 @@ async function getMembersByGroupId(groupId: number): Promise<DB.UserInfo[]> {
   const members = db
     .prepare(
       `
-      SELECT * FROM userInfos
-      WHERE id IN (
+      SELECT
+        Info.id,
+        Info.account,
+        Info.avatar,
+        Info.email,
+        Info.regisTime,
+        Info.updateTime,
+        Friend.remark,
+        Friend.astrolabe,
+        Friend.block,
+        Friend.createdAt,
+        Friend.updatedAt
+      FROM userInfos AS Info
+      LEFT OUTER JOIN friends AS Friend ON Friend.owner = $owner AND Friend.id = Info.id
+      WHERE Info.id IN (
         ${ids.map(() => '?').join(', ')}
       )
       `
     )
-    .all(ids) as DB.UserInfo[];
+    .all({ owner }) as DB.UserWithFriendSetting[];
 
   return members;
 }
@@ -818,7 +853,9 @@ async function getGroups(
  */
 async function getGroupsIncludeMembers(
   userId: number
-): Promise<Array<ModuleIM.Core.GroupBasic & { members: DB.UserInfo[] }>> {
+): Promise<
+  Array<ModuleIM.Core.GroupBasic & { members: DB.UserWithFriendSetting[] }>
+> {
   const db = getInstance();
   const groups = db
     .prepare(
@@ -838,7 +875,7 @@ async function getGroupsIncludeMembers(
   return db.transaction(
     (groups: Array<ModuleIM.Core.GroupBasic & { members: string }>) => {
       const result: Array<
-        ModuleIM.Core.GroupBasic & { members: DB.UserInfo[] }
+        ModuleIM.Core.GroupBasic & { members: DB.UserWithFriendSetting[] }
       > = [];
 
       for (const group of groups) {
@@ -847,13 +884,26 @@ async function getGroupsIncludeMembers(
         const members = db
           .prepare(
             `
-            SELECT * FROM userInfos
-            WHERE id IN (
+            SELECT
+              Info.id,
+              Info.account,
+              Info.avatar,
+              Info.email,
+              Info.regisTime,
+              Info.updateTime,
+              Friend.remark,
+              Friend.astrolabe,
+              Friend.block,
+              Friend.createdAt,
+              Friend.updatedAt
+            FROM userInfos AS Info
+            LEFT OUTER JOIN friends AS Friend ON Friend.owner = $owner AND Friend.id = Info.id
+            WHERE Info.id IN (
               ${ids.map(() => '?').join(', ')}
             )
             `
           )
-          .all(ids) as DB.UserInfo[];
+          .all({ owner: userId }) as DB.UserWithFriendSetting[];
 
         result.push({ ...group, members });
       }

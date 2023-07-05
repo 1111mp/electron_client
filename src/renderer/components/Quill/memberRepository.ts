@@ -15,25 +15,25 @@ const FUSE_OPTIONS = {
   maxPatternLength: 32,
   minMatchCharLength: 1,
   tokenize: true,
-  keys: ['name', 'firstName', 'profileName', 'title'],
+  keys: ['account', 'remark', 'email'],
 };
 
 export class MemberRepository {
-  private members: Array<ConversationType>;
+  private members: Array<DB.UserWithFriendSetting>;
 
-  private fuse: Fuse<ConversationType>;
+  private fuse: Fuse<DB.UserWithFriendSetting>;
 
-  constructor(members: Array<ConversationType> = []) {
+  constructor(members: Array<DB.UserWithFriendSetting> = []) {
     this.members = members;
-    this.fuse = new Fuse<ConversationType>(this.members, FUSE_OPTIONS);
+    this.fuse = new Fuse<DB.UserWithFriendSetting>(this.members, FUSE_OPTIONS);
   }
 
-  updateMembers(members: Array<ConversationType>): void {
+  updateMembers(members: Array<DB.UserWithFriendSetting>): void {
     this.members = members;
     this.fuse = new Fuse(members, FUSE_OPTIONS);
   }
 
-  getMembers(omit?: ConversationType): Array<ConversationType> {
+  getMembers(omit?: DB.UserWithFriendSetting): Array<DB.UserWithFriendSetting> {
     if (omit) {
       return this.members.filter(({ id }) => id !== omit.id);
     }
@@ -41,25 +41,30 @@ export class MemberRepository {
     return this.members;
   }
 
-  getMemberById(id?: string): ConversationType | undefined {
+  getMemberById(id?: number): DB.UserWithFriendSetting | undefined {
     return id
       ? this.members.find(({ id: memberId }) => memberId === id)
       : undefined;
   }
 
-  getMemberByUuid(uuid?: string): ConversationType | undefined {
-    return uuid
-      ? this.members.find(({ uuid: memberUuid }) => memberUuid === uuid)
+  getMemberByAccount(account?: string): DB.UserWithFriendSetting | undefined {
+    return account
+      ? this.members.find(({ account: memberAct }) => memberAct === account)
       : undefined;
   }
 
-  search(pattern: string, omit?: ConversationType): Array<ConversationType> {
+  search(
+    pattern: string,
+    omit?: DB.UserWithFriendSetting
+  ): DB.UserWithFriendSetting[] {
     const results = this.fuse.search(`${pattern}`);
 
     if (omit) {
-      return results.filter(({ item }) => item.id !== omit.id);
+      return results
+        .filter(({ item }) => item.id !== omit.id)
+        .map(({ item }) => item);
     }
 
-    return results;
+    return results.map(({ item }) => item);
   }
 }

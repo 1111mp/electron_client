@@ -8,10 +8,10 @@ import {
   Props as EmojiButtonProps,
 } from 'Components/EmojiWidgets/EmojiButton';
 import { EmojiPickDataType } from 'Components/EmojiWidgets/EmojiPicker';
-import type { BodyRangeType } from 'App/renderer/components/Quill/utils';
+import type { BodyRange } from 'App/renderer/components/Quill/utils';
 
 export type Props = {
-  onSend: (content: string, mentions: BodyRangeType[]) => void;
+  onSend: (content: string, bodys: BodyRange[]) => void;
 };
 
 export const Transmitter: React.ComponentType<Props> = memo(({ onSend }) => {

@@ -4,7 +4,6 @@
 import Quill from 'quill';
 import Delta from 'quill-delta';
 
-import { getTextFromOps } from '../utils';
 import { FilesInfo, getInfoFromFileList } from 'App/renderer/utils/file';
 
 const getSelectionHTML = () => {
@@ -75,10 +74,6 @@ export class SignalClipboard {
       return;
     }
 
-    const text = getTextFromOps(ops);
-    // const html = getSelectionHTML();
-
-    event.clipboardData.setData('text/plain', text);
     event.clipboardData.setData('text/signal', JSON.stringify(ops));
 
     if (isCut) {
@@ -99,14 +94,10 @@ export class SignalClipboard {
       return;
     }
 
-    const text = event.clipboardData.getData('text/plain');
     const opsStr = event.clipboardData.getData('text/signal');
 
-    if (text || opsStr) {
-      const clipboard = this.quill.getModule('clipboard');
-      const clipboardDelta = opsStr
-        ? new Delta(JSON.parse(opsStr))
-        : clipboard.convert(replaceAngleBrackets(text));
+    if (opsStr) {
+      const clipboardDelta = new Delta(JSON.parse(opsStr));
 
       const { scrollTop } = this.quill.scrollingContainer;
 

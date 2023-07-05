@@ -23,21 +23,21 @@ export class MentionBlot extends Embed {
   }
 
   static value(node: HTMLElement): MentionBlotValue {
-    const { uuid, title } = node.dataset;
-    if (uuid === undefined || title === undefined) {
+    const { id, title } = node.dataset;
+    if (id === undefined || title === undefined) {
       throw new Error(
-        `Failed to make MentionBlot with uuid: ${uuid} and title: ${title}`
+        `Failed to make MentionBlot with id: ${id} and title: ${title}`
       );
     }
 
     return {
-      uuid,
+      id: parseInt(id),
       title,
     };
   }
 
   static buildSpan(mention: MentionBlotValue, node: HTMLElement): void {
-    node.setAttribute('data-uuid', mention.uuid || '');
+    node.setAttribute('data-id', `${mention.id}` || '');
     node.setAttribute('data-title', mention.title || '');
 
     const mentionSpan = document.createElement('span');

@@ -44,15 +44,22 @@ export type DataInterface = {
   getGroup: (groupId: number) => Promise<ModuleIM.Core.GroupBasic>;
   // getGroupSync: (groupId: number) => ModuleIM.Core.GroupBasic;
   getGroupWithMembers: (
+    owner: number,
     groupId: number
   ) => Promise<
-    (ModuleIM.Core.GroupBasic & { members: DB.UserInfo[] }) | undefined
+    | (ModuleIM.Core.GroupBasic & { members: DB.UserWithFriendSetting[] })
+    | undefined
   >;
-  getMembersByGroupId: (groupId: number) => Promise<DB.UserInfo[]>;
+  getMembersByGroupId: (
+    owner: number,
+    groupId: number
+  ) => Promise<DB.UserWithFriendSetting[]>;
   getGroups: (userId: number) => Promise<Array<ModuleIM.Core.GroupBasic>>;
   getGroupsIncludeMembers: (
     userId: number
-  ) => Promise<Array<ModuleIM.Core.GroupBasic & { members: DB.UserInfo[] }>>;
+  ) => Promise<
+    Array<ModuleIM.Core.GroupBasic & { members: DB.UserWithFriendSetting[] }>
+  >;
 
   // messages
   setMessage: (

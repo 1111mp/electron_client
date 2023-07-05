@@ -12,13 +12,15 @@ export const matchMention =
 
       if (node.classList.contains('module-message-body__at-mention')) {
         const { id } = node.dataset;
-        const conversation = memberRepository.getMemberById(id);
+        const conversation = memberRepository.getMemberById(
+          id ? parseInt(id) : undefined
+        );
 
-        if (conversation && conversation.uuid) {
+        if (conversation && conversation.id) {
           return new Delta().insert({
             mention: {
               title,
-              uuid: conversation.uuid,
+              id: conversation.id,
             },
           });
         }
@@ -27,14 +29,20 @@ export const matchMention =
       }
 
       if (node.classList.contains('mention-blot')) {
-        const { uuid } = node.dataset;
-        const conversation = memberRepository.getMemberByUuid(uuid);
+        const { id } = node.dataset;
+        const conversation = memberRepository.getMemberById(
+          id ? parseInt(id) : undefined
+        );
 
-        if (conversation && conversation.uuid) {
+        if (conversation && conversation.id) {
           return new Delta().insert({
             mention: {
-              title: title || conversation.title,
-              uuid: conversation.uuid,
+              title:
+                title ||
+                (conversation.remark
+                  ? conversation.remark
+                  : conversation.account),
+              id: conversation.id,
             },
           });
         }

@@ -254,10 +254,10 @@ export const Conversation: React.FC<IAnyObject> = observer(() => {
   );
 
   const onSend: TransmitterProps['onSend'] = useEventCallback(
-    (content, mentions) => {
+    (content, bodys) => {
       if (!content) return;
       console.log(content);
-      console.log(mentions);
+      console.log(bodys);
       const { groupId, sender } = conversation;
       if (!groupId) {
         // p2p message

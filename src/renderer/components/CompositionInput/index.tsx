@@ -29,13 +29,14 @@ import {
   ConversationType,
 } from 'Components/Quill/memberRepository';
 import {
-  BodyRangeType,
-  getTextAndMentionsFromOps,
-  insertMentionOps,
+  BodyRange,
+  getTextAndBodysFromOps,
+  insertBodyOps,
   insertEmojiOps,
   isMentionBlot,
   getDeltaToRestartMention,
   getDeltaToRemoveStaleMentions,
+  BodyRangeType,
 } from 'Components/Quill/utils';
 import { convertShortName } from 'Components/EmojiWidgets/lib';
 import { SignalClipboard } from 'Components/Quill/signal-clipboard';
@@ -72,17 +73,17 @@ type Props = {
   readonly inputApi?: React.MutableRefObject<InputApi | undefined>;
   readonly skinTone?: EmojiPickDataType['skinTone'];
   readonly draftText?: string;
-  readonly draftBodyRanges?: Array<BodyRangeType>;
-  members?: DB.UserInfo[];
+  readonly draftBodyRanges?: Array<BodyRange>;
+  members?: DB.UserWithFriendSetting[];
   onDirtyChange?(dirty: boolean): unknown;
   onEditorStateChange?(
     messageText: string,
-    bodyRanges: Array<BodyRangeType>,
+    bodyRanges: Array<BodyRange>,
     caretLocation?: number
   ): unknown;
   onTextTooLong(): unknown;
   onPickEmoji(o: EmojiPickDataType): unknown;
-  onSubmit(message: string, mentions: Array<BodyRangeType>): unknown;
+  onSubmit(message: string, bodys: Array<BodyRange>): unknown;
   getQuotedMessage(): unknown;
   clearQuotedMessage(): unknown;
 };
@@ -103,20 +104,27 @@ export const CompositionInput: React.ComponentType<Props> = observer(
       clearQuotedMessage,
       members = [
         {
-          id: 0,
-          uuid: '0',
-          name: '张逸凡',
-          avatarPath: 'https://img2-npl.bao.163.com/avatar/default/054/200',
-          title: '张逸凡',
-          isMe: true,
+          id: 10007,
+          account: '17621398254',
+          email: 'zyf@gmail.com',
+          avatar:
+            'http://img.touxiangkong.com/uploads/allimg/20203301301/2020/3/Vzuiy2.jpg',
+          regisTime: '2023-01-28 12:16:06',
+          updateTime: '2023-01-29 14:01:35',
         },
         {
-          id: 1,
-          uuid: '1',
-          name: '成丹丹',
-          avatarPath: 'https://img2-npl.bao.163.com/avatar/default/054/200',
-          title: '成丹丹',
-          isMe: false,
+          id: 10009,
+          account: '17601254993',
+          email: null,
+          avatar:
+            'http://img.touxiangkong.com/uploads/allimg/20203301301/2020/3/Vzuiy2.jpg',
+          createdAt: '2023-05-27 15:53:40',
+          regisTime: '2023-01-28 17:36:29',
+          remark: 'other',
+          block: false,
+          astrolabe: false,
+          updateTime: '2023-01-28 17:36:30',
+          updatedAt: '2023-05-27 15:53:40',
         },
       ],
     } = props;
@@ -157,16 +165,16 @@ export const CompositionInput: React.ComponentType<Props> = observer(
 
     const generateDelta = (
       text: string,
-      bodyRanges: Array<BodyRangeType>
+      bodyRanges: Array<BodyRange>
     ): Delta => {
       const initialOps = [{ insert: text }];
-      const opsWithMentions = insertMentionOps(initialOps, bodyRanges);
-      const opsWithEmojis = insertEmojiOps(opsWithMentions);
+      const opsWithBodys = insertBodyOps(initialOps, bodyRanges);
+      const opsWithEmojis = insertEmojiOps(opsWithBodys);
 
       return new Delta(opsWithEmojis);
     };
 
-    const getTextAndMentions = (): [string, Array<BodyRangeType>] => {
+    const getTextAndBodys = (): [string, Array<BodyRange>] => {
       const quill = quillRef.current;
 
       if (quill === undefined) {
@@ -185,7 +193,7 @@ export const CompositionInput: React.ComponentType<Props> = observer(
         return ['', []];
       }
 
-      return getTextAndMentionsFromOps(ops);
+      return getTextAndBodysFromOps(ops);
     };
 
     const focus = () => {
@@ -213,12 +221,10 @@ export const CompositionInput: React.ComponentType<Props> = observer(
       }
 
       const emoji = convertShortName(e.shortName, e.skinTone);
-      console.log(emoji);
       const delta = new Delta()
         .retain(insertionRange.index)
         .delete(insertionRange.length)
         .insert({ emoji });
-      console.log(delta);
 
       // https://github.com/quilljs/delta/issues/30
       quill.updateContents(delta as unknown as DeltaStatic, 'user');
@@ -260,12 +266,10 @@ export const CompositionInput: React.ComponentType<Props> = observer(
         return;
       }
 
-      const [text, mentions] = getTextAndMentions();
-      // console.log(text);
-      // console.log(mentions);
+      const [text, bodys] = getTextAndBodys();
 
-      // window.log.info(`Submitting a message with ${mentions.length} mentions`);
-      onSubmit(text, mentions);
+      // window.log.info(`Submitting a message with ${bodys.length} bodys`);
+      onSubmit(text, bodys);
       // clear
       quill.deleteText(0, quill.getLength());
     };
@@ -409,7 +413,7 @@ export const CompositionInput: React.ComponentType<Props> = observer(
     const onChange = () => {
       const quill = quillRef.current;
 
-      const [text, mentions] = getTextAndMentions();
+      const [text, bodys] = getTextAndBodys();
 
       if (quill !== undefined) {
         const historyModule: HistoryStatic = quill.getModule('history');
@@ -445,7 +449,9 @@ export const CompositionInput: React.ComponentType<Props> = observer(
       }
     };
 
-    const removeStaleMentions = (currentMembers: Array<ConversationType>) => {
+    const removeStaleMentions = (
+      currentMembers: Array<DB.UserWithFriendSetting>
+    ) => {
       const quill = quillRef.current;
 
       if (quill === undefined) {
@@ -457,11 +463,11 @@ export const CompositionInput: React.ComponentType<Props> = observer(
         return;
       }
 
-      const currentMemberUuids = currentMembers
-        .map((m) => m.uuid)
-        .filter((uuid): uuid is string => uuid !== undefined);
+      const currentMembeIds = currentMembers
+        .map((m) => m.id)
+        .filter((id): id is number => id !== undefined);
 
-      const newDelta = getDeltaToRemoveStaleMentions(ops, currentMemberUuids);
+      const newDelta = getDeltaToRemoveStaleMentions(ops, currentMembeIds);
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       quill.updateContents(newDelta as any);
@@ -470,8 +476,8 @@ export const CompositionInput: React.ComponentType<Props> = observer(
     const memberIds = members.map((m) => m.id);
 
     useEffect(() => {
-      memberRepositoryRef.current.updateMembers(members || []);
-      removeStaleMentions(members || []);
+      memberRepositoryRef.current.updateMembers(members);
+      removeStaleMentions(members);
       // We are still depending on members, but ESLint can't tell
       // Comparing the actual members list does not work for a couple reasons:
       //    * Arrays with the same objects are not "equal" to React
@@ -480,14 +486,14 @@ export const CompositionInput: React.ComponentType<Props> = observer(
     }, [JSON.stringify(memberIds)]);
 
     const reactQuill = useMemo(() => {
-      // const delta = generateDelta(draftText || '', draftBodyRanges || []);
+      const delta = generateDelta(draftText || '', draftBodyRanges || []);
 
       return (
         <ReactQuill
           className="module-composition-input__quill"
           scrollingContainer={scrollerRef.current!}
           onChange={onChange}
-          // defaultValue={delta}
+          defaultValue={delta}
           modules={{
             toolbar: false,
             signalClipboard: true,
@@ -528,7 +534,7 @@ export const CompositionInput: React.ComponentType<Props> = observer(
               // i18n,
             },
           }}
-          formats={["ivideo", 'iimage', 'emoji', 'mention']}
+          formats={['ivideo', 'iimage', 'emoji', 'mention']}
           placeholder={i18n('sendMessageToContact')}
           readOnly={disabled}
           ref={(element) => {
