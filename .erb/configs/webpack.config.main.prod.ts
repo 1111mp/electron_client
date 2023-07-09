@@ -24,7 +24,7 @@ const entrys = preload_files.reduce(
     ...acc,
     [cur.split('.')[0]]: path.join(webpackPaths.srcPreloadPath, cur),
   }),
-  {}
+  {},
 );
 
 entrys['mainWorker'] = mainWorkerPath;

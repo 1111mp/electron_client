@@ -1,4 +1,4 @@
-const { NODE_ENV } = window.Context;
+const { NODE_ENV } = window.Context || { NODE_ENV: 'development' };
 
 interface Config {
   isDev: boolean;

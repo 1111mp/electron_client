@@ -1,9 +1,8 @@
-import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
-import Root from '../renderer/login/root';
+import Login from '../renderer/login/login';
 
 describe('App', () => {
   it('should render', () => {
-    expect(render(<Root />)).toBeTruthy();
+    expect(render(<Login />)).toBeTruthy();
   });
 });
