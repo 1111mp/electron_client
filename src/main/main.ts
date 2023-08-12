@@ -10,7 +10,7 @@
  */
 import path from 'path';
 import { userInfo } from 'os';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, nativeTheme } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -70,7 +70,7 @@ const installExtensions = async () => {
   return installer
     .default(
       extensions.map((name) => installer[name]),
-      forceDownload
+      forceDownload,
     )
     .catch(console.log);
 };
@@ -105,7 +105,7 @@ const createWindow = async (callback: VoidFunction) => {
     frame: false,
     title: 'mainWindow', // 用来标识 mainWindow
     icon: getAssetPath('icon.png'),
-    backgroundColor: '#121212',
+    backgroundColor: nativeTheme.shouldUseDarkColors ? '#121212' : '#ffffff',
     titleBarStyle: process.platform === 'darwin' ? 'hidden' : 'default',
     trafficLightPosition: {
       x: 4,
@@ -230,7 +230,7 @@ const createLogin = async () => {
       createWindow(() => {
         loginWindow && loginWindow.close();
       });
-    }
+    },
   );
 
   ipcMain.once('close-login', () => {
@@ -245,13 +245,13 @@ const createLogin = async () => {
 };
 
 async function initializeSQL(
-  userDataPath: string
+  userDataPath: string,
 ): Promise<{ ok: true; error: undefined } | { ok: false; error: Error }> {
   const key = userInfo().username;
 
   if (!key) {
     logger.info(
-      'key/initialize: Generating new encryption key, since we did not find it on disk'
+      'key/initialize: Generating new encryption key, since we did not find it on disk',
     );
   }
 
@@ -318,7 +318,7 @@ app
     const sqlInitPromise = initializeSQL(userDataPath);
 
     const timeout = new Promise((resolve) =>
-      setTimeout(resolve, 3000, 'timeout')
+      setTimeout(resolve, 3000, 'timeout'),
     );
 
     Promise.race([sqlInitPromise, timeout])
@@ -327,7 +327,7 @@ app
 
         /** 这里可以加载 loading 过渡 */
         logger.info(
-          'sql.initialize is taking more than three seconds; showing loading dialog'
+          'sql.initialize is taking more than three seconds; showing loading dialog',
         );
 
         // loadingWindow = new BrowserWindow({
