@@ -89,6 +89,7 @@ function updateToSchemaVersion1(
         sender INTEGER NOT NULL,
         receiver INTEGER NOT NULL,
         content TEXT,
+        loading BOOLEAN DEFAULT FALSE,
         timer INTEGER NOT NULL DESC,
         ext TEXT
       );
@@ -100,6 +101,8 @@ function updateToSchemaVersion1(
       CREATE INDEX messages_sender ON messages (sender);
 
       CREATE INDEX messages_receiver ON messages (receiver);
+
+      CREATE INDEX messages_loading ON messages (loading);
 
       CREATE INDEX messages_timer ON messages (timer);
     `);

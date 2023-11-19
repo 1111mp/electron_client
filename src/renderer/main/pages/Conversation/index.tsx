@@ -189,10 +189,10 @@ export const Conversation: React.FC<IAnyObject> = observer(() => {
   const msgs = useLoaderData() as ModuleIM.Core.MessageBasic[];
 
   const [messages, updateMessages] = useImmer<ModuleIM.Core.MessageBasic[]>(
-    () => msgs
+    () => msgs,
   );
   const [scrollToIndex, setScrollToIndex] = useState<number | undefined>(
-    msgs.length - 1
+    () => msgs.length - 1,
   );
   const [visible, setVisible] = useState<boolean>(false);
 
@@ -203,10 +203,10 @@ export const Conversation: React.FC<IAnyObject> = observer(() => {
   const { sendMesssage } = useTargetStore('conversationStore');
 
   const conversation = computed(() =>
-    getActivedConversation(parseInt(id!))
+    getActivedConversation(parseInt(id!)),
   ).get()!;
 
-  console.log(conversation);
+  // console.log(conversation);
 
   useEffect(() => {
     return () => {
@@ -250,7 +250,7 @@ export const Conversation: React.FC<IAnyObject> = observer(() => {
           </CellMeasurer>
         );
       },
-    [messages]
+    [messages],
   );
 
   const onSend: TransmitterProps['onSend'] = useEventCallback(
@@ -267,6 +267,7 @@ export const Conversation: React.FC<IAnyObject> = observer(() => {
           sender: user.userId,
           receiver: sender,
           content,
+          loading: true,
           timer: Date.now(),
         };
 
@@ -285,8 +286,14 @@ export const Conversation: React.FC<IAnyObject> = observer(() => {
       }
 
       // group message
-    }
+    },
   );
+
+  const updateMessagsStatus = (msgId: string) => {
+    updateMessages((draft) => {
+      
+    });
+  };
 
   const scrollTo = (index: number) => {
     setScrollToIndex(index);

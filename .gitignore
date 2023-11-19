@@ -2,6 +2,8 @@
 logs
 *.log
 
+.nvmdrc
+
 # Runtime data
 pids
 *.pid

@@ -17,6 +17,7 @@ declare global {
         groupId?: number;
         receiver: number; // userId or groupId
         content: string;
+        loading?: boolean;
         timer: number;
         ext?: string; // reserved field
       };

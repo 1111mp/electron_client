@@ -32,7 +32,7 @@ export class NativeThemeListener {
       this.update(true);
 
       for (const fn of this.subscribers) {
-        fn(theme);
+        fn(theme === Theme.system ? window.Context.getSystemTheme() : theme);
       }
     });
   }
